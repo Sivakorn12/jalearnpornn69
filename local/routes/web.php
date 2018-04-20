@@ -16,6 +16,8 @@
 Auth::routes();
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/searchType', 'HomeController@searchType');
+Route::get('/searchSize', 'HomeController@searchSize');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });

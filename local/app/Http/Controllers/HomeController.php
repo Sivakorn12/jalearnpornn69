@@ -28,7 +28,7 @@ class HomeController extends Controller
     {
         $dataRoom = DB::table('meeting_room')
             ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
-            ->select('meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
+            ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
             ->get();
 
         $typeRoom = DB::table('meeting_type')->get();

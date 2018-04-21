@@ -45,4 +45,31 @@ class func extends Model
 
         return $tableHTML;
     }
+
+    public static function selectReserve ($data) {
+        $check_reserve = DB::table('meeting_room')
+                                ->where('meeting_ID', $data)
+                                ->where('meeting_status', '=', '1')
+                                ->first();
+        if (count($check_reserve) == 0) {
+            return null;
+        } else {
+            return $check_reserve;
+        }
+    }
+
+    public static function Getequips ($id) {
+        $dataEquips = DB::table('equipment_in')
+                            ->where('meeting_ID', $id)
+                            ->get();
+        return $dataEquips;
+    }
+
+    public static function queryReserveTime ($id) {
+        $checktime = DB::table('detail_booking')
+                            ->where('meeting_ID', $id)
+                            ->first();
+        return $checktime;
+    }
+    
 }

@@ -166,11 +166,11 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
-                        <li {{ (Request::is('/') ? 'class="active"' : '') }}>
+                        <li {{ (Request::is('/') ? 'class="active"' : 'class="active"') }}>
                             <a href="{{ url ('') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
                         </li>
-                        <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
-                            <a href="{{ url ('charts') }}"><i class="fa fa-book fa-fw"></i> จองห้อง</a>
+                        <li {{ (Request::is('reserve/') ? 'class="active"' : '') }}>
+                            <a href="{{ url ('reserve/') }}"><i class="fa fa-book fa-fw"></i> จองห้อง</a>
                             <!-- /.nav-second-level -->
                         </li>
                         <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
@@ -211,5 +211,6 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 </html>

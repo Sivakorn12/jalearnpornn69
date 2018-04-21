@@ -18,6 +18,8 @@ Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/searchType', 'HomeController@searchType');
 Route::get('/searchSize', 'HomeController@searchSize');
+Route::get('/reserve', 'ReserveController@index');
+Route::get('/reserve/{id}', 'ReserveController@ReservrRoom');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });

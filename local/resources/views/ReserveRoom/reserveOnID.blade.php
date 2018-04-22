@@ -11,9 +11,19 @@
 <?php
   $equipments = func::Getequips($rooms->meeting_ID);
   $reserveTime = func::queryReserveTime($rooms->meeting_ID);
-  $timeStart = $reserveTime->detail_timestart;
-  $timeEnd = $reserveTime->detail_timeout;
-  $times = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+
+  if (isset($reserveTime)) {
+    // $timeStart = substr(explode(" ", $reserveTime->detail_timestart)[1], 0, strpos(explode(" ", $reserveTime->detail_timestart)[1], ":"));
+    // $timeEnd = explode(" ", $reserveTime->detail_timeout)[1];
+    $timeStart = substr(explode(" ", $reserveTime->detail_timestart)[1], 0, -3);
+    $timeEnd = substr(explode(" ", $reserveTime->detail_timeout)[1], 0, -3);
+    $postimeStart = array_search($timeStart, $times);
+    $postimeEnd = array_search($timeEnd, $times);
+  }
+  // dd($timeStart, $timeEnd);
+  // dd($postimeStart, $postimeEnd);
+  // dd(array_search($timeEnd, $times));
 ?>
     <div class="col-md-1"></div>
     <div class="col-md-10">
@@ -61,9 +71,11 @@
 <div class="row">
   <div class="col-md-1"></div>
   <div class="col-md-10">
-    @foreach($times as $time)
-    <button type="button" class="btn btn-success">{{$time}}</button>
-    @endforeach
+    @for($index = 0; $index < sizeof($times); $index++)
+      @if($index == $postimeStart || $index > $postimeStart && $index < $postimeEnd) <button type="button" class="btn btn-danger" disabled="disabled">{{$times[$index]}}</button>
+      @else <button type="button" class="btn btn-success">{{$times[$index]}}</button>
+      @endif
+    @endfor
   </div>
   <div class="col-md-1"></div>
 </div>

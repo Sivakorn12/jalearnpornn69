@@ -13,7 +13,16 @@
     <!-- Styles -->
     <link href="{{ url('css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ url('css/styles.css') }}" rel="stylesheet">
+    <link href="{{ url('css/stylescomponent.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script
+    src="http://code.jquery.com/jquery-1.12.4.js"
+    integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+    crossorigin="anonymous">
+    </script>
 </head>
 <body>
     <div id="wrapper">
@@ -210,7 +219,5 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/bootstrap.js') }}"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 </html>

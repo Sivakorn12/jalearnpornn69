@@ -36,7 +36,7 @@ class HomeController extends Controller
                             ->select('meeting_size')
                             ->groupBy('meeting_size')
                             ->get();
-
+        // dd(Auth::user()->user_name);
         $data = array(
             'rooms' => $dataRoom,
             'types' => $typeRoom,

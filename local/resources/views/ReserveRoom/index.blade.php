@@ -54,6 +54,8 @@
                   </tr>
               @endforeach
               </table>
+              @if(session('message') != null) <b>{{session('message')}}</b>
+              @endif
           </div>
       <div class="col-md-1"></div>
   </div>

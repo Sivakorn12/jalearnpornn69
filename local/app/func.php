@@ -65,11 +65,72 @@ class func extends Model
         return $dataEquips;
     }
 
-    public static function queryReserveTime ($id) {
-        $checktime = DB::table('detail_booking')
-                            ->where('meeting_ID', $id)
-                            ->first();
-        return $checktime;
+    public static function GetSection () {
+        $dataSection = DB::table('section')
+                            ->get();
+        return $dataSection;
     }
-    
+
+    public static function GET_Timeuse ($id) {
+        $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
+        
+        $datatimes = DB::table('detail_booking')
+                            ->where('meeting_ID', $id)
+                            ->OrderBy('detail_timestart')
+                            ->get();
+
+        if (isset($datatimes)) {
+            $timeStart = array();
+            foreach ($datatimes as $reserves) {
+              for ($index = 0; $index < sizeof($times); $index++) {
+                if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
+                  $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
+                  echo $hour;
+                  for ($inner = 0; $inner < $hour; $inner++) {
+                    $checkTimeuse[$inner + $index] = 1;
+                  }
+                }
+              }
+            }
+          }
+
+        return $checkTimeuse;
+    }
+
+    public static function CHECK_TIME_REAMAIN ($id, $time_reserve) {
+        $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
+        $time_reserve = $time_reserve.':00';
+        $count_time = 0;
+        $pos_timeuse = array_search($time_reserve, $times);
+        
+        $datatimes = DB::table('detail_booking')
+                            ->where('meeting_ID', $id)
+                            ->OrderBy('detail_timestart')
+                            ->get();
+
+        if (isset($datatimes)) {
+            $timeStart = array();
+            foreach ($datatimes as $reserves) {
+                for ($index = 0; $index < sizeof($times); $index++) {
+                if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
+                    $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
+                    for ($inner = 0; $inner < $hour; $inner++) {
+                    $checkTimeuse[$inner + $index] = 1;
+                    }
+                }
+                }
+            }
+        }
+
+        for ($index = $pos_timeuse; $index < sizeof($checkTimeuse); $index++) {
+            if ($checkTimeuse[$index] == 0) {
+                $count_time++;
+                if ($count_time >= 3) break;
+            } else break;
+        }
+
+        return $count_time;
+    }
 }

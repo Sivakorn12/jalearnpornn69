@@ -19,7 +19,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/searchType', 'HomeController@searchType');
 Route::get('/searchSize', 'HomeController@searchSize');
 Route::get('/reserve', 'ReserveController@index');
+Route::get('/reserve/confirm', 'ReserveController@submitReserve');
 Route::get('/reserve/{id}', 'ReserveController@ReservrRoom');
+Route::get('/reserve/{id}/{timeReserve}', 'ReserveController@reserveForm');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });

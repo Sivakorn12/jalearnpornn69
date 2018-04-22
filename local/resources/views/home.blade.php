@@ -59,7 +59,7 @@
                     </tr>
                 </tbody>
                 @foreach($rooms as $key => $room)
-                    <tr onclick="location.href='{{ url('reserve/'.$room->meeting_ID)}}'">
+                    <tr onclick="location.href='{{ url('reserve/'.$room->meeting_ID) }}'">
                         <td>
                             <img src='{{url ("asset/".$room->meeting_pic)}}' width="100">
                         </td>
@@ -92,11 +92,6 @@
         text-align: center;
     };
 </style>
-<script
-  src="http://code.jquery.com/jquery-1.12.4.js"
-  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
-  crossorigin="anonymous">
-</script>
 
 <script>
        $(document).ready(function() 

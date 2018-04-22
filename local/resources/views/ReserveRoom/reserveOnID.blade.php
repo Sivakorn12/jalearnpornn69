@@ -10,20 +10,8 @@
   @else
 <?php
   $equipments = func::Getequips($rooms->meeting_ID);
-  $reserveTime = func::queryReserveTime($rooms->meeting_ID);
+  $time_use = func::GET_Timeuse($rooms->meeting_ID);
   $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-
-  if (isset($reserveTime)) {
-    // $timeStart = substr(explode(" ", $reserveTime->detail_timestart)[1], 0, strpos(explode(" ", $reserveTime->detail_timestart)[1], ":"));
-    // $timeEnd = explode(" ", $reserveTime->detail_timeout)[1];
-    $timeStart = substr(explode(" ", $reserveTime->detail_timestart)[1], 0, -3);
-    $timeEnd = substr(explode(" ", $reserveTime->detail_timeout)[1], 0, -3);
-    $postimeStart = array_search($timeStart, $times);
-    $postimeEnd = array_search($timeEnd, $times);
-  }
-  // dd($timeStart, $timeEnd);
-  // dd($postimeStart, $postimeEnd);
-  // dd(array_search($timeEnd, $times));
 ?>
     <div class="col-md-1"></div>
     <div class="col-md-10">
@@ -72,8 +60,8 @@
   <div class="col-md-1"></div>
   <div class="col-md-10">
     @for($index = 0; $index < sizeof($times); $index++)
-      @if($index == $postimeStart || $index > $postimeStart && $index < $postimeEnd) <button type="button" class="btn btn-danger" disabled="disabled">{{$times[$index]}}</button>
-      @else <button type="button" class="btn btn-success">{{$times[$index]}}</button>
+      @if($time_use[$index] == 1) <button type="button" class="btn btn-danger" disabled="disabled">{{$times[$index]}}</button>
+      @else <button type="button" class="btn btn-success" onclick="location.href='{{ url('reserve/'.$rooms->meeting_ID.'/'.substr($times[$index], -8, 2)) }}'">{{$times[$index]}}</button>
       @endif
     @endfor
   </div>

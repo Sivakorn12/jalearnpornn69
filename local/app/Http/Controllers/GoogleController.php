@@ -46,7 +46,7 @@ class GoogleController extends Controller
                     ->insertGetId([
                         'user_name' => $user->name,
                         'user_email' => $user->email,
-                        'remember_token' => "",
+                        'remember_token' => "user",
                         'created_at' => date('Y-m-d H:i:s'),
                         'updated_at' => date('Y-m-d H:i:s')
                 ]);
@@ -56,8 +56,13 @@ class GoogleController extends Controller
             } else {
                 Auth::loginUsingId($check_user->id);
             }
-
-            return redirect("/home");
+            if(Auth::user()->user_status=="superuser"){
+                return redirect("/control");
+            }
+            if(Auth::user()->user_status=="user"){
+                return redirect("/home");
+            }
+            
         } else {
             return redirect("/login");
         }

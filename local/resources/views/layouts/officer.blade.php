@@ -13,7 +13,17 @@
     <!-- Styles -->
     <link href="{{ url('css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ url('css/styles.css') }}" rel="stylesheet">
+    <link href="{{ url('css/custom-style.css') }}" rel="stylesheet">
+    <link href="{{ url('css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{{ url('js/bootstrap.js') }}"></script>
+    <script src="{{ url('js/notify.js') }}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ url('js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('js/dataTables.bootstrap.min.js') }}"></script>
 </head>
 <body>
     <div id="wrapper">
@@ -166,22 +176,14 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
-                        <li {{ (Request::is('/') ? 'class="active"' : 'class="active"') }}>
-                            <a href="{{ url ('') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
+                        <li class={{ $page === "index" ? "active" : "" }}>
+                            <a href="{{ url ('/control') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
                         </li>
-                        <li {{ (Request::is('reserve/') ? 'class="active"' : '') }}>
-                            <a href="{{ url ('reserve/') }}"><i class="fa fa-book fa-fw"></i> จองห้อง</a>
+                        <li class={{ $page === "reservation" ? "active" : "" }}>
+                            <a href="{{ url ('control/reservation/') }}"><i class="fa fa-book fa-fw"></i> ตรวจสอบการจองห้อง</a>
                             <!-- /.nav-second-level -->
                         </li>
                         <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
-                            <a href="{{ url ('charts') }}"><i class="fa fa-bookmark fa-fw"></i> ประวัติการใช้งาน</a>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
-                            <a href="{{ url ('charts') }}"><i class="fa fa-user fa-fw"></i> ข้อมูลผู้ใช้งาน</a>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li >
                             <a href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
@@ -217,8 +219,6 @@
        
     </div>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/bootstrap.js') }}"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    
 </body>
 </html>

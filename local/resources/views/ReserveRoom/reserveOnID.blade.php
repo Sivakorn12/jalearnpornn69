@@ -14,16 +14,12 @@
   $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
   if (isset($reserveTime)) {
-    // $timeStart = substr(explode(" ", $reserveTime->detail_timestart)[1], 0, strpos(explode(" ", $reserveTime->detail_timestart)[1], ":"));
-    // $timeEnd = explode(" ", $reserveTime->detail_timeout)[1];
     $timeStart = substr(explode(" ", $reserveTime->detail_timestart)[1], 0, -3);
     $timeEnd = substr(explode(" ", $reserveTime->detail_timeout)[1], 0, -3);
     $postimeStart = array_search($timeStart, $times);
     $postimeEnd = array_search($timeEnd, $times);
   }
-  // dd($timeStart, $timeEnd);
-  // dd($postimeStart, $postimeEnd);
-  // dd(array_search($timeEnd, $times));
+  
 ?>
     <div class="col-md-1"></div>
     <div class="col-md-10">

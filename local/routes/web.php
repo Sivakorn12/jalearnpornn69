@@ -25,5 +25,16 @@ Route::get('/reserve/{id}/{timeReserve}', 'ReserveController@reserveForm');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });
+Route::prefix('/control')->group(function () {
+  Route::get('/' ,'OfficerController@index');
+  Route::get('/reservation','OfficerController@indexReservation');
+  Route::get('/reservation/view/{id}','OfficerController@viewReservation');
+  Route::any('/reservation/{id}/confirm','OfficerController@confirmReservation');
+  Route::any('/reservation/{id}/cancel','OfficerController@cancelReservation');
+
+  Route::get('/room','OfficerController@indexRoom');
+});
+
+
 Route::get('auth/google', 'GoogleController@redirectToProvider');
 Route::get('auth/google/callback', 'GoogleController@handleProviderCallback');

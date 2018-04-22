@@ -1,0 +1,5 @@
+table.showroom > tbody > tr > td,
+table.showroom > thead > tr > th {
+  vertical-align: middle;
+  text-align: center;
+};

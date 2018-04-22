@@ -19,7 +19,7 @@ class func extends Model
             $tableHTML = $tableHTML."
                                     <tr>
                                         <td>
-                                            <img src='".$room->meeting_pic."' width='100'>
+                                            <img src='".url ("asset/".$room->meeting_pic)."' width='100'>
                                         </td>
                                         <td>
                                             ".$room->meeting_name."

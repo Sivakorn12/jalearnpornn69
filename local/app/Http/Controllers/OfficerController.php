@@ -77,14 +77,20 @@ class OfficerController extends Controller
     public function confirmReservation($id){
        $stateChange = DB::table('booking')
                     ->where('booking_ID', $id)
-                    ->update(['status_ID' => 1]);
+                    ->update([
+                        'status_ID' => 1,
+                        'approve_date' => date('Y-m-d')
+                    ]);
        return response()->json(['id'=>$id]);
     }
     
     public function cancelReservation($id){
         $stateChange = DB::table('booking')
                      ->where('booking_ID', $id)
-                     ->update(['status_ID' => 2]);
+                     ->update([
+                        'status_ID' => 2,
+                        'approve_date' => date('Y-m-d')
+                    ]);
         return response()->json(['id'=>$id]);
     }
 

@@ -40,7 +40,7 @@
  </div>
 
  <!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
+<div id="booking-detail" class="modal fade" role="dialog">
     <div class="modal-dialog">
   
       <!-- Modal content-->
@@ -62,19 +62,9 @@
 
 
 <script>
-  $('#myModal').on('show.bs.modal', function(event) {
-    var button = $(event.relatedTarget) // Button that triggered the modal
-    var id = button.data('id'); // Extract info from data-* attributes
-    var modal = $(this)
-    $.ajax({
-        url: window.location.pathname + "/view/" + id,
-        type: 'GET',
-        dataType: 'JSON',
-        data: { id: button.data('id') },
-        success: function(data) {
-            modal.find('#showView').html(data.html);
-        }
-    });
-});
+  
+  setTimeout(function(){ fecthdataBooking() }, 3000);
+  //setTimeout(function(){ window.location.reload() }, 5000);
 </script>
+<script src="{{ url('js/script.js') }}"></script>
 @endsection

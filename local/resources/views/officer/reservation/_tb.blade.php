@@ -25,11 +25,11 @@ elseif($type == 'confirmed'){
     @foreach($bookings as $key => $booking)
       @if($selected_status == $booking->status_ID or $selected_status=='')
       <tr>
-          <td data-toggle="modal" data-target="#myModal" data-id="{{$booking->booking_ID}}"><img src='{{url ("asset/".$booking->meeting_pic)}}' width="80"></td>
-          <td data-toggle="modal" data-target="#myModal" data-id="{{$booking->booking_ID}}">{{$booking->meeting_name}}</td>
-          <td data-toggle="modal" data-target="#myModal" data-id="{{$booking->booking_ID}}">{{$booking->checkin}}</td>
-          <td data-toggle="modal" data-target="#myModal" data-id="{{$booking->booking_ID}}">{{substr($booking->detail_timestart, -8,5)}} - {{substr($booking->detail_timeout, -8,5)}}</td>
-          <td data-toggle="modal" data-target="#myModal" data-id="{{$booking->booking_ID}}">55</td>
+          <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}"><img src='{{url ("asset/".$booking->meeting_pic)}}' width="80"></td>
+          <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{$booking->meeting_name}}</td>
+          <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{$booking->checkin}}</td>
+          <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{substr($booking->detail_timestart, -8,5)}} - {{substr($booking->detail_timeout, -8,5)}}</td>
+          <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">55</td>
           <td>
             @if($booking->status_ID==3)
               <button type="button" class="btn btn-success" data-id="{{$booking->booking_ID}}" id="confirmBooking-{{$type}}" ><i class="fa fa-check" aria-hidden="true"></i> อนุมัติ</button>
@@ -46,13 +46,15 @@ elseif($type == 'confirmed'){
    </tbody>
 </table>
 <script>
+
 $(document).ready(function() {
   $('#tb-{{$type}}').DataTable();
+  
 });
 
 
+
 $('#confirmBooking-{{$type}}').click(function(e){
-  
   var id = $(this).data("id")
   $.ajax({
       url: window.location.pathname + "/" + id+"/confirm",
@@ -65,6 +67,7 @@ $('#confirmBooking-{{$type}}').click(function(e){
       }
   });
 });
+
 $('#cancelBooking-{{$type}}').click(function(e){
 var id = $(this).data("id")
 $.ajax({

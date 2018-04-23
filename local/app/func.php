@@ -7,6 +7,11 @@ use DB;
 
 class func extends Model
 {
+    public function __construct()
+    {
+        date_default_timezone_set("Asia/Bangkok");
+    }
+
     public static function queryData($data, $condition) {
         $dataRoom = DB::table('meeting_room')
             ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
@@ -71,11 +76,16 @@ class func extends Model
         return $dataSection;
     }
 
-    public static function GET_Timeuse ($id) {
+    public static function GET_TIMEUSE ($id) {
+        $temp_date = explode('-', '25-04-2561');
+        // $id = 3;
+        $date = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+
         $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
         $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
         
         $datatimes = DB::table('detail_booking')
+                            ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date)
                             ->where('meeting_ID', $id)
                             ->OrderBy('detail_timestart')
                             ->get();
@@ -83,15 +93,14 @@ class func extends Model
         if (isset($datatimes)) {
             $timeStart = array();
             foreach ($datatimes as $reserves) {
-              for ($index = 0; $index < sizeof($times); $index++) {
-                if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
-                  $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
-                  echo $hour;
-                  for ($inner = 0; $inner < $hour; $inner++) {
-                    $checkTimeuse[$inner + $index] = 1;
-                  }
+                for ($index = 0; $index < sizeof($times); $index++) {
+                    if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
+                        $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
+                        for ($inner = 0; $inner < $hour; $inner++) {
+                        $checkTimeuse[$inner + $index] = 1;
+                        }
+                    }
                 }
-              }
             }
           }
 
@@ -99,6 +108,7 @@ class func extends Model
     }
 
     public static function CHECK_TIME_REAMAIN ($id, $time_reserve) {
+        $date_now = date('Y-m-d');
         $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
         $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
         $time_reserve = $time_reserve.':00';
@@ -113,13 +123,15 @@ class func extends Model
         if (isset($datatimes)) {
             $timeStart = array();
             foreach ($datatimes as $reserves) {
-                for ($index = 0; $index < sizeof($times); $index++) {
-                if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
-                    $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
-                    for ($inner = 0; $inner < $hour; $inner++) {
-                    $checkTimeuse[$inner + $index] = 1;
+                if (substr($reserves->detail_timestart, 0, 10) == $date_now) {
+                    for ($index = 0; $index < sizeof($times); $index++) {
+                        if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
+                            $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
+                            for ($inner = 0; $inner < $hour; $inner++) {
+                            $checkTimeuse[$inner + $index] = 1;
+                            }
+                        }
                     }
-                }
                 }
             }
         }

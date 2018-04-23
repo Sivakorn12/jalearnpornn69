@@ -66,5 +66,5 @@
   setTimeout(function(){ fecthdataBooking() }, 3000);
   //setTimeout(function(){ window.location.reload() }, 5000);
 </script>
-<script src="{{ url('js/myscript.js') }}"></script>
+<script src="{{ url('js/script.js') }}"></script>
 @endsection

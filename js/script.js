@@ -13,16 +13,3 @@ $('#booking-detail').on('show.bs.modal', function(event) {
   });
 });
 
-function fecthdataBooking(){
-  //console.log('yy')
-  $.ajax({
-      url: window.location.pathname + "/fetchTbBooking/",
-      type: 'GET',
-      dataType: 'JSON',
-      data: '',
-      success: function(data) {
-          modal.find('#showView').html(data.html);
-      }
-  });
-  setTimeout(function(){ fecthdataBooking() }, 3000);
-}

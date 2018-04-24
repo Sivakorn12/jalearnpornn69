@@ -72,7 +72,7 @@ class ReserveController extends Controller
                                 'user_ID' => $req->user_id,
                                 'booking_name' => $req->user_name,
                                 'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
-                                'booking_date' => date('Y-m-d'),
+                                'booking_date' => date('Y-m-d H:i:s'),
                                 'checkin' => date('Y-m-d')
                             ]);
             DB::table('detail_booking')
@@ -96,5 +96,14 @@ class ReserveController extends Controller
         // "meeting_id" => "2"
         // "time_reserve" => "14:00"
         // "time_use" => "1"
+    }
+
+    public function CHECK_DATE_RESERVE (Request $req) {
+        // $temp_date = explode('-', $req->date);
+        // $date = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+
+        $time_use = func::GET_TIMEUSE (3);
+        // dd($time_use);
+        return response()->json(['success'=> $time_use]);
     }
 }

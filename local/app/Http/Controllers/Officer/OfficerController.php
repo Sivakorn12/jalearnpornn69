@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Officer;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Session;
 use Auth;
@@ -9,6 +10,7 @@ use DB;
 use \Input as Input;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Officer as officer;
 
 class OfficerController extends Controller
 {
@@ -23,6 +25,7 @@ class OfficerController extends Controller
             }  
             return $next($request);
         });
+        date_default_timezone_set("Asia/Bangkok");
         
     }
     public function index(){
@@ -34,6 +37,7 @@ class OfficerController extends Controller
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                    ->join('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                   ->orderBy('booking_date','desc')
                    ->get();
         //dd($booking);
         $data = array(
@@ -70,6 +74,10 @@ class OfficerController extends Controller
                         <td width="100"><b>ผู้จอง</b></td>
                         <td>'.$booking->user_name.'</td>
                     </tr>
+                    <tr>
+                        <td width="100"><b>วันเวลาที่จอง</b></td>
+                        <td>'.$booking->booking_date.'</td>
+                    </tr>
                 </table>';
         return response()->json(['html'=>$html]);
     }
@@ -79,7 +87,7 @@ class OfficerController extends Controller
                     ->where('booking_ID', $id)
                     ->update([
                         'status_ID' => 1,
-                        'approve_date' => date('Y-m-d')
+                        'approve_date' => date('Y-m-d H:i:s')
                     ]);
        return response()->json(['id'=>$id]);
     }
@@ -89,9 +97,36 @@ class OfficerController extends Controller
                      ->where('booking_ID', $id)
                      ->update([
                         'status_ID' => 2,
-                        'approve_date' => date('Y-m-d')
+                        'approve_date' => date('Y-m-d H:i:s')
                     ]);
         return response()->json(['id'=>$id]);
+    }
+
+    public function fetchTbBooking(){
+        $bookings = DB::table('booking')
+                   ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
+                   ->join('users','booking.user_ID','=','users.id')
+                   ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                   ->orderBy('booking_date','desc')
+                   ->get();
+        $tbHtml = array();
+        $statusBooking = array("all","wait","confirmed");
+        for($i = 0; $i<count($statusBooking);$i++){
+            array_push($tbHtml,officer::pushTableBooking($bookings,$statusBooking[$i]));
+        }
+        return response()->json([
+            'tball'=> $tbHtml[0],
+            'tbwait'=> $tbHtml[1],
+            'tbconfirmed'=> $tbHtml[2],
+        ]);
+        
+    }
+
+    public function resetStatus(){
+        DB::table('booking')
+            ->update([
+            'status_ID' => 3,
+        ]);
     }
 
     

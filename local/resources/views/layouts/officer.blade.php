@@ -37,11 +37,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url ('') }}">SB Admin v2.0 | Laravel 5</a>
+                <a class="navbar-brand" href="{{ url ('') }}">ระบบการจองและการใช้ห้องประชุมออนไลน์</a>
             </div>
             <!-- /.navbar-header -->
 
             <ul class="nav navbar-top-links navbar-right">
+                <li>
+                <p >วันที่: {{date('Y-m-d')}}</p>
+                </li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
@@ -181,7 +184,9 @@
                         </li>
                         <li class={{ $page === "reservation" ? "active" : "" }}>
                             <a href="{{ url ('control/reservation/') }}"><i class="fa fa-book fa-fw"></i> ตรวจสอบการจองห้อง</a>
-                            <!-- /.nav-second-level -->
+                        </li>
+                        <li class={{ $page === "room" ? "active" : "" }}>
+                                <a href="{{ url ('control/room/') }}"><i class="fa fa-address-card" aria-hidden="true"></i> จัดการห้องประชุม</a>
                         </li>
                         <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
                             <a href="{{ route('logout') }}"

@@ -1,7 +1,8 @@
 $('#booking-detail').on('show.bs.modal', function(event) {
   var button = $(event.relatedTarget)
   var id = button.data('id'); 
-  var modal = $(this)
+    var modal = $(this)
+  console.log(window.location.pathname + "/view/" + id)  
   $.ajax({
       url: window.location.pathname + "/view/" + id,
       type: 'GET',
@@ -14,14 +15,20 @@ $('#booking-detail').on('show.bs.modal', function(event) {
 });
 
 function fecthdataBooking(){
+  console.log('fetch Booking At:'+ new Date())
   $.ajax({
-      url: window.location.pathname + "/fetchTbBooking/",
+      url: window.location.pathname + "/fetchTbBooking",
       type: 'GET',
       dataType: 'JSON',
       data: '',
       success: function(data) {
-          modal.find('#showView').html(data.html);
+          $('#all').html(data.tball);          
+          $('#wait').html(data.tbwait);
+          $('#confirmed').html(data.tbconfirmed);
+          $('#tb-wait').DataTable();
+          $('#tb-all').DataTable();
+          $('#tb-confirmed').DataTable();
       }
   });
-  setTimeout(function(){ fecthdataBooking() }, 3000);
 }
+

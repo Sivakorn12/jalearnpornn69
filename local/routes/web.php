@@ -27,13 +27,15 @@ Route::get('/history', 'HistoryController@index');
 //     echo bcrypt('1234');
 // });
 Route::prefix('/control')->group(function () {
-  Route::get('/' ,'OfficerController@index');
-  Route::get('/reservation','OfficerController@indexReservation');
-  Route::get('/reservation/view/{id}','OfficerController@viewReservation');
-  Route::any('/reservation/{id}/confirm','OfficerController@confirmReservation');
-  Route::any('/reservation/{id}/cancel','OfficerController@cancelReservation');
+  Route::get('/' ,'Officer\OfficerController@index');
+  Route::get('/reservation','Officer\OfficerController@indexReservation');
+  Route::get('/reservation/fetchTbBooking','Officer\OfficerController@fetchTbBooking');
+  Route::get('/reservation/view/{id}','Officer\OfficerController@viewReservation');
+  Route::any('/reservation/{id}/confirm','Officer\OfficerController@confirmReservation');
+  Route::any('/reservation/{id}/cancel','Officer\OfficerController@cancelReservation');
 
-  Route::get('/room','OfficerController@indexRoom');
+  Route::get('/room','Officer\RoomController@index');
+  Route::get('/resetStatus','Officer\OfficerController@resetStatus');
 });
 
 Route::get('auth/google', 'GoogleController@redirectToProvider');

@@ -3,6 +3,7 @@
 @section('page_heading','ตรวจสอบการจองห้อง')
 @section('content')
  <div class="row">
+
       <div class="col-xs-12">
           <ul class="nav nav-tabs" style="margin-bottom:10px">
               <li class="active"><a data-toggle="tab" href="#all">การจองทั้งหมด</a></li>
@@ -42,7 +43,6 @@
  <!-- Modal -->
 <div id="booking-detail" class="modal fade" role="dialog">
     <div class="modal-dialog">
-  
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -61,10 +61,38 @@
   </div>
 
 
+<script src="{{ url('js/script.js') }}"></script>
 <script>
-  
-  setTimeout(function(){ fecthdataBooking() }, 3000);
+  setInterval(function(){ fecthdataBooking()}, 60000);
+  //setTimeout(function(){ fecthdataBooking() }, 3000);
   //setTimeout(function(){ window.location.reload() }, 5000);
 </script>
-<script src="{{ url('js/script.js') }}"></script>
+<script>
+function confirmBooking(id) {
+  $.ajax({
+    url: window.location.pathname + "/" + id+"/confirm",
+    type: 'POST',
+    dataType: 'JSON',
+    data: { _token: "{{ csrf_token() }}",id:id },
+    success: function(data) {
+      $.notify("อนุมัติการจองหมายเลข :"+data.id,"success");
+      fecthdataBooking()
+    }
+  });
+}
+
+function cancelBooking(id) {
+  $.ajax({
+    url: window.location.pathname + "/" + id+"/cancel",
+    type: 'POST',
+    dataType: 'JSON',
+    data: { _token: "{{ csrf_token() }}",id:id },
+    success: function(data) {
+      $.notify("ยกเลิกการจองหมายเลข :"+data.id,"error");
+      fecthdataBooking()
+    }
+  });
+}
+
+</script>
 @endsection

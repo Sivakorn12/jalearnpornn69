@@ -27,15 +27,25 @@ Route::get('/history', 'HistoryController@index');
 //     echo bcrypt('1234');
 // });
 Route::prefix('/control')->group(function () {
-  Route::get('/' ,'Officer\OfficerController@index');
-  Route::get('/reservation','Officer\OfficerController@indexReservation');
-  Route::get('/reservation/fetchTbBooking','Officer\OfficerController@fetchTbBooking');
-  Route::get('/reservation/view/{id}','Officer\OfficerController@viewReservation');
-  Route::any('/reservation/{id}/confirm','Officer\OfficerController@confirmReservation');
-  Route::any('/reservation/{id}/cancel','Officer\OfficerController@cancelReservation');
+  Route::get('/' ,'Officer\CheckBookingController@index');
+  Route::get('/checkbooking','Officer\CheckBookingController@indexReservation');
+  Route::get('/checkbooking/fetchTbBooking','Officer\CheckBookingController@fetchTbBooking');
+  Route::get('/checkbooking/view/{id}','Officer\CheckBookingController@viewReservation');
+  Route::any('/checkbooking/{id}/confirm','Officer\CheckBookingController@confirmReservation');
+  Route::any('/checkbooking/{id}/cancel','Officer\CheckBookingController@cancelReservation');
 
   Route::get('/room','Officer\RoomController@index');
-  Route::get('/resetStatus','Officer\OfficerController@resetStatus');
+  Route::get('/room/form','Officer\RoomController@Form');
+  Route::post('/room/add','Officer\RoomController@add');
+  Route::get('/room/edit/{id}','Officer\RoomController@Form');
+  Route::post('/room/update','Officer\RoomController@update');
+  Route::get('/room/delete/{id}','Officer\RoomController@delete');
+
+  Route::get('/equipment','Officer\EquipmentController@index');
+  Route::get('/equipment/form','Officer\EquipmentController@Form');
+  Route::post('/equipment/add','Officer\EquipmentController@add');
+  
+  Route::get('/resetStatus','Officer\CheckBookingController@resetStatus');
 });
 
 Route::get('auth/google', 'GoogleController@redirectToProvider');

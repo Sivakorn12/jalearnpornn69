@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 class Officer extends Model
 {
-    //
+    //*********************** Booking
     public static function getStatusBooking($id){
         $status = DB::table('status_room')
                   ->where('status_ID',$id)
@@ -43,7 +43,7 @@ class Officer extends Model
                 if($selected_status == '3'){ $selectRow = (date('Y-m-d')<$booking->checkin and $booking->status_ID==3 and $booking->detail_timestart>date('Y-m-d H:i:s')) ;}
                 if($selectRow){
                 $html=$html.'<tr>
-                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'"><img src="'.url("asset/".$booking->meeting_pic).'" width="80"></td>
+                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'"><img src="'.url("asset/rooms/".$booking->meeting_pic).'" width="80"></td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->meeting_name.'</td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->checkin.'</td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.substr($booking->detail_timestart, -8,5).' - '.substr($booking->detail_timeout, -8,5).'</td>
@@ -68,6 +68,20 @@ class Officer extends Model
             $html=$html.'</tbody>
             </table>';
         return $html; 
+    }
+
+
+    // *********************** Room 
+    public static function getTypeRoom(){
+        return DB::table('meeting_type')->get();
+    }
+
+    public static function deleteFile($filename){
+        if(file_exists($filename)){
+            unlink( $filename );
+            if(file_exists($filename)) echo 'Check permission on file '.$filename;
+            else echo 'Delete file complete';
+        }else echo 'file not found ' . $filename;
     }
 
 }

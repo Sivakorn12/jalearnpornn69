@@ -62,7 +62,6 @@
 <script>
     $(document).ready(function() {
     $('#table_room').DataTable();
-    
     });
 </script>
 @endsection

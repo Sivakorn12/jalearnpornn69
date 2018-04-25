@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Officer as officer;
 
-class OfficerController extends Controller
+class CheckBookingController extends Controller
 {
     //
     public function __construct(){
@@ -43,7 +43,7 @@ class OfficerController extends Controller
         $data = array(
             'bookings' => $booking
         );
-        return view('officer/reservation/index',$data);
+        return view('officer/checkbooking/index',$data);
     }
 
     public function viewReservation($id){

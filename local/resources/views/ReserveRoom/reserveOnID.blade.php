@@ -10,7 +10,6 @@
   @else
 <?php
   $equipments = func::Getequips($rooms->meeting_ID);
-  // $time_use = func::GET_TIMEUSE($rooms->meeting_ID);
 ?>
     <div class="col-md-1"></div>
     <div class="col-md-10">
@@ -79,35 +78,36 @@ $(document).ready(function() {
     thaiyear: true,
     language: 'th',
   }).on("change", function() {
-    var data = $(this).val();
+    var dataOnchange = $(this).val();
+    $('#time-reserve').hide()
       $.ajax({
           url: "{{url('checkdate')}}",
           type: 'GET',
           dataType: 'JSON',
-          data: {  _token: "{{ csrf_token() }}", date: data, roomid: "{{$rooms->meeting_ID}}" },
+          data: {  _token: "{{ csrf_token() }}", date: dataOnchange, roomid: "{{$rooms->meeting_ID}}" },
           success: function(data) {
-            if (data.success) {
-              // console.log(data.success)
-              render_button_time(data.success)
-              // alert(data.success)
+            if (data.time_use) {
+              render_button_time(data.time_use, dataOnchange)
               $('#time-reserve').show()
             } else {
-              alert(data.error)
+              render_button_time(data.constant_time)
+              $('#time-reserve').show()
+              swal('ไม่สำเร็จ', data.error, 'error')
             }
           }
       });
   });
 });
 
-  function render_button_time (time) {
+  function render_button_time (time, date_select) {
     var viewHTML = ""
-    let button_times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
+    let button_times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
     for (index = 0; index < time.length; index++) {
-      let path = "{{url('reserve')}}"+"/{{$rooms->meeting_ID}}/"+button_times[index].substring(-8, 2)
+      let path = "{{url('reserve')}}"+"/{{$rooms->meeting_ID}}/"+button_times[index].substring(-8, 2)+"/"+date_select
       if (time[index] == 1) {
-        viewHTML += "<button type='button' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+button_times[index]+"</button>"
+        viewHTML += "<a type='button' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+button_times[index]+"</a>"
       } else {
-        viewHTML += "<button type='button' class='btn btn-success' style='margin-right: 1rem;' onclick='location.href='"+path+"'>"+button_times[index]+"</button>"
+        viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' href="+path+">"+button_times[index]+"</a>"
       }
     }
     $('#time-reserve').html(viewHTML)

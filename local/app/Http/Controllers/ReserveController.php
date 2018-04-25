@@ -38,7 +38,7 @@ class ReserveController extends Controller
         return view('ReserveRoom/reserveOnID', $data);
     }
 
-    public function reserveForm($id, $timeReserve)
+    public function reserveForm($id, $timeReserve, $timeSelect)
     {
         $dataRoom = DB::table('meeting_room')
             ->where('meeting_ID', $id)
@@ -48,7 +48,7 @@ class ReserveController extends Controller
             ->where('meeting_ID', $id)
             ->get();
         
-        $time_reamain = func::CHECK_TIME_REAMAIN ($id, $timeReserve);
+        $time_reamain = func::CHECK_TIME_REAMAIN ($id, $timeReserve, $timeSelect);
 
         $data = array(
             'room' => $dataRoom,
@@ -99,11 +99,22 @@ class ReserveController extends Controller
     }
 
     public function CHECK_DATE_RESERVE (Request $req) {
-        // $temp_date = explode('-', $req->date);
-        // $date = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+        $temp_date = explode('-', $req->date);
+        $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+        $check_holiday = date_create($date_select);
+        $check_holiday = date_format($check_holiday, 'r');
+        $date_now = date('Y-m-d');
+        $constant_cancel_timeuse = ['1', '1', '1', '1', '1', '1', '1', '1'];
 
-        $time_use = func::GET_TIMEUSE (3);
-        // dd($time_use);
-        return response()->json(['success'=> $time_use]);
+        if ($date_now > $date_select) {
+            return response()->json(['error'=> 'ไม่สามารถจองห้องได้', 'constant_time' => $constant_cancel_timeuse]);
+        } else {
+            if (substr($check_holiday, 0, 3) == 'Sat' || substr($check_holiday, 0, 3) == 'Sun') {
+                return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้', 'constant_time' => $constant_cancel_timeuse]);
+            } else {
+                $time_use = func::GET_TIMEUSE ($date_select, $req->roomid);
+                return response()->json(['time_use'=> $time_use]);
+            }
+        }
     }
 }

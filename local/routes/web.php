@@ -17,10 +17,10 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/searchType', 'HomeController@searchType');
 Route::get('/searchSize', 'HomeController@searchSize');
 Route::get('/reserve', 'ReserveController@index');
-Route::get('/reserve/confirm', 'ReserveController@submitReserve');
+Route::post('/reserve/confirm', 'ReserveController@submitReserve');
 Route::get('/reserve/{id}', 'ReserveController@ReservrRoom');
 Route::get('/checkdate', 'ReserveController@CHECK_DATE_RESERVE');
-Route::get('/reserve/{id}/{timeReserve}', 'ReserveController@reserveForm');
+Route::get('/reserve/{id}/{timeReserve}/{timeSelect}', 'ReserveController@reserveForm');
 
 Route::get('/history', 'HistoryController@index');
 // Route::get('/main', function(){

@@ -1,5 +1,5 @@
 
-@extends('layouts.officer',['page'=>'reservation'])
+@extends('layouts.officer',['page'=>'checkbooking'])
 @section('page_heading','ตรวจสอบการจองห้อง')
 @section('content')
  <div class="row">
@@ -14,21 +14,21 @@
       <div class="col-xs-12" id="tableroom"> 
           <div class="tab-content">
               <div id="all" class="tab-pane fade in active">
-                  @component('officer.reservation._tb',[
+                  @component('officer.checkbooking._tb',[
                     "bookings"=>$bookings,
                     "type" => 'all'
                   ])
                   @endcomponent
               </div>
               <div id="wait" class="tab-pane fade">
-                  @component('officer.reservation._tb',[
+                  @component('officer.checkbooking._tb',[
                     "bookings"=>$bookings,
                     "type" => 'wait'
                   ])
                   @endcomponent
               </div>
               <div id="confirmed" class="tab-pane fade">
-                  @component('officer.reservation._tb',[
+                  @component('officer.checkbooking._tb',[
                     "bookings"=>$bookings,
                     "type" => 'confirmed'
                   ])

@@ -182,11 +182,14 @@
                         <li class={{ $page === "index" ? "active" : "" }}>
                             <a href="{{ url ('/control') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
                         </li>
-                        <li class={{ $page === "reservation" ? "active" : "" }}>
-                            <a href="{{ url ('control/reservation/') }}"><i class="fa fa-book fa-fw"></i> ตรวจสอบการจองห้อง</a>
+                        <li class={{ $page === "checkbooking" ? "active" : "" }}>
+                            <a href="{{ url ('control/checkbooking/') }}"><i class="fa fa-book fa-fw"></i> ตรวจสอบการจองห้อง</a>
                         </li>
                         <li class={{ $page === "room" ? "active" : "" }}>
                                 <a href="{{ url ('control/room/') }}"><i class="fa fa-address-card" aria-hidden="true"></i> จัดการห้องประชุม</a>
+                        </li>
+                        <li class={{ $page === "equipment" ? "active" : "" }}>
+                            <a href="{{ url ('control/equipment/') }}"><i class="fa fa-television" aria-hidden="true"></i> อุปกรณ์</a>
                         </li>
                         <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
                             <a href="{{ route('logout') }}"

@@ -15,7 +15,7 @@
                     <th>ห้อง</th>
                     <th>อาคาร</th>
                     <th>ขนาด</th>
-                    <th></th>
+                    <th  width="60"></th>
                 </tr>
             </thead>
            <tbody>

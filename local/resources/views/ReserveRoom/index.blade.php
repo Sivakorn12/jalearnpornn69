@@ -32,7 +32,7 @@
                                         @else swal('ไม่สำเร็จ', 'ห้องประชุมไม่พร้อมใช้งาน', 'error')
                                         @endif">
                             <td>
-                                <img src='{{url ("asset/".$room->meeting_pic)}}' width="100">
+                                <img src='{{url ("asset/rooms/".$room->meeting_pic)}}' width="100">
                             </td>
                             <td>
                                 {{$room->meeting_name}}
@@ -55,14 +55,17 @@
                     @endforeach
                 </tbody>
               </table>
-              @if(session('message') != null) <b>{{session('message')}}</b>
-              @endif
           <!-- </div> -->
   </div>
 <script>
     $(document).ready(function() {
-    $('#table_room').DataTable();
-    
+        $('#table_room').DataTable();
+        
+        var Oncheck_message = '{{session('message')}}'
+        
+        if (Oncheck_message) {
+            $.notify(Oncheck_message, 'success')
+        }
     });
 </script>
 @endsection

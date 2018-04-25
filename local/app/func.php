@@ -24,7 +24,7 @@ class func extends Model
             $tableHTML = $tableHTML."
                                     <tr>
                                         <td>
-                                            <img src='".url ("asset/".$room->meeting_pic)."' width='100'>
+                                            <img src='".url ("asset/rooms/".$room->meeting_pic)."' width='100'>
                                         </td>
                                         <td>
                                             ".$room->meeting_name."
@@ -76,16 +76,12 @@ class func extends Model
         return $dataSection;
     }
 
-    public static function GET_TIMEUSE ($id) {
-        $temp_date = explode('-', '25-04-2561');
-        // $id = 3;
-        $date = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-
-        $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
+    public static function GET_TIMEUSE ($date_select, $id) {
+        $times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
+        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0'];
         
         $datatimes = DB::table('detail_booking')
-                            ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date)
+                            ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
                             ->where('meeting_ID', $id)
                             ->OrderBy('detail_timestart')
                             ->get();
@@ -103,19 +99,21 @@ class func extends Model
                 }
             }
           }
-
         return $checkTimeuse;
     }
 
-    public static function CHECK_TIME_REAMAIN ($id, $time_reserve) {
-        $date_now = date('Y-m-d');
-        $times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
+    public static function CHECK_TIME_REAMAIN ($id, $time_reserve, $time_select) {
+        $temp_date = explode('-', $time_select);
+        $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+        
+        $times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
+        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0'];
         $time_reserve = $time_reserve.':00';
         $count_time = 0;
         $pos_timeuse = array_search($time_reserve, $times);
         
         $datatimes = DB::table('detail_booking')
+                            ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
                             ->where('meeting_ID', $id)
                             ->OrderBy('detail_timestart')
                             ->get();
@@ -123,7 +121,7 @@ class func extends Model
         if (isset($datatimes)) {
             $timeStart = array();
             foreach ($datatimes as $reserves) {
-                if (substr($reserves->detail_timestart, 0, 10) == $date_now) {
+                if (substr($reserves->detail_timestart, 0, 10) == $date_select) {
                     for ($index = 0; $index < sizeof($times); $index++) {
                         if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
                             $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
@@ -139,7 +137,6 @@ class func extends Model
         for ($index = $pos_timeuse; $index < sizeof($checkTimeuse); $index++) {
             if ($checkTimeuse[$index] == 0) {
                 $count_time++;
-                if ($count_time >= 3) break;
             } else break;
         }
 

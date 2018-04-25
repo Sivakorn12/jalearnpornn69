@@ -15,7 +15,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">กรอกข้อมูลการจองห้องประชุม</div>
       <div class="panel-body">
-        <form class="form-horizontal" action="{{ url('reserve/confirm') }}" method="get">
+        <form class="form-horizontal" action="{{ url('reserve/confirm') }}" method="post">
           <div class="form-group">
             <label class="col-sm-2 control-label">ห้องประชุม</label>
             <div class="col-sm-10">
@@ -86,6 +86,7 @@
           <input type="hidden" name="user_name" value="{{$user_name}}">
           <input type="hidden" name="meeting_id" value="{{$room->meeting_ID}}">
           <input type="hidden" name="time_reserve" value="{{$time_reserve}}">
+          <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
           <div class="form-group">
             <div class="col-sm-2"></div>
             <div class="col-sm-10">

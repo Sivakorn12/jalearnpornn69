@@ -18,9 +18,13 @@ class HistoryController extends Controller
     {
         $dataHistory = DB::table('booking')
             ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
+            ->join('status_room', 'booking.status_ID', '=', 'status_room.status_ID')
+            ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
+            ->where('booking.user_ID', Auth::user()->id)
+            ->OrderBy()
             ->get();
 
-        $dataHistory = array(
+        $data = array(
             'historys' => $dataHistory
         );
         return view('History_user/index', $data);

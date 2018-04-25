@@ -34,7 +34,7 @@ elseif($type == 'confirmed'){
       ?>
       @if($selectRow) 
           <tr>
-              <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}"><img src='{{url ("asset/".$booking->meeting_pic)}}' width="80"></td>
+              <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}"><img src='{{url ("asset/rooms/".$booking->meeting_pic)}}' width="80"></td>
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{$booking->meeting_name}}</td>
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{$booking->checkin}}</td>
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{substr($booking->detail_timestart, -8,5)}} - {{substr($booking->detail_timeout, -8,5)}}</td>

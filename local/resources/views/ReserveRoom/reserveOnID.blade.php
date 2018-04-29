@@ -17,7 +17,7 @@
         <div class="panel-heading"><h4>{{$rooms->meeting_name}}</h4></div>
         <div class="panel-body">
           <div class="col-md-4">
-            <img class="img-responsive" src='{{url ("asset/".$rooms->meeting_pic)}}'>
+            <img class="img-responsive" src='{{url ("asset/rooms/".$rooms->meeting_pic)}}'>
           </div>
           <div class="col-md-8">
             <div class="table-responsive">

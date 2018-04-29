@@ -61,7 +61,7 @@
                 @foreach($rooms as $key => $room)
                     <tr onclick="location.href='{{ url('reserve/'.$room->meeting_ID) }}'">
                         <td>
-                            <img src='{{url ("asset/".$room->meeting_pic)}}' width="100">
+                            <img src='{{url ("asset/rooms/".$room->meeting_pic)}}' width="100">
                         </td>
                         <td>
                             {{$room->meeting_name}}

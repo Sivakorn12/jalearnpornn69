@@ -9,6 +9,7 @@ use App\func as func;
 
 class ReserveController extends Controller
 {
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -40,6 +41,9 @@ class ReserveController extends Controller
 
     public function reserveForm($id, $timeReserve, $timeSelect)
     {
+        $temp_date = explode('-', $timeSelect);
+        $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+
         $dataRoom = DB::table('meeting_room')
             ->where('meeting_ID', $id)
             ->first();
@@ -53,15 +57,16 @@ class ReserveController extends Controller
         $data = array(
             'room' => $dataRoom,
             'time_reserve' => $timeReserve.':00',
-            'time_remain' => $time_reamain
+            'time_remain' => $time_reamain,
+            'time_select' => $date_select
         );
         return view('ReserveRoom/reserveForm', $data);
     }
 
     public function submitReserve(Request $req)
     {
-        $time_start = date('Y-m-d'.' '.$req->time_reserve.':00');
-        $time_out = date('Y-m-d'.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00');
+        $time_start = $req->time_select.' '.$req->time_reserve.':00';
+        $time_out = $req->time_select.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00';
 
         if(isset($req)) {
             $id_insert = DB::table('booking')
@@ -73,7 +78,7 @@ class ReserveController extends Controller
                                 'booking_name' => $req->user_name,
                                 'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
                                 'booking_date' => date('Y-m-d H:i:s'),
-                                'checkin' => date('Y-m-d')
+                                'checkin' => $req->time_select
                             ]);
             DB::table('detail_booking')
                     ->insert([
@@ -87,15 +92,6 @@ class ReserveController extends Controller
 
             return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
         }
-        // "section_id" => "10101"
-        // "detail_topic" => "testing topic"
-        // "detail_count" => "20"
-        // "user_tel" => "0123456789"
-        // "user_id" => "2"
-        // "user_name" => "Sivakorn Pranomsri"
-        // "meeting_id" => "2"
-        // "time_reserve" => "14:00"
-        // "time_use" => "1"
     }
 
     public function CHECK_DATE_RESERVE (Request $req) {

@@ -14,6 +14,10 @@
       <div id="home" class="tab-pane fade in active">
         @component('History_user.component._tb_reserve',[
           "reserves"=>$historys,
+          "years_th"=>$years_th,
+          "time_start"=>$time_start,
+          "time_out"=>$time_out,
+          "check_date"=>$check_date
         ])
         @endcomponent
       </div>

@@ -72,7 +72,7 @@ class EquipmentController extends Controller
           $validator = Validator::make($request->all(),$rule,$msg);
     
           if ($validator->passes()) {
-              //try{
+              try{
                 $newid = '10001';
                 $last = DB::table('equipment')->orderBy('em_ID','desc')->first();
                 if($last!=null) $newid = substr($last->em_ID,0,5)+1;
@@ -84,16 +84,55 @@ class EquipmentController extends Controller
                 
                 return redirect('control/equipment/')
                         ->with('successMessage','เพิ่มอุปกรณ์สำเร็จ');
-            //   }catch (Exception $e) {
-            //     return redirect('control/equipment/')
-            //             ->with('errorMesaage',$e);
-            //   }
-              
-
+              }catch (Exception $e) {
+                return redirect('control/equipment/')
+                        ->with('errorMesaage',$e);
+              }
           }else{
             return redirect('control/equipment/form')
                         ->withErrors($validator)
                         ->withInput($request->input());
           }
+    }
+
+    public function update(Request $request){
+        //dd($request);
+        $msg = [
+            'em_name.required' => "กรุณาระบุชื่ออุปกรณ์",
+            "em_count.required" => "กรุณาระบุจำนวนอุปกรณ์",
+          ];
+    
+          $rule = [
+            'em_name' => 'required',
+            'em_count' => 'required',
+          ];
+    
+          $validator = Validator::make($request->all(),$rule,$msg);
+    
+          if ($validator->passes()) {
+              try{
+                DB::table('equipment')
+                    ->where('em_ID',$request->id)
+                    ->update([
+                        "em_name" =>$request->em_name,
+                        "em_count" =>$request->em_count,
+                    ]);
+                
+                return redirect('control/equipment/')
+                        ->with('successMessage','แก้ไขอุปกรณ์สำเร็จ');
+              }catch (Exception $e) {
+                return redirect('control/equipment/')
+                        ->with('errorMesaage',$e);
+              }
+          }else{
+            return redirect('control/equipment/edit/'.$request->id)
+                        ->withErrors($validator)
+                        ->withInput($request->input());
+          }
+    }
+
+    public function delete($id){
+        DB::table('equipment')->where('em_ID',$id)->delete();
+        return redirect('control/equipment/');
     }
 }

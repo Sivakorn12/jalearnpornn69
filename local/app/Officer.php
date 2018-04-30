@@ -43,7 +43,7 @@ class Officer extends Model
                 if($selected_status == '3'){ $selectRow = (date('Y-m-d')<$booking->checkin and $booking->status_ID==3 and $booking->detail_timestart>date('Y-m-d H:i:s')) ;}
                 if($selectRow){
                 $html=$html.'<tr>
-                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'"><img src="'.url("asset/rooms/".$booking->meeting_pic).'" width="80"></td>
+                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'"><img src="'.url("asset/rooms/".self::getAImage($booking->meeting_pic)).'" width="80"></td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->meeting_name.'</td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->checkin.'</td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.substr($booking->detail_timestart, -8,5).' - '.substr($booking->detail_timeout, -8,5).'</td>
@@ -82,6 +82,36 @@ class Officer extends Model
             if(file_exists($filename)) echo 'Check permission on file '.$filename;
             else echo 'Delete file complete';
         }else echo 'file not found ' . $filename;
+    }
+
+    public static function getAImage($imageName){
+        $images = explode(',',$imageName);
+        return $images[0];
+    }
+
+    public static function GET_TIMEUSE ($date_select, $id) {
+        $times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
+        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0'];
+        
+        $datatimes = DB::table('detail_booking')
+                            ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
+                            ->where('meeting_ID', $id)
+                            ->OrderBy('detail_timestart')
+                            ->get();
+        if (isset($datatimes)) {
+            $timeStart = array();
+            foreach ($datatimes as $reserves) {
+                for ($index = 0; $index < sizeof($times); $index++) {
+                    if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
+                        $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
+                        for ($inner = 0; $inner < $hour; $inner++) {
+                        $checkTimeuse[$inner + $index] = 1;
+                        }
+                    }
+                }
+            }
+        }
+        return $checkTimeuse;
     }
 
 }

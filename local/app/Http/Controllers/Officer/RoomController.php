@@ -76,22 +76,29 @@ class RoomController extends Controller
           $validator = Validator::make($request->all(),$rule,$msg);
     
           if ($validator->passes()) {
-              try{
-                $file = $request->file('room_image');
+                $pic = array();
+                $files = $request->file('room_image');
                 if(!empty($request->file('room_image'))){
-                    $pic = $file->getClientOriginalName();
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-room'.($key+1).".".$fileType;
+                        array_push($pic,$fileFullName);
+                        $file->move('asset/rooms',$fileFullName);
+                    }
                 }
+                $picTxt = implode(",",$pic);
+                try{
                 DB::table('meeting_room')->insert([
                     "meeting_type_ID" =>$request->type,
                     "provision" =>$request->provision,
                     "meeting_name" =>$request->room_name,
                     "meeting_size" =>$request->room_size,
-                    "meeting_pic" =>$pic,
+                    "meeting_pic" =>$picTxt,
                     "meeting_buiding" =>$request->room_building,
                     "meeting_status" =>1,
                 ]);
                 
-                $file->move('asset/rooms',$file->getClientOriginalName());
                 return redirect('control/room/')
                         ->with('successMessage','เพิ่มห้องสำเร็จ');
               }catch (Exception $e) {
@@ -127,12 +134,27 @@ class RoomController extends Controller
     
           if ($validator->passes()) {
             try{
-                $file = $request->file('room_image');
+                $pic = array();
+                $files = $request->file('room_image');
                 if(!empty($request->file('room_image'))){
-                    $pic = $file->getClientOriginalName();
+
+                    // add new file
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-room'.($key+1).".".$fileType;
+                        array_push($pic,$fileFullName);
+                        $file->move('asset/rooms',$fileFullName);
+                    }
+                    // delete old file
+                    $images = explode(',', $request->oldpic);
+                    for($i=0;$i<count($images);$i++){
+                        officer::deleteFile('asset/rooms/'.$images[$i]);
+                    }
+                    $picTxt = implode(",",$pic);
                 }
                 else{
-                    $pic = $request->oldpic;
+                    $picTxt = $request->oldpic;
                 }
                 DB::table('meeting_room')
                     ->where('meeting_ID',$request->id)
@@ -141,15 +163,11 @@ class RoomController extends Controller
                     "provision" =>$request->provision,
                     "meeting_name" =>$request->room_name,
                     "meeting_size" =>$request->room_size,
-                    "meeting_pic" =>$pic,
+                    "meeting_pic" =>$picTxt,
                     "meeting_buiding" =>$request->room_building,
                     "meeting_status" =>1,
                 ]);
-                if(!empty($request->file('room_image'))){
-                    $filename='asset/rooms/'.$request->oldpic;
-                    officer::deleteFile($filename);
-                    $file->move('asset/rooms',$file->getClientOriginalName());
-                }
+            
                 
                 return redirect('control/room/')
                         ->with('successMessage','แก้ไขห้องสำเร็จ');
@@ -169,8 +187,11 @@ class RoomController extends Controller
         $meeting_room = DB::table('meeting_room')
                         ->where('meeting_ID',$id)
                         ->first();
-        $filename='asset/rooms/'.$meeting_room->meeting_pic;
-        officer::deleteFile($filename);
+        // delete old file
+        $images = explode(',', $meeting_room->meeting_pic);
+        for($i=0;$i<count($images);$i++){
+            officer::deleteFile('asset/rooms/'.$images[$i]);
+        }
 
         DB::table('meeting_room')->where('meeting_ID',$id)->delete();
         return redirect('control/room/');

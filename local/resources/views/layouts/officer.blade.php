@@ -16,14 +16,18 @@
     <link href="{{ url('css/custom-style.css') }}" rel="stylesheet">
     <link href="{{ url('css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="{{ url('css/datepicker.css')}}">
     <!-- Scripts -->
+    
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="{{ url('js/bootstrap.js') }}"></script>
-    <script src="{{ url('js/notify.js') }}"></script>
+    <script src="{{ url('js/bootstrap.min.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ url('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ url('js/notify.js') }}"></script>
+    <script type="text/javascript" src="{{ url('js/bootstrap-datepicker-custom.js')}}"></script>
+    <script type="text/javascript" src="{{ url('js/bootstrap-datepicker.th.js')}}"></script>
 </head>
 <body>
     <div id="wrapper">
@@ -182,6 +186,9 @@
                         <li class={{ $page === "index" ? "active" : "" }}>
                             <a href="{{ url ('/control') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
                         </li>
+                        <li class={{ $page === "reservation" ? "active" : "" }}>
+                            <a href="{{ url ('control/reservation/') }}"><i class="fa fa-book" aria-hidden="true"></i> การจองห้องประชุม</a>
+                        </li>
                         <li class={{ $page === "checkbooking" ? "active" : "" }}>
                             <a href="{{ url ('control/checkbooking/') }}"><i class="fa fa-book fa-fw"></i> ตรวจสอบการจองห้อง</a>
                         </li>
@@ -190,6 +197,9 @@
                         </li>
                         <li class={{ $page === "equipment" ? "active" : "" }}>
                             <a href="{{ url ('control/equipment/') }}"><i class="fa fa-television" aria-hidden="true"></i> อุปกรณ์</a>
+                        </li>
+                        <li class={{ $page === "holiday" ? "active" : "" }}>
+                            <a href="{{ url ('control/holiday/') }}"><i class="fa fa-flag" aria-hidden="true"></i> วันหยุด</a>
                         </li>
                         <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
                             <a href="{{ route('logout') }}"

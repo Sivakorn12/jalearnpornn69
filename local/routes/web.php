@@ -27,7 +27,7 @@ Route::get('/history', 'HistoryController@index');
 //     echo bcrypt('1234');
 // });
 Route::prefix('/control')->group(function () {
-  Route::get('/' ,'Officer\CheckBookingController@index');
+  Route::get('/' ,'Officer\DashboardController@index');
   Route::get('/checkbooking','Officer\CheckBookingController@indexReservation');
   Route::get('/checkbooking/fetchTbBooking','Officer\CheckBookingController@fetchTbBooking');
   Route::get('/checkbooking/view/{id}','Officer\CheckBookingController@viewReservation');

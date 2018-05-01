@@ -187,7 +187,7 @@
                             <a href="{{ url ('/control') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
                         </li>
                         <li class={{ $page === "reservation" ? "active" : "" }}>
-                            <a href="{{ url ('control/reservation/') }}"><i class="fa fa-book" aria-hidden="true"></i> การจองห้องประชุม</a>
+                            <a href="{{ url ('control/reservation/') }}"><i class="fa fa-table" aria-hidden="true"></i> การจองห้องประชุม</a>
                         </li>
                         <li class={{ $page === "checkbooking" ? "active" : "" }}>
                             <a href="{{ url ('control/checkbooking/') }}"><i class="fa fa-book fa-fw"></i> ตรวจสอบการจองห้อง</a>

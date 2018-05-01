@@ -114,4 +114,15 @@ class Officer extends Model
         return $checkTimeuse;
     }
 
+    public static function colorEvents(){
+        return array(
+            "#3a87ad","#ff4d4d","#33cc33","#ffff1a",
+            "#ff531a","#8600b3","#8080ff","#ff1a8c",
+            "#ccffcc","#4dff4d","#85adad","#660000",
+            "#ff99ff","#ffcc99","#c3c388","#3a87ad",
+            "#003300","#3d5c5c","#33331a","#ff8000",
+            "#3a87ad","#3a87ad","#3a87ad","#3a87ad",
+        );
+    }
+
 }

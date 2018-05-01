@@ -35,7 +35,7 @@ class CheckBookingController extends Controller
     public function indexReservation(){
         $booking = DB::table('booking')
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
-                   ->join('users','booking.user_ID','=','users.id')
+                   ->leftjoin('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
                    ->orderBy('booking_date','desc')
                    ->get();
@@ -49,10 +49,11 @@ class CheckBookingController extends Controller
     public function viewReservation($id){
         $booking = DB::table('booking')
                     ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
-                    ->join('users','booking.user_ID','=','users.id')
+                    ->leftjoin('users','booking.user_ID','=','users.id')
                     ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
                     ->where('booking.booking_ID',$id)
                     ->first();
+        //dd($booking);
         $html = '<table cellpadding=3>
                     <tr>
                         <td width="120"><b>รหัสการจอง</b></td>
@@ -72,7 +73,7 @@ class CheckBookingController extends Controller
                     </tr>
                     <tr>
                         <td width="100"><b>ผู้จอง</b></td>
-                        <td>'.$booking->user_name.'</td>
+                        <td>'.((isset($booking->user_name))?$booking->user_name:'-').'</td>
                     </tr>
                     <tr>
                         <td width="100"><b>วันเวลาที่จอง</b></td>
@@ -105,7 +106,7 @@ class CheckBookingController extends Controller
     public function fetchTbBooking(){
         $bookings = DB::table('booking')
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
-                   ->join('users','booking.user_ID','=','users.id')
+                   ->leftjoin('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
                    ->orderBy('booking_date','desc')
                    ->get();

@@ -52,7 +52,7 @@ class ReservationController extends Controller
     }
 
     public function CHECK_DATE_RESERVE (Request $req) {
-        $temp_date = explode('-', '30-04-2561');
+        $temp_date = explode('-', $req->date);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
         $check_holiday = date_create($date_select);
         $check_holiday = date_format($check_holiday, 'r');

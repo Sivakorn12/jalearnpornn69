@@ -24,8 +24,8 @@
                 <td>{{$equipment->em_name	}}</td>
                 <td>{{$equipment->em_count}}</td>
                 <td>
-                    <a class="btn btn-warning" data-toggle="tooltip" href="{{url('control/room/edit/'.$equipment->em_ID)}}" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                    <a class="btn btn-danger" data-toggle="tooltip" href="{{url('control/room/delete/'.$equipment->em_ID)}}" 
+                    <a class="btn btn-warning" data-toggle="tooltip" href="{{url('control/equipment/edit/'.$equipment->em_ID)}}" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                    <a class="btn btn-danger" data-toggle="tooltip" href="{{url('control/equipment/delete/'.$equipment->em_ID)}}" 
                     onclick="return confirm('คุณต้องการลบห้อง {{$equipment->em_name}} หรือไม่?');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
                 </td>
             </tr>

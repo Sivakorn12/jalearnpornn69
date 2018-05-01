@@ -1,3 +1,6 @@
+<?php
+use App\Officer as officer;
+?>
 @extends('layouts.officer',['page'=>'room'])
 @section('page_heading','จัดการห้องประชุม')
 @section('content')
@@ -21,7 +24,7 @@
            <tbody>
             @foreach($rooms as $key => $room )
             <tr>
-                <td><img src='{{url ("asset/rooms/".$room->meeting_pic)}}' width="80"></td>
+                <td><img src='{{url ("asset/rooms/".officer::getAImage($room->meeting_pic))}}' width="80"></td>
                 <td>{{$room->meeting_name}}</td>
                 <td>{{$room->meeting_buiding}}</td>
                 <td>{{$room->meeting_size}}</td>

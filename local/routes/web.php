@@ -56,7 +56,7 @@ Route::prefix('/control')->group(function () {
 
   Route::get('/holiday','Officer\HolidayController@index');
   Route::get('/holiday/form','Officer\HolidayController@Form');
-  Route::post('/holiday/add','Officer\HolidayController@add');
+  Route::any('/holiday/add','Officer\HolidayController@add');
   Route::get('/holiday/edit/{id}','Officer\HolidayController@Form');
   Route::post('/holiday/update','Officer\HolidayController@update');
   Route::get('/holiday/delete/{id}','Officer\HolidayController@delete');

@@ -28,6 +28,7 @@
     <script src="{{ url('js/notify.js') }}"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker-custom.js')}}"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker.th.js')}}"></script>
+    <script type="text/javascript" src="{{ url('js/script.js')}}"></script>
 </head>
 <body>
     <div id="wrapper">

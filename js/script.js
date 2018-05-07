@@ -32,3 +32,9 @@ function fecthdataBooking(){
   });
 }
 
+function showModal(){
+    $('#my-modal').modal({
+        show: 'true'
+    });
+}
+

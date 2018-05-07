@@ -124,5 +124,9 @@ class Officer extends Model
             "#3a87ad","#3a87ad","#3a87ad","#3a87ad",
         );
     }
+    public static function dateFormatDB($dateHtml){
+        $dateArr = explode("-",$dateHtml);
+        return ($dateArr[2]-543)."-".$dateArr[1]."-".$dateArr[0];
+    }
 
 }

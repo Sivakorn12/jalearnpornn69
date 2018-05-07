@@ -28,4 +28,13 @@
     </div>
   </div>
 </div>
+<script>
+    $(document).ready(function() {
+        var Oncheck_message = '{{session('message')}}'
+        
+        if (Oncheck_message) {
+            $.notify(Oncheck_message, 'success')
+        }
+    });
+</script>
 @endsection

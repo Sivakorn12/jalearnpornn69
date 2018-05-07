@@ -8,14 +8,12 @@ use DB;
 
 class HistoryController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth');
         date_default_timezone_set("Asia/Bangkok");
     }
 
-    public function index ()
-    {
+    public function index () {
         $date_now = date('Y-m-d');
         $dataHistory = DB::table('booking')
             ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
@@ -52,5 +50,17 @@ class HistoryController extends Controller
             'check_date' => $check_dateCheckin
         );
         return view('History_user/index', $data);
+    }
+
+    public function DELETE_RESERVE ($reserveId) {
+        DB::table('booking')
+            ->where('booking_ID', $reserveId)
+            ->delete();
+
+        DB::table('detail_booking')
+            ->where('booking_ID', $reserveId)
+            ->delete();
+
+        return redirect('history')->with('message', 'ยกเลิกการจองสำเร็จ');
     }
 }

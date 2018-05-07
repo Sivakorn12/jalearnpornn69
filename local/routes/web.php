@@ -23,6 +23,7 @@ Route::get('/checkdate', 'ReserveController@CHECK_DATE_RESERVE');
 Route::get('/reserve/{id}/{timeReserve}/{timeSelect}', 'ReserveController@reserveForm');
 
 Route::get('/history', 'HistoryController@index');
+Route::get('/history/{reserveid}', 'HistoryController@DELETE_RESERVE');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });

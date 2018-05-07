@@ -192,10 +192,6 @@
                                 <i class="fa fa-bookmark fa-fw"></i> ประวัติการใช้งาน
                             </a>
                         </li>
-                        <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
-                            <a href="{{ url ('charts') }}"><i class="fa fa-user fa-fw"></i> ข้อมูลผู้ใช้งาน</a>
-                            <!-- /.nav-second-level -->
-                        </li>
                         <li >
                             <a href="{{ route('logout') }}"
                             onclick="event.preventDefault();

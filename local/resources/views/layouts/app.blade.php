@@ -13,12 +13,15 @@
     <!-- Styles -->
     <link href="{{ url('css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ url('css/styles.css') }}" rel="stylesheet">
-    <link href="{{ url('css/stylescomponent.css') }}" rel="stylesheet">
+    <link href="{{ url('css/custom-style.css') }}" rel="stylesheet">
+    <link href="{{ url('css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ url('css/datepicker.css')}}">
-
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <!-- Scripts -->
+    
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{{ url('js/bootstrap.min.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ url('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('js/dataTables.bootstrap.min.js') }}"></script>
@@ -188,10 +191,6 @@
                             <a href="{{ url ('history/') }}">
                                 <i class="fa fa-bookmark fa-fw"></i> ประวัติการใช้งาน
                             </a>
-                        </li>
-                        <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
-                            <a href="{{ url ('charts') }}"><i class="fa fa-user fa-fw"></i> ข้อมูลผู้ใช้งาน</a>
-                            <!-- /.nav-second-level -->
                         </li>
                         <li >
                             <a href="{{ route('logout') }}"

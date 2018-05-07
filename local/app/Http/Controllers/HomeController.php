@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
+use Calendar;  
+use App\Event;
+use App\Officer as officer;
 use App\func as func;
 
 class HomeController extends Controller
@@ -24,37 +27,39 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $dataRoom = DB::table('meeting_room')
-            ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
-            ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
-            ->get();
+        $events = [];  
+         $colors = officer::colorEvents();
+         $booking = DB::table('booking')
+                   ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
+                   ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                   ->orderBy('checkin','desc')
+                   ->get();
+         
+         if(isset($booking)){  
+            foreach ($booking as $key => $value) {  
+                $events[] = Calendar::event(  
+                "[".$value->meeting_name."] ".$value->detail_topic,  
+                false,  
+                new \DateTime($value->detail_timestart),  
+                new \DateTime($value->detail_timeout),
+                $key,
+                [
+                    'backgroundColor' =>$colors[$value->meeting_ID-1],
+                    'textColor' => '#fff',
+                    'description' => "Event Description",
+                ]
+            );  
+            }  
+        }
 
-        $typeRoom = DB::table('meeting_type')->get();
-        $sizeRoom = DB::table('meeting_room')
-                            ->select('meeting_size')
-                            ->groupBy('meeting_size')
-                            ->get();
-                            
+        $calendar = Calendar::addEvents($events)->setOptions([
+            'timeFormat'=> 'H:mm',
+            'lang'=> 'th',
+        ]); 
         $data = array(
-            'rooms' => $dataRoom,
-            'types' => $typeRoom,
-            'sizes' => $sizeRoom
+            'calendar' => $calendar
         );
 
-        return view('home', $data);
-    }
-    
-    public function searchType(Request $req) {
-        $data = $req->type;
-        $resultData = func::queryData($data, 'meeting_type_name');
-
-        return response()->json(['res'=> $resultData]);
-    }
-
-    public function searchSize(Request $req) {
-        $data = $req->size;
-        $resultData = func::queryData($data, 'meeting_size');
-
-        return response()->json(['res'=> $resultData]);
+        return view('home',$data);
     }
 }

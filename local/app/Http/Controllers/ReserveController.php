@@ -10,14 +10,12 @@ use App\func as func;
 class ReserveController extends Controller
 {
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth');
         date_default_timezone_set("Asia/Bangkok");
     }
 
-    public function index()
-    {
+    public function index() {
         $dataRoom = DB::table('meeting_room')
             ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
             ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
@@ -29,8 +27,7 @@ class ReserveController extends Controller
         return view('ReserveRoom/index', $data);
     }
 
-    public function ReservrRoom($id)
-    {
+    public function ReservrRoom($id) {
         $resultData = func::selectReserve($id);
 
         $data = array(
@@ -39,8 +36,7 @@ class ReserveController extends Controller
         return view('ReserveRoom/reserveOnID', $data);
     }
 
-    public function reserveForm($id, $timeReserve, $timeSelect)
-    {
+    public function reserveForm($id, $timeReserve, $timeSelect) {
         $temp_date = explode('-', $timeSelect);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
 
@@ -63,8 +59,7 @@ class ReserveController extends Controller
         return view('ReserveRoom/reserveForm', $data);
     }
 
-    public function submitReserve(Request $req)
-    {
+    public function submitReserve(Request $req) {
         $time_start = $req->time_select.' '.$req->time_reserve.':00';
         $time_out = $req->time_select.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00';
 

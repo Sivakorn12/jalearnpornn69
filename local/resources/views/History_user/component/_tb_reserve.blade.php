@@ -6,6 +6,7 @@
             <th>วันที่เข้าใช้ห้อง</th>
             <th>เวลาที่เข้าใช้ห้อง</th>
             <th>สถานะ</th>
+            <th></th>
         </tr>
     </thead>
    <tbody>
@@ -20,6 +21,10 @@
       @elseif($check_date[$key] == 2) <span class="label label-success">อนุมัติ</span>
       @elseif($check_date[$key] == 3) <span class="label label-info">เกินวันเข้าใช้งาน</span>
       @else <span class="label label-danger">ไม่อนุมัติ</span>
+      @endif
+      </td>
+      <td>
+      @if($check_date[$key] == 1)<a href="{{url('history/'.$reserve->booking_ID)}}" class="btn btn-danger btn-xs">ยกเลิกการจอง</a>
       @endif
       </td>
       </tr>

@@ -14,8 +14,7 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth');
     }
 
@@ -24,8 +23,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         $dataRoom = DB::table('meeting_room')
             ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
             ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
@@ -46,16 +44,14 @@ class HomeController extends Controller
         return view('home', $data);
     }
     
-    public function searchType(Request $req)
-    {
+    public function searchType(Request $req) {
         $data = $req->type;
         $resultData = func::queryData($data, 'meeting_type_name');
 
         return response()->json(['res'=> $resultData]);
     }
 
-    public function searchSize(Request $req)
-    {
+    public function searchSize(Request $req) {
         $data = $req->size;
         $resultData = func::queryData($data, 'meeting_size');
 

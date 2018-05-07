@@ -97,7 +97,8 @@ class ReserveController extends Controller
         $date_now = date('Y-m-d');
         $constant_cancel_timeuse = ['1', '1', '1', '1', '1', '1', '1', '1'];
         $dataHolidays = DB::table('holiday')
-                    ->where('holiday_close', $date_select)
+                    ->where('holiday_start', '<=', $date_select)
+                    ->where('holiday_end', '>=', $date_select)
                     ->first();
 
         if ($date_now > $date_select) {

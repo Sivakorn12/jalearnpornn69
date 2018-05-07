@@ -1,9 +1,15 @@
-
+<?php
+use App\Officer as officer;
+?>
 @extends('layouts.officer',['page'=>'checkbooking'])
 @section('page_heading','ตรวจสอบการจองห้อง')
 @section('content')
  <div class="row">
-
+      <div class="col-xs-12" style="padding-bottom:10px">
+        <div style="float:right"> 
+            <a class="btn btn-success" data-toggle="tooltip" href="{{url('control/reservation')}}" title="เพิ่ม"><i class="fa fa-plus" aria-hidden="true"></i> เพิ่มการจอง</a>
+        </div>
+      </div>
       <div class="col-xs-12">
           <ul class="nav nav-tabs" style="margin-bottom:10px">
               <li class="active"><a data-toggle="tab" href="#all">การจองทั้งหมด</a></li>

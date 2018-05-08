@@ -37,7 +37,10 @@ class GoogleController extends Controller
     {
         $user = Socialite::driver('google')->user();
         $user_array = explode("@", $user->email);
-        if ($user_array[1] == "fitm.kmutnb.ac.th") {
+        $chkMail_arr = explode(".", $user_array[1]);
+        unset($chkMail_arr[0]);
+        $domain = implode(".",$chkMail_arr);
+        if ($domain == "kmutnb.ac.th") {
             $check_user = DB::table("users")
                             ->where("user_email", '=', $user->email)
                             ->first();

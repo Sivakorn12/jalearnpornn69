@@ -16,10 +16,9 @@ use App\Officer as officer;
                             <div id='calendar'></div>
                     </div>  
                 </div>  
-        </div>
-        
+        </div>  
 </div>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -59,16 +58,34 @@ use App\Officer as officer;
                                 <input type="submit"  class="btn btn-primary" value="บันทึก"></button>
                             </div>
                     </div>
-                    
                 </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              
             </div>
           </div>
         </div>
 </div>
+
+<div id="detailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">ดูรายละเอียดวันหยุด</h4>
+        </div>
+        <div class="modal-body">
+          <p id="msgConfirm"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+  
+    </div>
+  </div>
 <script>       
     $(document).ready(function() {
       $('#tb-room').DataTable();
@@ -95,18 +112,41 @@ use App\Officer as officer;
             events : [
                 @foreach($holidays as $holiday)
                 {
-                    title : '{{ $holiday->holiday_detail }}',
-                    start : '{{ $holiday->holiday_start }}',
+                    id: '{{ $holiday->holiday_ID }}',
+                    title : '{{ $holiday->holiday_name }}',
+                    start: new Date('{{ $holiday->holiday_start }}'),
+                    end: new Date('{{$holiday->holiday_end}}T23:59:59.0+0100'),
+                    description :'{{ $holiday->holiday_detail }}',
+                    allDay: true,    
                 },
                 @endforeach
             ],
-            dayClick: function(date, jsEvent, view) {FormaddHoliday(date.format())}
+            dayClick: function(date, jsEvent, view) {FormaddHoliday(date.format())},
+            eventClick: function(calEvent, jsEvent, view) {detailHoliday(calEvent);}
         })
     });
 
+    function detailHoliday(event){
+        var html = ''
+        var today = new Date(event.end);
+        var yesterday = new Date(today);
+        yesterday.setDate(today.getDate()-1);
+        
+        yesterday = moment(yesterday).format('YYYY-MM-DD')
+        html +="<table>"+
+                 "<tr><td width='80px'>หัวข้อ</td><td>"+event.title+"</td></tr>"+
+                 "<tr><td>รายละเอียด</td><td>"+event.description+"</td></tr>"+
+                 "<tr><td>วันที่หยุด</td><td>"+dateThai(event.start.format())+"</td></tr>"+
+                 "<tr><td>ถึง</td><td>"+dateThai(yesterday) +"</td></tr>"+
+                "</table>"+
+                "<br><br><a class='btn btn-danger' href='{{url('control/holiday/delete')}}/"+event.id+"'>เอาวันหยุดออก</a>";
+        $('#msgConfirm').html(html)
+        $('#detailModal').modal('show')
+    }
+
     function FormaddHoliday(day){
         $("#date_start").val(dateThai(day))
-        $('#myModal').modal('show')
+        $('#formModal').modal('show')
     }
     function dateThai(day){
         var dmy = day.split("-");

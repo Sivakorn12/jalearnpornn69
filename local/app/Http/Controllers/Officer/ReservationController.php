@@ -54,18 +54,22 @@ class ReservationController extends Controller
     public function CHECK_DATE_RESERVE (Request $req) {
         $temp_date = explode('-', $req->date);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-        $check_holiday = date_create($date_select);
-        $check_holiday = date_format($check_holiday, 'r');
+        $check_weekend = date_create($date_select);
+        $check_weekend = date_format($check_weekend, 'r');
         $date_now = date('Y-m-d');
         $constant_cancel_timeuse = ['1', '1', '1', '1', '1', '1', '1', '1'];
+        $dataHolidays = DB::table('holiday')
+                    ->where('holiday_start', '<=', $date_select)
+                    ->where('holiday_end', '>=', $date_select)
+                    ->first();
 
         if ($date_now > $date_select) {
             return response()->json(['error'=> 'ไม่สามารถจองห้องได้', 'constant_time' => $constant_cancel_timeuse]);
         } else {
-            if (substr($check_holiday, 0, 3) == 'Sat' || substr($check_holiday, 0, 3) == 'Sun') {
+            if (substr($check_weekend, 0, 3) == 'Sat' || substr($check_weekend, 0, 3) == 'Sun' || isset($dataHolidays)) {
                 return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้', 'constant_time' => $constant_cancel_timeuse]);
             } else {
-                $time_use = officer::GET_TIMEUSE ($date_select, $req->roomid);
+                $time_use = func::GET_TIMEUSE ($date_select, $req->roomid);
                 return response()->json(['time_use'=> $time_use]);
             }
         }

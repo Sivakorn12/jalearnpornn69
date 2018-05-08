@@ -93,4 +93,10 @@ class HolidayController extends Controller
                     ->with('errorMesaage',$e);
         }
     }
+
+    public function delete($id){
+        
+        DB::table('holiday')->where('holiday_ID',$id)->delete();
+        return redirect('control/holiday');
+    }
 }

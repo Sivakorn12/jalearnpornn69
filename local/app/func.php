@@ -56,7 +56,7 @@ class func extends Model
                                 ->where('meeting_ID', $data)
                                 ->where('meeting_status', '=', '1')
                                 ->first();
-        if (count($check_reserve) == 0) {
+        if (isset($check_reserve) == 0) {
             return null;
         } else {
             return $check_reserve;

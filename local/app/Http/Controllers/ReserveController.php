@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use App\func as func;
+use Illuminate\Support\Facades\Validator;
 
 class ReserveController extends Controller
 {
@@ -60,33 +61,53 @@ class ReserveController extends Controller
     }
 
     public function submitReserve(Request $req) {
-        $time_start = $req->time_select.' '.$req->time_reserve.':00';
-        $time_out = $req->time_select.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00';
+        // $msg = [
+        // 'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
+        // "detail_count.required" => "กรุณาระบุจำนวนผู้เข้าประชุม",
+        // 'user_tel.required' => "กรุณาระบุเบอร์โทรติดต่อ"
+        // ];
+    
+        // $rule = [
+        // 'detail_topic' => 'required',
+        // 'detail_count' => 'required',
+        // 'user_tel' => 'required'
+        // ];
 
-        if(isset($req)) {
-            $id_insert = DB::table('booking')
-                            ->insertGetId([
-                                'status_ID' => 3,
-                                'section_ID' => isset($req->section_id)? $req->section_id : null,
-                                'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
-                                'user_ID' => $req->user_id,
-                                'booking_name' => $req->user_name,
-                                'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
-                                'booking_date' => date('Y-m-d H:i:s'),
-                                'checkin' => $req->time_select
-                            ]);
-            DB::table('detail_booking')
-                    ->insert([
-                        'booking_ID' => $id_insert,
-                        'meeting_ID' => $req->meeting_id,
-                        'detail_topic' => $req->detail_topic,
-                        'detail_timestart' => $time_start,
-                        'detail_timeout' => $time_out,
-                        'detail_count' => $req->detail_count
-                    ]);
+        // $validator = Validator::make($req->all(),$rule,$msg);
 
-            return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
-        }
+        // if ($validator->passes()) {
+            $time_start = $req->time_select.' '.$req->time_reserve.':00';
+            $time_out = $req->time_select.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00';
+
+            if(isset($req)) {
+                $id_insert = DB::table('booking')
+                                ->insertGetId([
+                                    'status_ID' => 3,
+                                    'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                    'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
+                                    'user_ID' => $req->user_id,
+                                    'booking_name' => $req->user_name,
+                                    'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                                    'booking_date' => date('Y-m-d H:i:s'),
+                                    'checkin' => $req->time_select
+                                ]);
+                DB::table('detail_booking')
+                        ->insert([
+                            'booking_ID' => $id_insert,
+                            'meeting_ID' => $req->meeting_id,
+                            'detail_topic' => $req->detail_topic,
+                            'detail_timestart' => $time_start,
+                            'detail_timeout' => $time_out,
+                            'detail_count' => $req->detail_count
+                        ]);
+
+                return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
+            }
+        // } else {
+        //     return redirect('reserve/{id}/{timeReserve}/{timeSelect}')
+        //             ->withErrors($validator)
+        //             ->withInput($req->input());
+        // }
     }
 
     public function CHECK_DATE_RESERVE (Request $req) {

@@ -61,9 +61,15 @@
         <div class="panel-heading"><h4>เวลาการจอง</h4></div>
         <div class="panel-body">
           <div class="col-md-12">
-            <input type="text" class="datepicker" data-provide="datepicker" data-date-language="th-th">
+            <div class="form-group form-room">
+                <label class="col-sm-3 control-label">เลือกวันที่จอง</label>
+                <div class="col-sm-7">
+                  <input type="text" class="datepicker" data-provide="datepicker" data-date-language="th-th">
+                </div>
+            </div>
           </div>
-          <div class="col-md-12" id="time-reserve" style="padding-top: 1rem; display: none;">
+          <div class="form-group form-room">
+            <div class="col-md-12" id="time-reserve" style="padding-top: 1rem; display: none;"></div>
           </div>
         </div>
       </div>

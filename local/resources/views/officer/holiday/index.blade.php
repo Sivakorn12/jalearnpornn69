@@ -138,8 +138,8 @@ use App\Officer as officer;
                  "<tr><td>รายละเอียด</td><td>"+event.description+"</td></tr>"+
                  "<tr><td>วันที่หยุด</td><td>"+dateThai(event.start.format())+"</td></tr>"+
                  "<tr><td>ถึง</td><td>"+dateThai(yesterday) +"</td></tr>"+
-                 "<tr><td></td><td style='margin-top:10px'><a class='btn btn-danger' href='{{url('control/holiday/delete')}}/"+event.id+"'>เอาวันหยุดออก</a></td></tr>"+
-                "</table>"
+                "</table>"+
+                "<br><br><a class='btn btn-danger' href='{{url('control/holiday/delete')}}/"+event.id+"'>เอาวันหยุดออก</a>";
         $('#msgConfirm').html(html)
         $('#detailModal').modal('show')
     }

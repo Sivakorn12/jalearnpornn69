@@ -56,10 +56,11 @@ class func extends Model
                                 ->where('meeting_ID', $data)
                                 ->where('meeting_status', '=', '1')
                                 ->first();
-        if (isset($check_reserve) == 0) {
-            return null;
-        } else {
+
+        if (isset($check_reserve)) {
             return $check_reserve;
+        } else {
+            return null;
         }
     }
 
@@ -76,9 +77,9 @@ class func extends Model
         return $dataSection;
     }
 
-    public static function GET_TIMEUSE ($date_select, $id) {
-        $times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
-        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0'];
+    public static function GET_TIMEUSE ($date_select, $times, $checkTimeuse, $id) {
+        // $times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
+        // $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0'];
         
         $datatimes = DB::table('detail_booking')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
@@ -141,5 +142,15 @@ class func extends Model
         }
 
         return $count_time;
+    }
+
+    public static function GET_EXTRATIME () {
+        $date_now = date('Y-m-d');
+        $data_openExtra = DB::table('meeting_open_extra')
+                                ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_now)
+                                ->first();
+
+        
+        return $data_openExtra;
     }
 }

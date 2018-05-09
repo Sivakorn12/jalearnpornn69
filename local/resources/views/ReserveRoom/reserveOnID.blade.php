@@ -115,12 +115,10 @@ $(document).ready(function() {
           dataType: 'JSON',
           data: {  _token: "{{ csrf_token() }}", date: dataOnchange, roomid: "{{$rooms->meeting_ID}}" },
           success: function(data) {
-            if (data.time_use) {
-              render_button_time(data.time_use, dataOnchange)
+            if (data.time_empty) {
+              render_button_time(data.time_empty, data.time_reserve, dataOnchange)
               $('#time-reserve').show()
             } else {
-              render_button_time(data.constant_time)
-              $('#time-reserve').show()
               swal('ไม่สำเร็จ', data.error, 'error')
             }
           }
@@ -128,15 +126,14 @@ $(document).ready(function() {
   });
 });
 
-  function render_button_time (time, date_select) {
+  function render_button_time (time, time_reserve, date_select) {
     var viewHTML = ""
-    let button_times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
     for (index = 0; index < time.length; index++) {
-      let path = "{{url('reserve')}}"+"/{{$rooms->meeting_ID}}/"+button_times[index].substring(-8, 2)+"/"+date_select
+      let path = "{{url('reserve')}}"+"/{{$rooms->meeting_ID}}/"+time_reserve[index].substring(-8, 2)+"/"+date_select
       if (time[index] == 1) {
-        viewHTML += "<a type='button' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+button_times[index]+"</a>"
+        viewHTML += "<a type='button' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+time_reserve[index]+"</a>"
       } else {
-        viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' href="+path+">"+button_times[index]+"</a>"
+        viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' href="+path+">"+time_reserve[index]+"</a>"
       }
     }
     $('#time-reserve').html(viewHTML)

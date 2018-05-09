@@ -18,9 +18,9 @@ class ReserveController extends Controller
 
     public function index() {
         $dataRoom = DB::table('meeting_room')
-            ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
-            ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
-            ->get();
+                            ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
+                            ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
+                            ->get();
 
         $imgs_room = array();
         for($index = 0; $index < sizeof($dataRoom); $index++) {
@@ -39,12 +39,11 @@ class ReserveController extends Controller
         $imgs_room = array();
         $imgs_room = explode(',', $resultData->meeting_pic);
 
-        // dd($imgs_room[0]);
-
         $data = array(
             'rooms' => $resultData,
             'imgs' => $imgs_room
         );
+
         return view('ReserveRoom/reserveOnID', $data);
     }
 
@@ -79,7 +78,7 @@ class ReserveController extends Controller
         ];
     
         $rule = [
-        'detail_topic' => 'required|alpha',
+        'detail_topic' => 'required|string',
         'detail_count' => 'required|numeric',
         'user_tel' => 'required|numeric'
         ];
@@ -130,25 +129,48 @@ class ReserveController extends Controller
     }
 
     public function CHECK_DATE_RESERVE (Request $req) {
+        $testdate = '2018-05-09';
         $temp_date = explode('-', $req->date);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
         $check_weekend = date_create($date_select);
         $check_weekend = date_format($check_weekend, 'r');
         $date_now = date('Y-m-d');
-        $constant_cancel_timeuse = ['1', '1', '1', '1', '1', '1', '1', '1'];
+        $empty_timeuse = array();
+        $data_openExtra = DB::table('meeting_open_extra')
+                                ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
+                                ->first();
+
+        $time_start = 8;
+        $time_end = 16;
+        $time_reserve = array();
+
+        if (isset($data_openExtra)) {
+            $time_start = substr($data_openExtra->extra_start, -8, 2);
+            $time_end = substr($data_openExtra->extra_end, -8, 2);
+        }
+
+        for ($index = $time_start; $index < $time_end; $index++) {
+            array_push($empty_timeuse, 0);
+            if (strlen($index) < 2) {
+                array_push($time_reserve, '0'.$index.':00');
+            } else {
+                array_push($time_reserve, $index.':00');
+            }
+        }
+
         $dataHolidays = DB::table('holiday')
-                    ->where('holiday_start', '<=', $date_select)
-                    ->where('holiday_end', '>=', $date_select)
-                    ->first();
+                            ->where('holiday_start', '<=', $date_select)
+                            ->where('holiday_end', '>=', $date_select)
+                            ->first();
 
         if ($date_now > $date_select) {
-            return response()->json(['error'=> 'ไม่สามารถจองห้องได้', 'constant_time' => $constant_cancel_timeuse]);
+            return response()->json(['error'=> 'ไม่สามารถจองห้องได้ย้อนหลังได้']);
         } else {
             if (substr($check_weekend, 0, 3) == 'Sat' || substr($check_weekend, 0, 3) == 'Sun' || isset($dataHolidays)) {
-                return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้', 'constant_time' => $constant_cancel_timeuse]);
+                return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);
             } else {
-                $time_use = func::GET_TIMEUSE ($date_select, $req->roomid);
-                return response()->json(['time_use'=> $time_use]);
+                $time_empty = func::GET_TIMEUSE ($date_select, $time_reserve, $empty_timeuse, $req->roomid);
+                return response()->json(['time_empty'=> $time_empty, 'time_reserve' => $time_reserve]);
             }
         }
     }

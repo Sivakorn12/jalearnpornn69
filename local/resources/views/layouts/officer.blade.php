@@ -202,6 +202,9 @@
                         <li class={{ $page === "holiday" ? "active" : "" }}>
                             <a href="{{ url ('control/holiday/') }}"><i class="fa fa-flag" aria-hidden="true"></i> วันหยุด</a>
                         </li>
+                        <li class={{ $page === "extratime" ? "active" : "" }}>
+                            <a href="{{ url ('control/extratime/') }}"<i class="fa fa-clock-o" aria-hidden="true"></i> เวลาการใช้งาน</a>
+                        </li>
                         <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
                             <a href="{{ route('logout') }}"
                             onclick="event.preventDefault();

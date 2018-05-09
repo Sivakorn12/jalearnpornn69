@@ -46,23 +46,30 @@ class DashboardController extends Controller
                 false,  
                 new \DateTime($value->detail_timestart),  
                 new \DateTime($value->detail_timeout),
-                $key,
+                $value->booking_ID,
                 [
                     'backgroundColor' =>$colors[$value->meeting_ID-1],
                     'textColor' => '#fff',
                     'description' => "Event Description",
+                    'className'=> 'moreBorder'
                 ]
             );  
             }  
         } 
-        //dd($events) ;
         $calendar = Calendar::addEvents($events)->setOptions([
             'timeFormat'=> 'H:mm',
             'lang'=> 'th',
+        ])->setCallbacks([ //set fullcalendar callback options (will not be JSON encoded)
+            'eventClick' => 'function(calEvent, jsEvent, view) {detailreserve(calEvent);}'
         ]); 
         $data = array(
             'calendar' => $calendar
         );
         return view('officer/index',$data);
+    }
+
+    public function viewBooking($id){
+        $html = officer::viewBooking($id);
+        return response()->json(['html'=>$html]);
     }
 }

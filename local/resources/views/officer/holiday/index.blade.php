@@ -11,7 +11,7 @@ use App\Officer as officer;
 <div class="row">
         <div class="col-xs-12" style="padding-bottom:10px">
                 <div class="panel panel-primary" style="width:100%!important">  
-                    <div class="panel-heading"> ปฏิทินการใช้ห้องประชุม </div>  
+                    <div class="panel-heading"> ปฏิทินวันหยุด </div>  
                     <div class="panel-body"> 
                             <div id='calendar'></div>
                     </div>  
@@ -118,40 +118,18 @@ use App\Officer as officer;
                     end: new Date('{{$holiday->holiday_end}}T23:59:59.0+0100'),
                     description :'{{ $holiday->holiday_detail }}',
                     allDay: true,    
-                },
-                @endforeach
+                    className: 'moreBorder'
+                    },
+                    @endforeach
             ],
             dayClick: function(date, jsEvent, view) {FormaddHoliday(date.format())},
-            eventClick: function(calEvent, jsEvent, view) {detailHoliday(calEvent);}
-        })
+            eventClick: function(calEvent, jsEvent, view) {detailHoliday(calEvent);},
+            eventRender: function(event, element, view) {
+                    $(element).height(100);
+            }
     });
-
-    function detailHoliday(event){
-        var html = ''
-        var today = new Date(event.end);
-        var yesterday = new Date(today);
-        yesterday.setDate(today.getDate()-1);
-        
-        yesterday = moment(yesterday).format('YYYY-MM-DD')
-        html +="<table>"+
-                 "<tr><td width='80px'>หัวข้อ</td><td>"+event.title+"</td></tr>"+
-                 "<tr><td>รายละเอียด</td><td>"+event.description+"</td></tr>"+
-                 "<tr><td>วันที่หยุด</td><td>"+dateThai(event.start.format())+"</td></tr>"+
-                 "<tr><td>ถึง</td><td>"+dateThai(yesterday) +"</td></tr>"+
-                "</table>"+
-                "<br><br><a class='btn btn-danger' href='{{url('control/holiday/delete')}}/"+event.id+"'>เอาวันหยุดออก</a>";
-        $('#msgConfirm').html(html)
-        $('#detailModal').modal('show')
-    }
-
-    function FormaddHoliday(day){
-        $("#date_start").val(dateThai(day))
-        $('#formModal').modal('show')
-    }
-    function dateThai(day){
-        var dmy = day.split("-");
-        return dmy[2]+"-"+dmy[1]+"-"+(parseInt(dmy[0])+543).toString()
-    }
+});
+    
     function addHoliday(){
         $.ajax({
           url: "{{url('control/checkdate')}}",

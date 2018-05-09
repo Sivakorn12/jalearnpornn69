@@ -27,6 +27,9 @@ Route::get('/history/{reserveid}', 'HistoryController@DELETE_RESERVE');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });
+Route::any('/getdataReserve/{id}', 'Officer\DashboardController@viewBooking');
+
+
 Route::prefix('/control')->group(function () {
   Route::get('/' ,'Officer\DashboardController@index');
   Route::get('/checkbooking','Officer\CheckBookingController@indexReservation');
@@ -60,6 +63,10 @@ Route::prefix('/control')->group(function () {
   Route::get('/holiday/edit/{id}','Officer\HolidayController@Form');
   Route::post('/holiday/update','Officer\HolidayController@update');
   Route::get('/holiday/delete/{id}','Officer\HolidayController@delete');
+
+  Route::get('/extratime','Officer\ExtraTimeController@index');
+  Route::any('/extratime/add','Officer\ExtraTimeController@add');
+  Route::any('/extratime/delete/{id}','Officer\ExtraTimeController@delete');
 
   Route::get('/checkdate', 'Officer\ReservationController@CHECK_DATE_RESERVE');
 

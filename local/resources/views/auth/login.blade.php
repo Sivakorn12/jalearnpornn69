@@ -12,7 +12,7 @@
                             style="
                             text-align: center;
                             font-size: 20px;
-                            margin-top: 5rem;
+                            margin-top: 3rem;
                             ">
                         LOGIN TO USE WEBSITE</p>
 
@@ -22,7 +22,7 @@
                                 <a class="btn btn-danger"
                                     style="
                                     width: 100%;
-                                    margin-top: 8rem;
+                                    margin-top: 5rem;
                                     box-shadow: 1px 4px 4px rgba(0, 0, 0, .5);
                                         "
                                     href="{{ url('auth/google') }}"

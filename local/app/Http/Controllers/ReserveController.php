@@ -22,17 +22,28 @@ class ReserveController extends Controller
             ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
             ->get();
 
+        $imgs_room = array();
+        for($index = 0; $index < sizeof($dataRoom); $index++) {
+            $imgs_room[$index] = explode(',', $dataRoom[$index]->meeting_pic);
+        }
+
         $data = array(
-            'rooms' => $dataRoom
+            'rooms' => $dataRoom,
+            'imgs' => $imgs_room
         );
         return view('ReserveRoom/index', $data);
     }
 
     public function ReservrRoom($id) {
         $resultData = func::selectReserve($id);
+        $imgs_room = array();
+        $imgs_room = explode(',', $resultData->meeting_pic);
+
+        // dd($imgs_room[0]);
 
         $data = array(
-            'rooms' => $resultData
+            'rooms' => $resultData,
+            'imgs' => $imgs_room
         );
         return view('ReserveRoom/reserveOnID', $data);
     }

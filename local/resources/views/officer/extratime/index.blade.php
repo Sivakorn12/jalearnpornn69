@@ -2,11 +2,9 @@
 @section('page_heading','เวลาการใช้งาน')
 @section('content')
 <div class="row">
-   
-    <div class="col-md-1"></div>
-    <div class="col-md-10" id="tableroom"> 
+    <div class="col-md-12" id="tableroom"> 
         <div style="float:right;margin-bottom:10px"> 
-            <a data-toggle="modal" data-target="#extratime-form" class="btn btn-success" data-toggle="tooltip" title="เพิ่ม"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            <a data-toggle="modal" onclick="addEx()" class="btn btn-success" data-toggle="tooltip" title="เพิ่ม"><i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
         <table class="table table-hover showroom" id="tb-room">
             <thead>
@@ -24,16 +22,15 @@
                 <td>{{substr($ex->extra_start,0,10)}}</td>
                 <td>{{substr($ex->extra_start,-8,5)}} - {{substr($ex->extra_end,-8,5)}}</td>
                 <td>
-                    <a class="btn btn-warning btn-sm" data-toggle="tooltip" href="{{url('control/equipment/edit/'.$ex->extra_ID)}}" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" href="{{url('control/equipment/delete/'.$ex->extra_ID)}}" 
-                    onclick="return confirm('คุณต้องการลบห้อง {{$ex->extra_start}} หรือไม่?');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
+                    <a class="btn btn-warning btn-sm" data-toggle="tooltip" data-toggle="modal" onclick="changeEx('{{$ex->extra_ID}}','{{$ex->extra_start}}','{{$ex->extra_end}}')" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" href="{{url('control/extratime/delete/'.$ex->extra_ID)}}" 
+                    onclick="return confirm('คุณต้องการลบเวลาการใช้ห้องใน วันที่ {{substr($ex->extra_start,0,10)}} หรือไม่?');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
                 </td>
             </tr>
             @endforeach
            </tbody>
         </table>
     </div>
-    <div class="col-md-1"></div>
 </div>
 <!-- extra time Modal-->
 <div class="modal fade" id="extratime-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -44,21 +41,39 @@
           <h4 class="modal-title" id="myModalLabel">เวลาการใช้งาน</h4>
         </div>
         <div class="modal-body">
-            <form action="{{url('control/extratime/add')}}" method="GET" >
-      
+            <form action="{{url('control/extratime/add')}}" method="POST" >
                 <div class="form-group form-room">
                         <label class="col-sm-3 control-label">วันที่เริ่ม</label>
                         <div class="col-sm-7">
                             <input type="text" name="date_start" id="date_start" class="datepicker" data-provide="datepicker" data-date-language="th-th">
                         </div>
                 </div>
-                
                 <div class="form-group form-room">
-                        <label class="col-sm-3 control-label"></label>
-                        <div class="col-sm-7">
-                            <input type="submit"  class="btn btn-primary" value="บันทึก"></button>
+                        <label class="col-sm-3 control-label">เวลา</label>
+                        <div class="col-sm-3">
+                            <select name="ex_start" onchange="setExEnd()" class="form-control"id="ex_start">
+                                @for($n = 8 ; $n<=19 ;$n++)
+                                    <option value="{{$n}}">{{$n}}.00 น.</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <label class="col-sm-1 control-label">ถึง</label>
+                        <div class="col-sm-3">
+                            <select name="ex_end" class="form-control"id="ex_end">
+                                @for($n = 9 ; $n<=20 ;$n++)
+                                    <option value="{{$n}}">{{$n}}.00 น.</option>
+                                @endfor
+                            </select>
                         </div>
                 </div>
+                <div class="form-group form-room">
+                    <label class="col-sm-3 control-label"></label>
+                    <div class="col-sm-7">
+                        <input type="submit"  class="btn btn-primary" value="บันทึก"></button>
+                    </div>
+                </div>
+                <div id="idHide"></div>
+                <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
             </form>
         </div>
         <div class="modal-footer">
@@ -82,5 +97,30 @@ $(document).ready(function() {
       if('{{session("successMessage")}}' != null) $.notify('{{session("successMessage")}}',"success");
       else if('{{session("errorMesaage")}}' != null) $.notify('{{session("errorMesaage")}}',"error");
 });
+function setExEnd(){
+    var st = $('#ex_start').val()
+    var html=''
+    st = parseInt(st)+1
+    for(var i = st;i<=20;i++){
+        html +="<option value='"+i+"'>"+i+".00 น.</option>"
+    }
+    $('#ex_end').html(html)
+}
+function addEx(){
+    $('#idHide').html("")
+    $('#extratime-form').modal('show')
+}
+function changeEx(id,st,end){
+    var dThai = dateThaiYearBC(st.substring(0,10))
+    console.log(st.substring(11,13))
+    $('#ex_start').val(parseInt(st.substring(11,13)))
+    setExEnd()
+    $('#ex_end').val(parseInt(end.substring(11,13)))
+    if(dThai != ''){
+      $('.datepicker').datepicker("setDate", dThai);
+    }
+    $('#idHide').html("<input type='hidden' name='id' value='"+id+"'>")
+    $('#extratime-form').modal('show')
+}
 </script>   
 @endsection

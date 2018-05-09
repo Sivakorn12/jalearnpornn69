@@ -38,101 +38,30 @@ class ExtraTimeController extends Controller
         return view('officer/extratime/index',$data);
     }
 
-    public function Form($id =''){
-        if($id==''){
-            return view('officer/equipment/Form',[
-                'form'=>'success',
-                'action' => 'add'
+    public function add(Request $request){
+        //dd(officer::dateFormatDB($request->date_start)." ".$request->ex_start.":00:00");
+        if(!isset($request->id)){
+            DB::table('meeting_open_extra')->insert([
+                "extra_start" =>officer::dateFormatDB($request->date_start)." ".$request->ex_start.":00:00",
+                "extra_end" =>officer::dateFormatDB($request->date_start)." ".$request->ex_end.":00:00",
             ]);
+            return redirect('control/extratime/')
+                    ->with('successMessage','เพิ่มอุปกรณ์สำเร็จ');
         }
         else{
-            $equipment = DB::table('equipment')
-                        ->where('em_ID',$id)
-                        ->first();
-            return view('officer/equipment/Form',[
-                'equipment' => $equipment ,
-                'form'=>'warning',
-                'action' => 'update'
-            ]);
-        }
-    }
-
-    public function add(Request $request){
-        //dd($request);
-        $msg = [
-            'em_name.required' => "กรุณาระบุชื่ออุปกรณ์",
-            "em_count.required" => "กรุณาระบุจำนวนอุปกรณ์",
-          ];
-    
-          $rule = [
-            'em_name' => 'required',
-            'em_count' => 'required',
-          ];
-    
-          $validator = Validator::make($request->all(),$rule,$msg);
-    
-          if ($validator->passes()) {
-              try{
-                $newid = '10001';
-                $last = DB::table('equipment')->orderBy('em_ID','desc')->first();
-                if($last!=null) $newid = substr($last->em_ID,0,5)+1;
-                DB::table('equipment')->insert([
-                    "em_ID" =>$newid,
-                    "em_name" =>$request->em_name,
-                    "em_count" =>$request->em_count,
-                ]);
-                
-                return redirect('control/equipment/')
-                        ->with('successMessage','เพิ่มอุปกรณ์สำเร็จ');
-              }catch (Exception $e) {
-                return redirect('control/equipment/')
-                        ->with('errorMesaage',$e);
-              }
-          }else{
-            return redirect('control/equipment/form')
-                        ->withErrors($validator)
-                        ->withInput($request->input());
-          }
-    }
-
-    public function update(Request $request){
-        //dd($request);
-        $msg = [
-            'em_name.required' => "กรุณาระบุชื่ออุปกรณ์",
-            "em_count.required" => "กรุณาระบุจำนวนอุปกรณ์",
-          ];
-    
-          $rule = [
-            'em_name' => 'required',
-            'em_count' => 'required',
-          ];
-    
-          $validator = Validator::make($request->all(),$rule,$msg);
-    
-          if ($validator->passes()) {
-              try{
-                DB::table('equipment')
-                    ->where('em_ID',$request->id)
+            DB::table('meeting_open_extra')
+                    ->where('extra_ID',$request->id)
                     ->update([
-                        "em_name" =>$request->em_name,
-                        "em_count" =>$request->em_count,
-                    ]);
-                
-                return redirect('control/equipment/')
-                        ->with('successMessage','แก้ไขอุปกรณ์สำเร็จ');
-              }catch (Exception $e) {
-                return redirect('control/equipment/')
-                        ->with('errorMesaage',$e);
-              }
-          }else{
-            return redirect('control/equipment/edit/'.$request->id)
-                        ->withErrors($validator)
-                        ->withInput($request->input());
-          }
-    }
+                        "extra_start" =>officer::dateFormatDB($request->date_start)." ".$request->ex_start.":00:00",
+                        "extra_end" =>officer::dateFormatDB($request->date_start)." ".$request->ex_end.":00:00",
+                ]);
+            return redirect('control/extratime/')
+                ->with('successMessage','เพิ่มอุปกรณ์สำเร็จ');
+        }
 
+    }
     public function delete($id){
-        DB::table('equipment')->where('em_ID',$id)->delete();
-        return redirect('control/equipment/');
+        DB::table('meeting_open_extra')->where('extra_ID',$id)->delete();
+        return redirect('control/extratime');
     }
 }

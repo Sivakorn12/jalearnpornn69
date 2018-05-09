@@ -65,6 +65,8 @@ Route::prefix('/control')->group(function () {
   Route::get('/holiday/delete/{id}','Officer\HolidayController@delete');
 
   Route::get('/extratime','Officer\ExtraTimeController@index');
+  Route::any('/extratime/add','Officer\ExtraTimeController@add');
+  Route::any('/extratime/delete/{id}','Officer\ExtraTimeController@delete');
 
   Route::get('/checkdate', 'Officer\ReservationController@CHECK_DATE_RESERVE');
 

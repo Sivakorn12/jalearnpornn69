@@ -32,7 +32,7 @@
                                         @else swal('ไม่สำเร็จ', 'ห้องประชุมไม่พร้อมใช้งาน', 'error')
                                         @endif">
                             <td>
-                                <img src='{{url ("asset/rooms/".$room->meeting_pic)}}' width="100">
+                                <img src='{{url ("asset/rooms/".$imgs[$key][0])}}' width="100">
                             </td>
                             <td>
                                 {{$room->meeting_name}}

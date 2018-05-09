@@ -17,7 +17,30 @@
         <div class="panel-heading"><h4>{{$rooms->meeting_name}}</h4></div>
         <div class="panel-body">
           <div class="col-md-4">
-            <img class="img-responsive" src='{{url ("asset/rooms/".$rooms->meeting_pic)}}'>
+
+          <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="item active">
+                <img class="img-responsive" src='{{url ("asset/rooms/".$imgs[0])}}'>
+              </div>
+
+              @foreach($imgs as $key => $img)
+              <div class="item">
+                <img class="img-responsive" src='{{url ("asset/rooms/".$imgs[$key])}}'>
+              </div>
+              @endforeach
+            </div>
+
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+              <span class="glyphicon glyphicon-chevron-left"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+              <span class="glyphicon glyphicon-chevron-right"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+
           </div>
           <div class="col-md-8">
             <div class="table-responsive">
@@ -64,7 +87,7 @@
             <div class="form-group form-room">
                 <label class="col-sm-3 control-label">เลือกวันที่จอง</label>
                 <div class="col-sm-7">
-                  <input type="text" class="datepicker" data-provide="datepicker" data-date-language="th-th">
+                  <input type="text" class="datepicker" data-provide="datepicker" data-date-language="th-th" placeholder="กดเพื่อเลือก">
                 </div>
             </div>
           </div>

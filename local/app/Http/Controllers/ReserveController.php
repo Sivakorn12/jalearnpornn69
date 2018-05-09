@@ -39,8 +39,6 @@ class ReserveController extends Controller
         $imgs_room = array();
         $imgs_room = explode(',', $resultData->meeting_pic);
 
-        // dd($imgs_room[0]);
-
         $data = array(
             'rooms' => $resultData,
             'imgs' => $imgs_room

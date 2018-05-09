@@ -44,9 +44,12 @@ class ReservationController extends Controller
 
     public function Form($id =''){
         $resultData = func::selectReserve($id);
+        $imgs_room = array();
+        $imgs_room = explode(',', $resultData->meeting_pic);
 
         $data = array(
-            'rooms' => $resultData
+            'rooms' => $resultData,
+            'imgs' => $imgs_room
         );
         return view('officer/reservation/reserveOnID', $data);
     }

@@ -47,39 +47,8 @@ class CheckBookingController extends Controller
     }
 
     public function viewReservation($id){
-        $booking = DB::table('booking')
-                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
-                    ->leftjoin('users','booking.user_ID','=','users.id')
-                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
-                    ->where('booking.booking_ID',$id)
-                    ->first();
-        //dd($booking);
-        $html = '<table cellpadding=3>
-                    <tr>
-                        <td width="120"><b>รหัสการจอง</b></td>
-                        <td>'.$booking->booking_ID.'</td>
-                    </tr>
-                    <tr>
-                        <td width="100"><b>ห้อง</b></td>
-                        <td>'.$booking->meeting_name.'</td>
-                    </tr>
-                    <tr>
-                        <td width="100"><b>วันที่</b></td>
-                        <td>'.$booking->checkin.'</td>
-                    </tr>
-                    <tr>
-                        <td width="100"><b>เวลา</b></td>
-                        <td>'.substr($booking->detail_timestart, -8,5) .' - '. substr($booking->detail_timeout, -8,5).'</td>
-                    </tr>
-                    <tr>
-                        <td width="100"><b>ผู้จอง</b></td>
-                        <td>'.((isset($booking->user_name))?$booking->user_name:'-').'</td>
-                    </tr>
-                    <tr>
-                        <td width="100"><b>วันเวลาที่จอง</b></td>
-                        <td>'.$booking->booking_date.'</td>
-                    </tr>
-                </table>';
+        
+        $html = officer::viewBooking($id);
         return response()->json(['html'=>$html]);
     }
 

@@ -12,3 +12,7 @@ table.showroom > thead > tr > th {
   padding-top: 8px;
   text-align: right
 }
+.moreBorder{
+  border:1px solid #cccccc !important;
+  padding: 5px!important
+}

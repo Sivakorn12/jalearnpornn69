@@ -38,3 +38,29 @@ function showModal(){
     });
 }
 
+function detailHoliday(event){
+    var html = ''
+    var today = new Date(event.end);
+    var yesterday = new Date(today);
+    yesterday.setDate(today.getDate()-1);
+    
+    yesterday = moment(yesterday).format('YYYY-MM-DD')
+    html +="<table>"+
+             "<tr><td width='80px'>หัวข้อ</td><td>"+event.title+"</td></tr>"+
+             "<tr><td>รายละเอียด</td><td>"+event.description+"</td></tr>"+
+             "<tr><td>วันที่หยุด</td><td>"+dateThai(event.start.format())+"</td></tr>"+
+             "<tr><td>ถึง</td><td>"+dateThai(yesterday) +"</td></tr>"+
+            "</table>"+
+            "<br><br><a class='btn btn-danger' href='{{url('control/holiday/delete')}}/"+event.id+"'>เอาวันหยุดออก</a>";
+    $('#msgConfirm').html(html)
+    $('#detailModal').modal('show')
+}
+
+function FormaddHoliday(day){
+    $("#date_start").val(dateThai(day))
+    $('#formModal').modal('show')
+}
+function dateThai(day){
+    var dmy = day.split("-");
+    return dmy[2]+"-"+dmy[1]+"-"+(parseInt(dmy[0])+543).toString()
+}

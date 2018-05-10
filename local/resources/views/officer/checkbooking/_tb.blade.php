@@ -39,7 +39,7 @@ elseif($type == 'confirmed'){
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{$booking->checkin}}</td>
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{substr($booking->detail_timestart, -8,5)}} - {{substr($booking->detail_timeout, -8,5)}}</td>
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">
-                {{($chk )? 'รออนุมัติ(ยกเลิก)' :officer::getStatusBooking($booking->status_ID)}}
+                {!!($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)!!}
               </td>
               <td>
               @if($chk)

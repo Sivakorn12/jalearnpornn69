@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>ระบบการจองและการใช้ห้องประชุมออนไลน์</title>
 
     <!-- Styles -->
     <link href="{{ url('css/bootstrap.css') }}" rel="stylesheet">

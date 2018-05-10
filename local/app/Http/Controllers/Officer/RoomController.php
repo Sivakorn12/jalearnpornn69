@@ -179,6 +179,20 @@ class RoomController extends Controller
                     "meeting_buiding" =>$request->room_building,
                     "meeting_status" =>1,
                 ]);
+
+                if(isset($request->hdnEq)){
+                    if($request->changeEq == 'yes'){
+                        DB::table('equipment_in')->where('meeting_ID',$request->id)->delete();
+                        for($i = 0 ; $i < count($request->hdnEq);$i++){
+                            $temp = explode(",",$request->hdnEq[$i]);
+                            DB::table('equipment_in')->insert([
+                                "meeting_ID" =>$request->id,
+                                "em_in_count" =>$temp[1],
+                                "em_in_name" =>$temp[0],
+                            ]);
+                        }
+                    }
+                }
             
                 
                 return redirect('control/room/')

@@ -89,6 +89,10 @@ class Officer extends Model
         return DB::table('meeting_type')->get();
     }
 
+    public static function getEquips($meetingId){
+        return DB::table('equipment_in')->where('meeting_ID',$meetingId)->get();
+    }
+
     // *Reserve
 
     public static function deleteFile($filename){

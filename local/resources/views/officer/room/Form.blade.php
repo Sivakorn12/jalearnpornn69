@@ -1,6 +1,10 @@
 <?php
 use App\Officer as officer;
 $roomTypes = officer::getTypeRoom();
+$equips = array();
+if(isset($room))
+    $equips = officer::getEquips($room->meeting_ID);
+//dd($equips);
 ?>
 @extends('layouts.officer',['page'=>'room'])
 @section('page_heading','จัดการห้องประชุม')
@@ -69,7 +73,7 @@ $roomTypes = officer::getTypeRoom();
                                 </div>
                                 <label class="col-sm-1 control-label">จำนวน</label>
                                 <div class="col-sm-2">
-                                        <input type="number" class="form-control" id="input-equip-amount" >
+                                        <input type="number" class="form-control" min="1" id="input-equip-amount" >
                                 </div>
                                 <div class="col-sm-1 control-label" >
                                     <button style="padding-top: 0px" type="button" class="btn btn-default btn-circle" onclick="addEquioment()">
@@ -77,7 +81,7 @@ $roomTypes = officer::getTypeRoom();
                                     </button>
                                 </div>
                         </div>
-                        <div class="form-group form-room" id="div-show-equip" >
+                        <div class="form-group form-room" id="div-show-equip" style="display:none">
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-7">
                                 <ul style="-webkit-padding-start: 15px;" id="list-equip">
@@ -95,6 +99,7 @@ $roomTypes = officer::getTypeRoom();
                     <div class="col-md-1"></div>
                     <div id="hideEquip"></div>
                     <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
+                    <input type="hidden" name="changeEq" id="changeEq" value="no" />
                     @if(isset($room->meeting_ID))
                         <input type="hidden" name="id"  value="{{ $room->meeting_ID }}" />
                     @endif
@@ -111,7 +116,8 @@ $roomTypes = officer::getTypeRoom();
     var equip =[]
     $(document).ready(function() {
       $('#tb-room').DataTable();
-      $('[data-toggle="tooltip"]').tooltip();      
+      $('[data-toggle="tooltip"]').tooltip();  
+      
     });
 
     function handleFiles(files){
@@ -134,12 +140,14 @@ $roomTypes = officer::getTypeRoom();
  }
  function addEquioment(){
      console.log(equip.length)
+     
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
      if (checkDuplicate(name,amount, equip)) {
         equip[equip.length] = [name,amount];
     }
     fetchListEquip(equip);
+    $('#changeEq').val('yes');
  }
  function checkDuplicate(newVal,amount, arrVal) {
     for (var m = 0; m < arrVal.length; m++)
@@ -149,19 +157,22 @@ $roomTypes = officer::getTypeRoom();
  function fetchListEquip(equipment){  
      if(equipment.length == 0){
         $('#div-show-equip').hide()
-
      }else{
         console.log("process fetch")
         var html = ''
         for(var i = 0 ; i < equipment.length ; i++){
-            html +='<li><b>'+equipment[i][0]+'</b> จำนวน : '+equipment[i][1]+'</li>'
+            html +='<li>'+
+                        '<b>'+equipment[i][0]+'</b> จำนวน : '+equipment[i][1]+
+                        ' <i class="fa fa-times" aria-hidden="true" title="ลบ" onclick="deleteEquip('+i+')"></i>'+
+                    '</li>'
         }
         pushHiddenEquip(equipment)
         $('#list-equip').html(html)
         $('#div-show-equip').show()
-
     }
+    console.log(equipment)
  }
+
  function pushHiddenEquip(equipment){
     var html =''
     for(var i = 0 ; i < equipment.length ; i++){
@@ -169,5 +180,26 @@ $roomTypes = officer::getTypeRoom();
     }
     $('#hideEquip').html(html)
  }
+ function deleteEquip(index){
+    equip.splice(index, 1);
+    fetchListEquip(equip)
+    $('#changeEq').val('yes');
+ }
 </script>   
+<script>
+     $(document).ready(function() {
+      if('{{$action}}'=='update'){
+        <?php
+          $cnt = 0;
+            foreach($equips as $key=>$eq){
+          ?>
+            equip[{{$cnt}}] = ['{{$eq->em_in_name}}','{{$eq->em_in_count}}'];
+          <?php
+          $cnt++;
+          }
+        ?>
+        fetchListEquip(equip)
+      }    
+    });
+</script>
 @endsection

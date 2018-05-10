@@ -16,3 +16,6 @@ table.showroom > thead > tr > th {
   border:1px solid #cccccc !important;
   padding: 5px!important
 }
+.label-status{
+  font-size: 12px!important
+}

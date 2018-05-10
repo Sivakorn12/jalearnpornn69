@@ -6,13 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 class Officer extends Model
 {
-    //*********************** Booking
-    public static function getStatusBooking($id){
+    //* Booking
+    public static function getStatusBooking($id,$type=0){
         $status = DB::table('status_room')
                   ->where('status_ID',$id)
                   ->first();
-        return $status->status_name;
+        if($type==0)
+            return $status->status_name;
+        else{
+            if($status->status_ID==1){
+                return '<span class="label label-status label-success">'.$status->status_name.'<span>';
+            }
+            elseif($status->status_ID==2){
+                return '<span class="label label-status label-danger">'.$status->status_name.'<span>';
+            }
+            elseif($status->status_ID==3){
+                return '<span class="label label-status label-warning">'.$status->status_name.'<span>';
+            }
+        }
     }
+
     public static function pushTableBooking($bookings,$type){
         if($type == 'all'){
                 $selected_status = '';
@@ -47,7 +60,7 @@ class Officer extends Model
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->meeting_name.'</td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->checkin.'</td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.substr($booking->detail_timestart, -8,5).' - '.substr($booking->detail_timeout, -8,5).'</td>
-                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? 'รออนุมัติ(ยกเลิก)' :officer::getStatusBooking($booking->status_ID)).'</td>
+                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)).'</td>
                 <td>';
                     if($chk){
                         $html=$html."ไม่อยู่ในช่วงเวลา";
@@ -71,10 +84,12 @@ class Officer extends Model
     }
 
 
-    // *********************** Room 
+    // * Room 
     public static function getTypeRoom(){
         return DB::table('meeting_type')->get();
     }
+
+    // *Reserve
 
     public static function deleteFile($filename){
         if(file_exists($filename)){
@@ -84,6 +99,7 @@ class Officer extends Model
         }else echo 'file not found ' . $filename;
     }
 
+    // *ETC
     public static function getAImage($imageName){
         $images = explode(',',$imageName);
         return $images[0];
@@ -127,6 +143,7 @@ class Officer extends Model
             "#4682B4","#D2B48C","#008080","#D8BFD8","#FF6347","#40E0D0","#EE82EE","#F5DEB3","#FFFFFF","#F5F5F5","#FFFF00","#9ACD32"
         );
     }
+    
     public static function dateFormatDB($dateHtml){
         $dateArr = explode("-",$dateHtml);
         return ($dateArr[2]-543)."-".$dateArr[1]."-".$dateArr[0];

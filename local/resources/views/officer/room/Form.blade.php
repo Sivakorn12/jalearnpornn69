@@ -62,6 +62,28 @@ $roomTypes = officer::getTypeRoom();
                                 <p id="error-pic" style="display:none;color:red">กรุณาเลือกรูปภาพเท่านั้น</p>
                             </div>
                         </div>
+                        <div class="form-group form-room">
+                                <label class="col-sm-3 control-label">อุปกรณ์ภายใน</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="input-equip-name" >
+                                </div>
+                                <label class="col-sm-1 control-label">จำนวน</label>
+                                <div class="col-sm-2">
+                                        <input type="number" class="form-control" id="input-equip-amount" >
+                                </div>
+                                <div class="col-sm-1 control-label" >
+                                    <button style="padding-top: 0px" type="button" class="btn btn-default btn-circle" onclick="addEquioment()">
+                                        <i style="margin-top:8px"class="fa fa-lg fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                        </div>
+                        <div class="form-group form-room" id="div-show-equip" >
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7">
+                                <ul style="-webkit-padding-start: 15px;" id="list-equip">
+                                </ul>
+                            </div>
+                        </div>
                         <div class="form-group form-room" >
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-7">
@@ -71,6 +93,7 @@ $roomTypes = officer::getTypeRoom();
                         </div>
                     </div>
                     <div class="col-md-1"></div>
+                    <div id="hideEquip"></div>
                     <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
                     @if(isset($room->meeting_ID))
                         <input type="hidden" name="id"  value="{{ $room->meeting_ID }}" />
@@ -84,11 +107,11 @@ $roomTypes = officer::getTypeRoom();
           </div>
     </div>
 </div>
-<script>       
+<script>      
+    var equip =[]
     $(document).ready(function() {
       $('#tb-room').DataTable();
-      $('[data-toggle="tooltip"]').tooltip(); 
-       
+      $('[data-toggle="tooltip"]').tooltip();      
     });
 
     function handleFiles(files){
@@ -102,13 +125,49 @@ $roomTypes = officer::getTypeRoom();
     }
     if(!isImg){
       $('#error-pic').show()
-
     }
     else {
     }
   }
   function isImage(file){
     return file['type'].split('/')[0]=='image';//returns true or false
+ }
+ function addEquioment(){
+     console.log(equip.length)
+     var name = $('#input-equip-name').val()
+     var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
+     if (checkDuplicate(name,amount, equip)) {
+        equip[equip.length] = [name,amount];
+    }
+    fetchListEquip(equip);
+ }
+ function checkDuplicate(newVal,amount, arrVal) {
+    for (var m = 0; m < arrVal.length; m++)
+        if (newVal == arrVal[m][0] &&amount == arrVal[m][1] ) return false;
+    return true;
+ }
+ function fetchListEquip(equipment){  
+     if(equipment.length == 0){
+        $('#div-show-equip').hide()
+
+     }else{
+        console.log("process fetch")
+        var html = ''
+        for(var i = 0 ; i < equipment.length ; i++){
+            html +='<li><b>'+equipment[i][0]+'</b> จำนวน : '+equipment[i][1]+'</li>'
+        }
+        pushHiddenEquip(equipment)
+        $('#list-equip').html(html)
+        $('#div-show-equip').show()
+
+    }
+ }
+ function pushHiddenEquip(equipment){
+    var html =''
+    for(var i = 0 ; i < equipment.length ; i++){
+        html +='<input type="hidden" name="hdnEq[]" value="'+equipment[i]+'">'
+    }
+    $('#hideEquip').html(html)
  }
 </script>   
 @endsection

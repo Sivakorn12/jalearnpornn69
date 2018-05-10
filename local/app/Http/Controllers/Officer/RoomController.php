@@ -89,7 +89,7 @@ class RoomController extends Controller
                 }
                 $picTxt = implode(",",$pic);
                 try{
-                DB::table('meeting_room')->insert([
+                $id = DB::table('meeting_room')->insertGetId([
                     "meeting_type_ID" =>$request->type,
                     "provision" =>$request->provision,
                     "meeting_name" =>$request->room_name,
@@ -98,6 +98,18 @@ class RoomController extends Controller
                     "meeting_buiding" =>$request->room_building,
                     "meeting_status" =>1,
                 ]);
+
+                if(isset($request->hdnEq)){
+                    for($i = 0 ; $i < count($request->hdnEq);$i++){
+                        $temp = explode(",",$request->hdnEq[$i]);
+                        DB::table('equipment_in')->insert([
+                            "meeting_ID" =>$id,
+                            "em_in_count" =>$temp[1],
+                            "em_in_name" =>$temp[0],
+                        ]);
+                    }
+                }
+
                 
                 return redirect('control/room/')
                         ->with('successMessage','เพิ่มห้องสำเร็จ');

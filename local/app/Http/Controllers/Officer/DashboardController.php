@@ -36,6 +36,7 @@ class DashboardController extends Controller
          $booking = DB::table('booking')
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                   ->where('status_ID','<>','2')
                    ->orderBy('checkin','desc')
                    ->get();
          

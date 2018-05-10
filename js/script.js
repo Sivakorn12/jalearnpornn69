@@ -51,7 +51,7 @@ function detailHoliday(event){
              "<tr><td>วันที่หยุด</td><td>"+dateThai(event.start.format())+"</td></tr>"+
              "<tr><td>ถึง</td><td>"+dateThai(yesterday) +"</td></tr>"+
             "</table>"+
-            "<br><br><a class='btn btn-danger' href='{{url('control/holiday/delete')}}/"+event.id+"'>เอาวันหยุดออก</a>";
+            "<br><br><a class='btn btn-danger' href='"+window.location.pathname+"/delete/"+event.id+"'>เอาวันหยุดออก</a>";
     $('#msgConfirm').html(html)
     $('#detailModal').modal('show')
 }

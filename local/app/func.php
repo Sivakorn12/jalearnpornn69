@@ -78,9 +78,6 @@ class func extends Model
     }
 
     public static function GET_TIMEUSE ($date_select, $times, $checkTimeuse, $id) {
-        // $times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
-        // $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0'];
-        
         $datatimes = DB::table('detail_booking')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
                             ->where('meeting_ID', $id)
@@ -94,12 +91,12 @@ class func extends Model
                     if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
                         $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
                         for ($inner = 0; $inner < $hour; $inner++) {
-                        $checkTimeuse[$inner + $index] = 1;
+                            $checkTimeuse[$inner + $index] = 1;
                         }
                     }
                 }
             }
-          }
+        }
         return $checkTimeuse;
     }
 
@@ -107,8 +104,29 @@ class func extends Model
         $temp_date = explode('-', $time_select);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
         
-        $times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
-        $checkTimeuse = ['0', '0', '0', '0', '0', '0', '0', '0'];
+        $data_openExtra = DB::table('meeting_open_extra')
+                                ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
+                                ->first();
+
+        $time_start = 8;
+        $time_end = 16;
+        $times = array();
+        $checkTimeuse = array();
+
+        if (isset($data_openExtra)) {
+            $time_start = substr($data_openExtra->extra_start, -8, 2);
+            $time_end = substr($data_openExtra->extra_end, -8, 2);
+        }
+
+        for ($index = $time_start; $index < $time_end; $index++) {
+            array_push($checkTimeuse, 0);
+            if (strlen($index) < 2) {
+                array_push($times, '0'.$index.':00');
+            } else {
+                array_push($times, $index.':00');
+            }
+        }
+
         $time_reserve = $time_reserve.':00';
         $count_time = 0;
         $pos_timeuse = array_search($time_reserve, $times);
@@ -140,7 +158,6 @@ class func extends Model
                 $count_time++;
             } else break;
         }
-
         return $count_time;
     }
 
@@ -149,8 +166,6 @@ class func extends Model
         $data_openExtra = DB::table('meeting_open_extra')
                                 ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_now)
                                 ->first();
-
-        
         return $data_openExtra;
     }
 }

@@ -71,7 +71,6 @@ Route::prefix('/control')->group(function () {
   Route::get('/checkdate', 'Officer\ReservationController@CHECK_DATE_RESERVE');
 
   Route::get('/resetStatus','Officer\CheckBookingController@resetStatus');
-
 });
 
 Route::get('auth/google', 'GoogleController@redirectToProvider');

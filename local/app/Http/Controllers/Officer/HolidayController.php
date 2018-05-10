@@ -97,6 +97,7 @@ class HolidayController extends Controller
     public function delete($id){
         
         DB::table('holiday')->where('holiday_ID',$id)->delete();
-        return redirect('control/holiday');
+        return redirect('control/holiday/')
+                    ->with('successMessage','ลบวันหยุดสำเร็จ');
     }
 }

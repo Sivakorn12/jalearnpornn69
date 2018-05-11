@@ -15,7 +15,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">กรอกข้อมูลการจองห้องประชุม</div>
       <div class="panel-body">
-        <form class="form-horizontal" action="{{ url('reserve/confirm') }}" method="post">
+        <form class="form-horizontal" action="{{ url('reserve/confirm') }}" method="post" enctype="multipart/form-data">
           <div class="form-group">
             <label class="col-sm-2 control-label">ห้องประชุม</label>
             <div class="col-sm-10">
@@ -78,13 +78,30 @@
           <div class="form-group">
             <label class="col-sm-2 control-label">อุปกรณ์ที่ยืมเพิ่ม</label>
             <div class="col-sm-5">
-              <select class="sectionlist form-control" name="equipment_name">
+              <select class="sectionlist form-control" id="input-equip-name">
                 @foreach($data_equipment as $equipment)
-                  <option value="{{$equipment->em_ID}}">{{$equipment->em_name}}</option>
+                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}}</option>
                 @endforeach
               </select>
             </div>
+            <label class="col-sm-1 control-label">จำนวน</label>
+            <div class="col-sm-2">
+                    <input type="number" class="form-control" min="1" id="input-equip-amount">
+            </div>
+            <div class="col-sm-1 control-label" >
+                <button style="padding-top: 0px" type="button" class="btn btn-default btn-circle" onclick="addEquioment()">
+                    <i style="margin-top:8px"class="fa fa-lg fa-plus" aria-hidden="true"></i>
+                </button>
+            </div>
           </div>
+          <div class="form-group form-room" id="div-show-equip" style="display:none">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-7">
+                <ul style="-webkit-padding-start: 15px;" id="list-equip">
+                </ul>
+            </div>
+          </div>
+          <div id="hideEquip"></div>
           <input type="hidden" name="user_id" value="{{$user_id}}">
           <input type="hidden" name="user_name" value="{{$user_name}}">
           <input type="hidden" name="meeting_id" value="{{$room->meeting_ID}}">
@@ -103,4 +120,58 @@
   </div>
   <div class="col-md-1"></div>
 </div>
+<script>
+  var equip =[]
+  
+  function addEquioment(){     
+     var name = $('#input-equip-name').val()
+     var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
+     if (amount && amount > 0) {
+        if (checkDuplicate(name,amount, equip)) {
+          equip[equip.length] = [name,amount];
+        }
+     }
+    fetchListEquip(equip);
+    $('#input-equip-amount').val('')
+    // $('#changeEq').val('yes');
+ }
+
+ function checkDuplicate(newVal,amount, arrVal) {
+    for (var m = 0; m < arrVal.length; m++)
+        if (newVal == arrVal[m][0] &&amount == arrVal[m][1] ) return false;
+    return true;
+ }
+
+ function fetchListEquip(equipment){  
+     if(equipment.length == 0){
+        $('#div-show-equip').hide()
+     }else{
+        var html = ''
+        for(var i = 0 ; i < equipment.length ; i++){
+            html +='<li>'+
+                        '<b>'+equipment[i][0]+'</b> จำนวน : '+equipment[i][1]+
+                        ' <i class="fa fa-times" aria-hidden="true" title="ลบ" onclick="deleteEquip('+i+')"></i>'+
+                    '</li>'
+        }
+        pushHiddenEquip(equipment)
+        $('#list-equip').html(html)
+        $('#div-show-equip').show()
+    }
+    console.log(equipment)
+ }
+
+ function pushHiddenEquip(equipment){
+    var html =''
+    for(var i = 0 ; i < equipment.length ; i++){
+        html +='<input type="hidden" name="hdnEq[]" value="'+equipment[i]+'">'
+    }
+    $('#hideEquip').html(html)
+ }
+
+ function deleteEquip(index){
+    equip.splice(index, 1);
+    fetchListEquip(equip)
+    // $('#changeEq').val('yes');
+ }
+</script>
 @endsection

@@ -15,8 +15,6 @@
     </div>
     <div id="detailModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
-          
-              <!-- Modal content-->
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -35,7 +33,6 @@
 <script>
    function  detailreserve(event){
        var path = '{{url("/getdataReserve")}}/'+event.id
-       console.log(path)
         $.ajax({
             url: path,
             type: 'POST',

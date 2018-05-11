@@ -58,14 +58,17 @@ class ReserveController extends Controller
         $dataTimeReserve = DB::table('detail_booking')
             ->where('meeting_ID', $id)
             ->get();
-        
+
+        $dataequipment = DB::table('equipment')
+                                ->get();
         $time_reamain = func::CHECK_TIME_REAMAIN ($id, $timeReserve, $timeSelect);
 
         $data = array(
             'room' => $dataRoom,
             'time_reserve' => $timeReserve.':00',
             'time_remain' => $time_reamain,
-            'time_select' => $date_select
+            'time_select' => $date_select,
+            'data_equipment' => $dataequipment
         );
         return view('ReserveRoom/reserveForm', $data);
     }

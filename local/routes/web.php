@@ -28,6 +28,7 @@ Route::get('/history/{reserveid}', 'HistoryController@DELETE_RESERVE');
 //     echo bcrypt('1234');
 // });
 Route::any('/getdataReserve/{id}', 'Officer\DashboardController@viewBooking');
+Route::any('/getdataCalendar/{id}', 'HomeController@viewBooking');
 
 
 Route::prefix('/control')->group(function () {

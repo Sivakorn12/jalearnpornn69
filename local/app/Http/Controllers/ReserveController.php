@@ -115,6 +115,34 @@ class ReserveController extends Controller
                                 'detail_count' => $req->detail_count
                             ]);
 
+                    if (isset($req->hdnEq)) {
+                        $id_borrow_booking = DB::table('borrow_booking')
+                                    ->insertGetId([
+                                        'booking_ID' => $id_insert,
+                                        'borrow_date' => $req->time_select
+                                    ]);
+
+                        for($i = 0 ; $i < count($req->hdnEq);$i++){
+                            $temp = explode(",",$req->hdnEq[$i]);
+                            $data_em = DB::table('equipment')
+                                        ->where('em_name', $temp[0])
+                                        ->first();
+
+                            $em_remain = $data_em->em_count - (int)$temp[1];
+
+                            DB::table('equipment')
+                                ->where('em_name', $temp[0])
+                                ->update(['em_count' => $em_remain]);
+
+                            DB::table('detail_borrow')
+                                ->insert([
+                                    'borrow_ID' => $id_borrow_booking,
+                                    'equiment_ID' => $data_em->em_ID,
+                                    'borrow_count' => $temp[1]
+                                ]);
+                        }
+                    }
+
                     return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
                 }
             } else {

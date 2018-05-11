@@ -164,7 +164,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,  
-
         /*
          * Package Service Providers...
          */
@@ -229,7 +228,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Calendar' => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,  
-
     ],
 
 ];

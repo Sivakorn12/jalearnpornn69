@@ -26,7 +26,7 @@ use App\Officer as officer;
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label">จำนวนอุปกรณ์</label>
                             <div class="col-sm-7">
-                                <input type="number" class="form-control" name="em_count" value="{{(isset($equipment->em_count))?$equipment->em_count:old('em_count')}}" >
+                                <input type="number" class="form-control" min="1" name="em_count" value="{{(isset($equipment->em_count))?$equipment->em_count:old('em_count')}}" >
                                 <p  style="color:red">@if($errors->has('em_count')) {{$errors->first('em_count')}}@endif</p>
                             </div>
                         </div>

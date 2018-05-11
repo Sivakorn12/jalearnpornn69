@@ -11,6 +11,7 @@ use \Input as Input;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Calendar;  
+use Arcanedev\QrCode\QrCode;
 use App\Event;  
 use App\Officer as officer;
 
@@ -72,5 +73,13 @@ class DashboardController extends Controller
     public function viewBooking($id){
         $html = officer::viewBooking($id);
         return response()->json(['html'=>$html]);
+    }
+
+    public function qr(){
+        $qrCode = new QrCode;
+        $qrCode->setText("https://www.youtube.com/");
+        $qrCode->setSize(200);
+
+        echo $qrCode->image("image alt", ['class' => 'qr-code-img']);
     }
 }

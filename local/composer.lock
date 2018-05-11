@@ -1,11 +1,63 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "53b33f146820325ce01cab02b724479f",
+    "content-hash": "2c3dcae74528ec41aa833bb4ea1ead4b",
     "packages": [
+        {
+            "name": "arcanedev/qr-code",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/arcanedev-maroc/QrCode.git",
+                "reference": "c0e3429df86bf9e4668c1e4f083c742ae677f6fe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/arcanedev-maroc/QrCode/zipball/c0e3429df86bf9e4668c1e4f083c742ae677f6fe",
+                "reference": "c0e3429df86bf9e4668c1e4f083c742ae677f6fe",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Arcanedev\\QrCode\\": "src/"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ARCANEDEV",
+                    "email": "arcanedev.maroc@gmail.com",
+                    "homepage": "http://www.arcanedev.net/"
+                }
+            ],
+            "description": "QR Code generator",
+            "homepage": "https://github.com/arcanedev-maroc/QrCode",
+            "keywords": [
+                "code",
+                "generator",
+                "qr",
+                "qr-code",
+                "qrcode"
+            ],
+            "time": "2014-10-25T20:57:30+00:00"
+        },
         {
             "name": "dnoegel/php-xdg-base-dir",
             "version": "0.1",
@@ -551,16 +603,16 @@
         },
         {
             "name": "laravel/socialite",
-            "version": "v3.0.9",
+            "version": "v3.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/socialite.git",
-                "reference": "fc1c8d415699e502f3e61cbc61e3250d5bd942eb"
+                "reference": "647ee1b1b7520e16c661b4df5cdff1d7f6902eee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/socialite/zipball/fc1c8d415699e502f3e61cbc61e3250d5bd942eb",
-                "reference": "fc1c8d415699e502f3e61cbc61e3250d5bd942eb",
+                "url": "https://api.github.com/repos/laravel/socialite/zipball/647ee1b1b7520e16c661b4df5cdff1d7f6902eee",
+                "reference": "647ee1b1b7520e16c661b4df5cdff1d7f6902eee",
                 "shasum": ""
             },
             "require": {
@@ -609,7 +661,7 @@
                 "laravel",
                 "oauth"
             ],
-            "time": "2017-11-06T16:02:48+00:00"
+            "time": "2017-12-05T13:46:36+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -3835,7 +3887,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "arcanedev/qr-code": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

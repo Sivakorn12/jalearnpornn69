@@ -32,6 +32,7 @@ Route::any('/getdataCalendar/{id}', 'HomeController@viewBooking');
 
 
 Route::prefix('/control')->group(function () {
+  Route::get('qr-code','Officer\DashboardController@qr' );
   Route::get('/' ,'Officer\DashboardController@index');
   Route::get('/checkbooking','Officer\CheckBookingController@indexReservation');
   Route::get('/checkbooking/fetchTbBooking','Officer\CheckBookingController@fetchTbBooking');

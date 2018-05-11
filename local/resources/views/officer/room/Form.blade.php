@@ -60,6 +60,12 @@ if(isset($room))
                         </div>
                         <br><br>
                         <div class="form-group form-room">
+                            <label class="col-sm-3 control-label">ลิ้งค์แบบประเมิน</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="est_link" value="{{(isset($room->estimate_link))?$room->estimate_link:old('est_link')}}" >
+                            </div>
+                        </div>
+                        <div class="form-group form-room">
                             <label class="col-sm-3 control-label">รูปภาพ</label>
                             <div class="col-sm-7">
                                 <input name="room_image[]" type="file" class="form-control" multiple onchange='handleFiles(this.files)' name="room_image"  accept="image/x-png,image/gif,image/jpeg">
@@ -140,7 +146,6 @@ if(isset($room))
  }
  function addEquioment(){
      console.log(equip.length)
-     
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
      if (checkDuplicate(name,amount, equip)) {

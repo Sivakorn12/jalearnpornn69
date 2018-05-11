@@ -43,7 +43,7 @@ elseif($type == 'confirmed'){
               </td>
               <td>
               @if($chk)
-                ไม่อยู่ในช่วงเวลา
+                <i style="color:#777" class=" fa fa-clock-o fa-lg" aria-hidden="true"></i>
               @else 
                 @if($booking->status_ID==3)
                   <button type="button" class="btn btn-success" onclick="confirmBooking('{{$booking->booking_ID}}')" ><i class="fa fa-check" aria-hidden="true"></i> อนุมัติ</button>

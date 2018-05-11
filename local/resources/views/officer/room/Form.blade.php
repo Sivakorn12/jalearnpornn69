@@ -1,10 +1,13 @@
 <?php
 use App\Officer as officer;
+use Arcanedev\QrCode\QrCode;
 $roomTypes = officer::getTypeRoom();
 $equips = array();
 if(isset($room))
     $equips = officer::getEquips($room->meeting_ID);
 //dd($equips);
+
+
 ?>
 @extends('layouts.officer',['page'=>'room'])
 @section('page_heading','จัดการห้องประชุม')
@@ -17,7 +20,7 @@ if(isset($room))
                   ข้อมูลห้องประชุม
                 </div>
                 <div class="panel-body" >
-                <form action="{{url('control/room/'.$action)}}" method="POST" enctype="multipart/form-data">
+                <form action="{{url('control/room/'.$action)}}" class="form-horizontal" method="POST" enctype="multipart/form-data">
                     <div class="col-md-1"></div>
                     <div class="col-md-10">
                         <div class="form-group form-room">
@@ -58,32 +61,39 @@ if(isset($room))
                                 <textarea name="provision" class="form-control"  rows="3">{{(isset($room->provision))?$room->provision:old('provision')}}</textarea>
                             </div>
                         </div>
-                        <br><br>
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label">ลิ้งค์แบบประเมิน</label>
                             <div class="col-sm-7">
                                 <input type="text" class="form-control" name="est_link" value="{{(isset($room->estimate_link))?$room->estimate_link:old('est_link')}}" >
                             </div>
                         </div>
+                        @if(isset($room->estimate_link))
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label">รูปภาพ</label>
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7" style="height:180px">
+                                {!!$qrCode->image("image alt", ['class' => 'qr-code-img'])!!}
+                            </div>
+                        </div>
+                        @endif
+                        <div class="form-group form-room" >
+                            <label class="col-sm-3 control-label" >รูปภาพ</label>
                             <div class="col-sm-7">
                                 <input name="room_image[]" type="file" class="form-control" multiple onchange='handleFiles(this.files)' name="room_image"  accept="image/x-png,image/gif,image/jpeg">
                                 <p id="error-pic" style="display:none;color:red">กรุณาเลือกรูปภาพเท่านั้น</p>
                             </div>
                         </div>
-                        <div class="form-group form-room">
-                                <label class="col-sm-3 control-label">อุปกรณ์ภายใน</label>
+                        <div class="form-group form-room" >
+                                <label class="col-sm-3 control-label" >อุปกรณ์ภายใน</label>
                                 <div class="col-sm-4">
                                     <input type="text" class="form-control" id="input-equip-name" >
                                 </div>
-                                <label class="col-sm-1 control-label">จำนวน</label>
+                                <label class="col-sm-1 control-label" >จำนวน</label>
                                 <div class="col-sm-2">
                                         <input type="number" class="form-control" min="1" id="input-equip-amount" >
                                 </div>
                                 <div class="col-sm-1 control-label" >
-                                    <button style="padding-top: 0px" type="button" class="btn btn-default btn-circle" onclick="addEquioment()">
-                                        <i style="margin-top:8px"class="fa fa-lg fa-plus" aria-hidden="true"></i>
+                                    <button style="margin-top: -3px" type="button" class="btn btn-default btn-circle" onclick="addEquioment()">
+                                        <i style="margin-top:3px"class="fa fa-lg fa-plus" aria-hidden="true"></i>
                                     </button>
                                 </div>
                         </div>

@@ -4,8 +4,7 @@ table.showroom > thead > tr > th {
   text-align: center;
 }
 .form-room{
-  padding:18px 0px;
-  margin-bottom: 20px;
+
 }
 
 .form-room>label{
@@ -18,4 +17,7 @@ table.showroom > thead > tr > th {
 }
 .label-status{
   font-size: 12px!important
+}
+.form-group{
+  height: auto;
 }

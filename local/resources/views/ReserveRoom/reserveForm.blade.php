@@ -30,8 +30,8 @@
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">จำนวนเวลา</label>
-            <div class="col-sm-10">
-              <select class="sectionlist" name="time_use">
+            <div class="col-sm-5">
+              <select class="sectionlist form-control" name="time_use">
                 @for($index = 1; $index <= $time_remain; $index++)
                   <option value="{{$index}}">{{$index}}</option>
                 @endfor
@@ -67,10 +67,20 @@
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">สาขา</label>
-            <div class="col-sm-10">
-              <select class="sectionlist" name="section_id">
+            <div class="col-sm-5">
+              <select class="sectionlist form-control" name="section_id">
                 @foreach($sections as $section)
                   <option value="{{$section->section_ID}}">{{$section->section_name}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">อุปกรณ์ที่ยืมเพิ่ม</label>
+            <div class="col-sm-5">
+              <select class="sectionlist form-control" name="equipment_name">
+                @foreach($data_equipment as $equipment)
+                  <option value="{{$equipment->em_ID}}">{{$equipment->em_name}}</option>
                 @endforeach
               </select>
             </div>

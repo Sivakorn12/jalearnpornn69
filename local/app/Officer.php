@@ -160,7 +160,7 @@ class Officer extends Model
         ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
         ->where('booking.booking_ID',$id)
         ->first();
-        //dd($booking);
+        
         $html = '<table cellpadding=3>
                 <tr>
                     <td width="120"><b>รหัสการจอง</b></td>

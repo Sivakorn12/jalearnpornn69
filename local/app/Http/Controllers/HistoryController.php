@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
+use App\Officer as officer;
 
 class HistoryController extends Controller
 {
@@ -62,5 +63,15 @@ class HistoryController extends Controller
             ->delete();
 
         return redirect('history')->with('message', 'ยกเลิกการจองสำเร็จ');
+    }
+
+    public function GET_QRCODE (Request $req) {
+        if (isset($req->id)) {
+            $data = $req->id;
+            $data_qr = officer::genQR_code($data);
+            return response()->json(['html'=> $data_qr]);
+        } else {
+            return response()->json(['html'=> 'asdasdasfasdas']);
+        }
     }
 }

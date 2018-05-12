@@ -77,6 +77,12 @@ class func extends Model
         return $dataSection;
     }
 
+    public static function GET_EQUIPMENT () {
+        $dataEquipment = DB::table('equipment')
+                            ->get();
+        return $dataEquipment;
+    }
+
     public static function GET_TIMEUSE ($date_select, $times, $checkTimeuse, $id) {
         $datatimes = DB::table('detail_booking')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
@@ -167,5 +173,48 @@ class func extends Model
                                 ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_now)
                                 ->first();
         return $data_openExtra;
+    }
+
+    public static function SET_DATA_BOOKING ($req, $time_start, $time_out) {
+        $id_insert = DB::table('booking')
+                        ->insertGetId([
+                            'status_ID' => 3,
+                            'section_ID' => isset($req->section_id)? $req->section_id : null,
+                            'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
+                            'user_ID' => $req->user_id,
+                            'booking_name' => $req->user_name,
+                            'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                            'booking_date' => date('Y-m-d H:i:s'),
+                            'checkin' => $req->time_select
+                        ]);
+        DB::table('detail_booking')
+                ->insert([
+                    'booking_ID' => $id_insert,
+                    'meeting_ID' => $req->meeting_id,
+                    'detail_topic' => $req->detail_topic,
+                    'detail_timestart' => $time_start,
+                    'detail_timeout' => $time_out,
+                    'detail_count' => $req->detail_count
+                ]);
+
+        return $id_insert;
+    }
+
+    public static function SET_DATA_BORROW ($id_equipment, $count_equipment, $id_insert_booking, $time_select) {
+        $id_borrow_booking = DB::table('borrow_booking')
+                                    ->insertGetId([
+                                        'booking_ID' => $id_insert_booking,
+                                        'borrow_date' => $time_select,
+                                        'borrow_status' => 3
+                                    ]);
+
+        for($index = 0 ; $index < sizeof($count_equipment); $index++){
+            DB::table('detail_borrow')
+                ->insert([
+                    'borrow_ID' => $id_borrow_booking,
+                    'equiment_ID' => $id_equipment[$index],
+                    'borrow_count' => $count_equipment[$index]
+                ]);
+        }
     }
 }

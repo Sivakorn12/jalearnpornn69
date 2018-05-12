@@ -57,8 +57,8 @@ $(document).ready(function() {
 });
 
 $('#exampleModal').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget) // Button that triggered the modal
-  var recipient = button.data('room') // Extract info from data-* attributes
+  var button = $(event.relatedTarget)
+  var recipient = button.data('room')
   var path = `{{url('history/getQr')}}`
   var modal = $(this)
 

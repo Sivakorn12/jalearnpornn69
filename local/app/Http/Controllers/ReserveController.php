@@ -75,9 +75,9 @@ class ReserveController extends Controller
 
     public function submitReserve(Request $req) {
         $msg = [
-        'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
-        "detail_count.required" => "กรุณาระบุจำนวนผู้เข้าประชุม",
-        'user_tel.required' => "กรุณาระบุเบอร์โทรติดต่อ"
+        'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
+        'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+        'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
         ];
     
         $rule = [
@@ -94,48 +94,21 @@ class ReserveController extends Controller
                 $time_out = $req->time_select.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00';
 
                 if(isset($req)) {
-                    $id_insert = DB::table('booking')
-                                    ->insertGetId([
-                                        'status_ID' => 3,
-                                        'section_ID' => isset($req->section_id)? $req->section_id : null,
-                                        'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
-                                        'user_ID' => $req->user_id,
-                                        'booking_name' => $req->user_name,
-                                        'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
-                                        'booking_date' => date('Y-m-d H:i:s'),
-                                        'checkin' => $req->time_select
-                                    ]);
-                    DB::table('detail_booking')
-                            ->insert([
-                                'booking_ID' => $id_insert,
-                                'meeting_ID' => $req->meeting_id,
-                                'detail_topic' => $req->detail_topic,
-                                'detail_timestart' => $time_start,
-                                'detail_timeout' => $time_out,
-                                'detail_count' => $req->detail_count
-                            ]);
-
                     if (isset($req->hdnEq)) {
-                        $id_borrow_booking = DB::table('borrow_booking')
-                                    ->insertGetId([
-                                        'booking_ID' => $id_insert,
-                                        'borrow_date' => $req->time_select,
-                                        'borrow_status' => 3
-                                    ]);
-
-                        for($i = 0 ; $i < count($req->hdnEq);$i++){
-                            $temp = explode(",",$req->hdnEq[$i]);
+                        for($index = 0 ; $index < count($req->hdnEq); $index++){
+                            $temp = explode(",",$req->hdnEq[$index]);
                             $data_em = DB::table('equipment')
                                         ->where('em_name', $temp[0])
                                         ->first();
 
-                            DB::table('detail_borrow')
-                                ->insert([
-                                    'borrow_ID' => $id_borrow_booking,
-                                    'equiment_ID' => $data_em->em_ID,
-                                    'borrow_count' => $temp[1]
-                                ]);
+                            $data_id_equipment[$index] = $data_em->em_ID;
+                            $data_count_equipment[$index] = $temp[1];
                         }
+
+                        $id_insert_booking = func::SET_DATA_BOOKING($req, $time_start, $time_out);
+                        func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select);
+                    } else {
+                        func::SET_DATA_BOOKING($req, $time_start, $time_out);
                     }
                     return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
                 }
@@ -154,7 +127,6 @@ class ReserveController extends Controller
     }
 
     public function CHECK_DATE_RESERVE (Request $req) {
-        $testdate = '2018-05-09';
         $temp_date = explode('-', $req->date);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
         $check_weekend = date_create($date_select);

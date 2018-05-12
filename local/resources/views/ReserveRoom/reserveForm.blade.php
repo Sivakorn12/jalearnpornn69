@@ -4,6 +4,7 @@
   $user_id = Auth::user()->id;
   $user_name = Auth::user()->user_name;
   $sections = func::GetSection();
+  $dataEquipment = func::GET_EQUIPMENT();
 ?>
 
 @extends('layouts.app')
@@ -80,7 +81,7 @@
             <div class="col-sm-5">
               <select class="sectionlist form-control" id="input-equip-name">
                 @foreach($data_equipment as $equipment)
-                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}}</option>
+                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}} : (เหลือจำนวน {{$equipment->em_count}})</option>
                 @endforeach
               </select>
             </div>
@@ -122,22 +123,30 @@
 </div>
 <script>
   var equip =[]
+  var data_equip = <?php echo $dataEquipment ?>;
   
-  function addEquioment(){     
+  function addEquioment() {
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
      if (amount && amount > 0) {
-        if (checkDuplicate(name,amount, equip)) {
-          equip[equip.length] = [name,amount];
-        }
-     }
+       for (let index = 0; index < data_equip.length; index++) {
+         if (data_equip[index].em_name == name && data_equip[index].em_count < amount) {
+            swal('ไม่สำเร็จ', 'อุปกรณ์ '+data_equip[index].em_name+' ไม่เพียงพอ กรุณาเลือกจำนวนใหม่อีกครั้ง' , 'error')
+            break
+         } else if (data_equip[index].em_count >= amount) {
+            if (checkDuplicate(name,amount, equip)) {
+              equip[equip.length] = [name,amount];
+            }
+         }
+      }
+    }
     fetchListEquip(equip);
     $('#input-equip-amount').val('')
  }
 
- function checkDuplicate(newVal,amount, arrVal) {
+ function checkDuplicate(newVal, amount, arrVal) {
     for (var m = 0; m < arrVal.length; m++)
-        if (newVal == arrVal[m][0] &&amount == arrVal[m][1] ) return false;
+        if (newVal == arrVal[m][0]) return false;
     return true;
  }
 

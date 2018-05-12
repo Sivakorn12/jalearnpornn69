@@ -111,7 +111,6 @@ class RoomController extends Controller
                     }
                 }
 
-                
                 return redirect('control/room/')
                         ->with('successMessage','เพิ่มห้องสำเร็จ');
               }catch (Exception $e) {

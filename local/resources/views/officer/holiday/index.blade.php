@@ -84,7 +84,7 @@ use App\Officer as officer;
       </div>
   
     </div>
-  </div>
+</div>
 <script>       
     $(document).ready(function() {
       $('#tb-room').DataTable();

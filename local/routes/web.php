@@ -61,6 +61,8 @@ Route::prefix('/control')->group(function () {
   Route::get('/equipment/delete/{id}','Officer\EquipmentController@delete');
 
   Route::get('/return-eq','Officer\ReturnEquipController@index');
+  Route::get('/return-eq/confirm/{id}','Officer\ReturnEquipController@confirm');
+  Route::get('/return-eq/viewdetailBorrow','Officer\ReturnEquipController@viewdetailBorrow');
 
   Route::get('/holiday','Officer\HolidayController@index');
   Route::get('/holiday/form','Officer\HolidayController@Form');

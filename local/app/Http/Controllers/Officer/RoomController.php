@@ -49,10 +49,11 @@ class RoomController extends Controller
             $meeting_room = DB::table('meeting_room')
                         ->where('meeting_ID',$id)
                         ->first();
+            
             return view('officer/room/Form',[
                 'room' => $meeting_room ,
                 'form'=>'warning',
-                'action' => 'update'
+                'action' => 'update',
             ]);
         }
     }

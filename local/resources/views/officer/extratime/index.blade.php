@@ -41,7 +41,7 @@
           <h4 class="modal-title" id="myModalLabel">เวลาการใช้งาน</h4>
         </div>
         <div class="modal-body">
-            <form action="{{url('control/extratime/add')}}" method="POST" >
+            <form action="{{url('control/extratime/add')}}" class="form-horizontal" method="POST" >
                 <div class="form-group form-room">
                         <label class="col-sm-3 control-label">วันที่เริ่ม</label>
                         <div class="col-sm-7">
@@ -107,6 +107,8 @@ function setExEnd(){
     $('#ex_end').html(html)
 }
 function addEx(){
+    $('#ex_start').val('8')
+    $('#ex_end').val('9')
     $('#idHide').html("")
     $('#extratime-form').modal('show')
 }

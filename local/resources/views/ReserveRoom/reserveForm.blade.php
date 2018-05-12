@@ -9,10 +9,6 @@
 @extends('layouts.app')
 @section('page_heading','จองห้องประชุม')
 @section('content')
-<div>
- @if(isset($message)) swal('ไม่สำเร็จ', $message, 'error')
- @endif
-</div>
 <div class="row">
   <div class="col-md-1"></div>
   <div class="col-md-10">
@@ -174,7 +170,5 @@
     equip.splice(index, 1);
     fetchListEquip(equip)
  }
-</script>
-<script>
 </script>
 @endsection

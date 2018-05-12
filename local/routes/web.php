@@ -24,6 +24,7 @@ Route::get('/reserve/{id}/{timeReserve}/{timeSelect}', 'ReserveController@reserv
 
 Route::get('/history', 'HistoryController@index');
 Route::get('/history/{reserveid}', 'HistoryController@DELETE_RESERVE');
+Route::get('/getQr', 'HistoryController@GET_QRCODE');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });
@@ -58,6 +59,8 @@ Route::prefix('/control')->group(function () {
   Route::get('/equipment/edit/{id}','Officer\EquipmentController@Form');
   Route::post('/equipment/update','Officer\EquipmentController@update');
   Route::get('/equipment/delete/{id}','Officer\EquipmentController@delete');
+
+  Route::get('/return-eq','Officer\ReturnEquipController@index');
 
   Route::get('/holiday','Officer\HolidayController@index');
   Route::get('/holiday/form','Officer\HolidayController@Form');

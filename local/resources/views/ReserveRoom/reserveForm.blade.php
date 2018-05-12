@@ -133,7 +133,7 @@
          if (data_equip[index].em_name == name && data_equip[index].em_count < amount) {
             swal('ไม่สำเร็จ', 'อุปกรณ์ '+data_equip[index].em_name+' ไม่เพียงพอ กรุณาเลือกจำนวนใหม่อีกครั้ง' , 'error')
             break
-         } else if (data_equip[index].em_count >= amount) {
+         } else if (data_equip[index].em_name == name && data_equip[index].em_count >= amount) {
             if (checkDuplicate(name,amount, equip)) {
               equip[equip.length] = [name,amount];
             }

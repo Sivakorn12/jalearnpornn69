@@ -104,6 +104,55 @@ class Officer extends Model
         }else echo 'file not found ' . $filename;
     }
 
+    // Equipment
+    public static function modalViewDetailBorrow($id){
+        $html = '';
+        $datas = DB::table('detail_borrow')
+                ->join('equipment','equipment.em_ID','=','detail_borrow.equiment_ID')
+                ->where('detail_borrow.borrow_ID',$id)
+                ->get();
+        
+        $html = '<p>
+                    รายการยืมอุปกรณ์ หมายเลข :'.$id .'
+                </p>
+                <table class="table table-bordered" >
+                <tr>
+                    <th width="25px">ลำดับ</th>
+                    <th>อุปกรณ์</th>
+                    <th>จำนวน</th>
+                    <th></th>
+                </tr>';
+        foreach($datas as $key => $data){
+            $html = $html."<tr>
+                            <td>".($key+1)."</td>
+                            <td>".$data->em_name."</td>
+                            <td>".$data->borrow_count."</td>
+                            <td>".officer::statusEquip($data->borrow_count,$data->em_count)."</td>
+                          </tr>";
+        }
+
+        $html = $html."</table><br>";
+        if(self::checkBorrowStatus($id)){
+        $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณต้องการอนุมัติการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/confirm/'.$data->borrow_ID).'" role="button">ยืนยัน</a>
+                       <a class="btn btn-danger"onclick="return confirm(`คุณต้องการยกเลิกการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/cancel/'.$data->borrow_ID).'" role="button">ยกเลิก</a>';
+        }
+        return $html;
+    }
+
+    public static function statusEquip($value,$total){
+        if($value <= $total){
+            return '<span  style="color:green" class="glyphicon glyphicon-ok " aria-hidden="true" title="เพียงพอ"></span>';
+        }
+        else return '<span style="color:red" class="glyphicon glyphicon-remove" aria-hidden="true" title="ไม่เพียงพอ"></span>';
+    }
+
+    public static function checkBorrowStatus($id){
+        $borrow = DB::table('borrow_booking')->select('borrow_status')->where('borrow_ID',$id)->first();
+        if($borrow->borrow_status == '3') 
+            return true;
+        return false;
+    }
+
     // *ETC
     public static function getAImage($imageName){
         $images = explode(',',$imageName);
@@ -200,5 +249,68 @@ class Officer extends Model
                 return $qrCode->image("image alt", ['class' => 'qr-code-img']);
             }
     }
+
+    public static function getDataBorrow($type=''){
+        if($type == ''){
+            return self::getallDataBorrow();
+        }
+        elseif($type = 'today'){
+            return self::getDataBorrowToday();
+        }
+
+    }
+    public static function getDataBorrowToday(){
+        return DB::table('booking')
+                ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
+                ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
+                ->orderBy('booking_date','desc')
+                ->select(
+                    "booking.booking_ID",
+                    "booking.status_ID",
+                    "booking.section_ID",
+                    "booking.booking_name",
+                    "booking.booking_phone",
+                    "booking.booking_date",
+                    "booking.checkin",
+                    "detail_booking.detail_topic",
+                    "detail_booking.detail_timestart",
+                    "detail_booking.detail_timeout",
+                    "meeting_room.meeting_name",
+                    "borrow_booking.borrow_ID",
+                    "borrow_booking.borrow_date",
+                    "borrow_booking.borrow_status"
+                )
+                ->where('borrow_booking.borrow_date' ,date('Y-m-d'))
+                ->get();
+    }
+
+    public static function getallDataBorrow(){
+        return DB::table('booking')
+                ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
+                ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
+                ->orderBy('booking_date','desc')
+                ->select(
+                    "booking.booking_ID",
+                    "booking.status_ID",
+                    "booking.section_ID",
+                    "booking.booking_name",
+                    "booking.booking_phone",
+                    "booking.booking_date",
+                    "booking.checkin",
+                    "detail_booking.detail_topic",
+                    "detail_booking.detail_timestart",
+                    "detail_booking.detail_timeout",
+                    "meeting_room.meeting_name",
+                    "borrow_booking.borrow_ID",
+                    "borrow_booking.borrow_date",
+                    "borrow_booking.borrow_status"
+                )
+                ->get();
+    }
+
+    
+
 
 }

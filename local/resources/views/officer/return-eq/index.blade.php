@@ -16,16 +16,45 @@
     <div class="col-xs-12" id="tableroom"> 
         <div class="tab-content">
             <div id="borrow" class="tab-pane fade in active">
-                @component('officer.return-eq._tb',[
-                    "datas"=>$datas,
-                    "type" => 'borrow'
-                  ])
-                  @endcomponent
+                <div class="tbEQ-section">
+                    <h4><i class="fa fa-calendar-check-o" aria-hidden="true"></i> รายการการยืมในวันนี้</h4>
+                    @component('officer.return-eq._tb',[
+                        "type" => 'borrowtoday'
+                        ])
+                    @endcomponent
+                </div>
+                <div class="tbEQ-section">
+                    <h4><i class="fa fa-calendar" aria-hidden="true"></i> รายการการยืมอุปกรณ์ทั้งหมด</h4>
+                    @component('officer.return-eq._tb',[
+                        "type" => 'borrow'
+                        ])
+                    @endcomponent
+                </div>
             </div>
             <div id="return" class="tab-pane fade">
-                
+                @component('officer.return-eq._tb',[
+                    "type" => 'return'
+                  ])
+                @endcomponent
             </div>
           </div>
+    </div>
+</div>
+<div id="detailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">ดูรายละเอียดการยืม</h4>
+        </div>
+        <div class="modal-body">
+            <p id="msg"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </div>
     </div>
 </div>
 
@@ -37,5 +66,21 @@
       if('{{session("successMessage")}}' != null) $.notify('{{session("successMessage")}}',"success");
       else if('{{session("errorMesaage")}}' != null) $.notify('{{session("errorMesaage")}}',"error");
     });
+
+    function viewBorrow(id){
+        var path = window.location.pathname+"/viewdetailBorrow"
+        $.ajax({
+            url: path,
+            type: 'GET',
+            dataType: 'JSON',
+            data: { id: id  },
+            success: function(data) {
+                $('#msg').html(data.html);
+                //
+            }
+        });
+        $('#detailModal').modal('show')
+        
+    }
 </script>   
 @endsection

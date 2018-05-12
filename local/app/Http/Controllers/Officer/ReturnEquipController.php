@@ -30,31 +30,41 @@ class ReturnEquipController extends Controller
     }
 
     public function index(){
-        $borrows = DB::table('booking')
-                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
-                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
-                    ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
-                    ->orderBy('booking_date','desc')
-                    ->select(
-                        "booking.booking_ID",
-                        "booking.status_ID",
-                        "booking.section_ID",
-                        "booking.booking_name",
-                        "booking.booking_phone",
-                        "booking.booking_date",
-                        "booking.checkin",
-                        "detail_booking.detail_topic",
-                        "detail_booking.detail_timestart",
-                        "detail_booking.detail_timeout",
-                        "meeting_room.meeting_name",
-                        "borrow_booking.borrow_ID",
-                        "borrow_booking.borrow_date",
-                        "borrow_booking.borrow_status"
-                    )
+        return view('officer/return-eq/index');
+    }
+
+    public function viewdetailBorrow(Request $req){
+        if(isset($req->id)){
+            $html = officer::modalViewDetailBorrow($req->id);
+            return response()->json(['html'=>$html]);
+        }
+    }
+
+    public function confirm($id){
+        try{
+            $datas = DB::table('detail_borrow')
+                    ->join('equipment','equipment.em_ID','=','detail_borrow.equiment_ID')
+                    ->where('detail_borrow.borrow_ID',$id)
                     ->get();
-        $data = array(
-            'datas' => $borrows
-        );
-        return view('officer/return-eq/index',$data);
+            // update status borrow
+            DB::table('borrow_booking')
+                ->where('borrow_ID', $id)
+                ->update([
+                    'borrow_status' => 1,
+                ]);
+            foreach($datas as $key => $data){
+                // update status borrow
+                DB::table('equipment')
+                    ->where('em_ID', $data->em_ID)
+                    ->update([
+                        'em_count' => ($data->em_count-$data->borrow_count),
+                    ]);
+            }
+            return redirect('control/return-eq/')
+                ->with('successMessage','ยืนยันการยืมเรียบร้อย');
+        }catch (Exception $e) {
+            return redirect('control/return-eq/')
+                    ->with('errorMesaage',$e);
+        }
     }
 }

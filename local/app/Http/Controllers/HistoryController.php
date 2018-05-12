@@ -17,29 +17,52 @@ class HistoryController extends Controller
     public function index () {
         $date_now = date('Y-m-d');
         $dataHistory = DB::table('booking')
-            ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
-            ->join('status_room', 'booking.status_ID', '=', 'status_room.status_ID')
-            ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
-            ->where('booking.user_ID', Auth::user()->id)
-            ->OrderBy('checkin', 'desc')
-            ->get();
+                            ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
+                            ->join('status_room', 'booking.status_ID', '=', 'status_room.status_ID')
+                            ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
+                            ->where('booking.user_ID', Auth::user()->id)
+                            ->OrderBy('checkin', 'desc')
+                            ->get();
+
+        $dataBorrow = $this->GET_HISTORY_BORROW();
         
-        $time_th = $time_start = $time_out = $check_dateCheckin = array();
+        $time_th = $time_start = $time_out = $check_dateCheckin = $checkin_date = $checkin_borrow = array();
         for ($index = 0; $index < sizeof($dataHistory); $index++) {
-            $time_th[$index] = str_replace(date('Y'), date('Y') + 543, $dataHistory[$index]->booking_date);
+            $time_th[0][$index] = str_replace(date('Y'), date('Y') + 543, $dataHistory[$index]->booking_date);
             $time_start[$index] = substr($dataHistory[$index]->detail_timestart, -8, 5);
             $time_out[$index] = substr($dataHistory[$index]->detail_timeout, -8, 5);
+            $temp = explode('-', $dataHistory[$index]->checkin);
+            $checkin_date[0][$index] = ($temp[0] + 543).'-'.$temp[1].'-'.$temp[2];
             
             if ($dataHistory[$index]->checkin >= $date_now) {
                 if ($dataHistory[$index]->status_ID == 3) {
-                    $check_dateCheckin[$index] = 1;
+                    $check_dateCheckin[0][$index] = 1;
                 } else if ($dataHistory[$index]->status_ID == 1) {
-                    $check_dateCheckin[$index] = 2;
+                    $check_dateCheckin[0][$index] = 2;
                 } else {
-                    $check_dateCheckin[$index] = 0;
+                    $check_dateCheckin[0][$index] = 0;
                 }
             } else {
-                $check_dateCheckin[$index] = 3;
+                $check_dateCheckin[0][$index] = 3;
+            }
+        }
+
+        for ($index = 0; $index < sizeof($dataBorrow); $index++) {
+            $temp_checkin = explode('-', $dataBorrow[$index]->checkin);
+            $temp_borrow_date = explode('-', $dataBorrow[$index]->borrow_date);
+            $checkin_date[1][$index] = ($temp_checkin[0] + 543).'-'.$temp_checkin[1].'-'.$temp_checkin[2];
+            $checkin_borrow[$index] = ($temp_borrow_date[0] + 543).'-'.$temp_borrow_date[1].'-'.$temp_borrow_date[2];
+            
+            if ($dataBorrow[$index]->checkin >= $date_now) {
+                if ($dataBorrow[$index]->borrow_status == 3) {
+                    $check_dateCheckin[1][$index] = 1;
+                } else if ($dataBorrow[$index]->borrow_status == 1) {
+                    $check_dateCheckin[1][$index] = 2;
+                } else {
+                    $check_dateCheckin[1][$index] = 0;
+                }
+            } else {
+                $check_dateCheckin[1][$index] = 3;
             }
         }
 
@@ -48,7 +71,10 @@ class HistoryController extends Controller
             'years_th' => $time_th,
             'time_start' => $time_start,
             'time_out' => $time_out,
-            'check_date' => $check_dateCheckin
+            'checkin_date' => $checkin_date,
+            'check_date' => $check_dateCheckin,
+            'history_borrow' => $dataBorrow,
+            'checkin_borrow' => $checkin_borrow
         );
         return view('History_user/index', $data);
     }
@@ -62,7 +88,29 @@ class HistoryController extends Controller
             ->where('booking_ID', $reserveId)
             ->delete();
 
-        return redirect('history')->with('message', 'ยกเลิกการจองสำเร็จ');
+        if (isset($id_borrow)) {
+            $id_borrow = DB::table('borrow_booking')
+                ->select('borrow_ID')
+                ->where('booking_ID', $bookingID)
+                ->first();
+
+            $this->DELETE_BORROW($reserveId, $id_borrow);
+        } else {
+            return redirect('history')->with('message', 'ยกเลิกรายการสำเร็จ');
+        }
+    }
+
+    public function DELETE_BORROW ($bookingID, $borrowID) {
+                            
+        DB::table('borrow_booking')
+            ->where('booking_ID', $bookingID)
+            ->delete();
+
+        DB::table('detail_borrow')
+            ->where('borrow_ID', $borrowID)
+            ->delete();
+
+        return redirect('history')->with('message', 'ยกเลิกรายการสำเร็จ');
     }
 
     public function GET_QRCODE (Request $req) {
@@ -70,8 +118,19 @@ class HistoryController extends Controller
             $data = $req->id;
             $data_qr = officer::genQR_code($data);
             return response()->json(['html'=> $data_qr]);
-        } else {
-            return response()->json(['html'=> 'asdasdasfasdas']);
         }
+    }
+
+    public function GET_HISTORY_BORROW () {
+        $dataBorrow = DB::table('borrow_booking')
+                            ->join('detail_borrow', 'borrow_booking.borrow_ID', '=', 'detail_borrow.borrow_ID')
+                            ->join('equipment', 'equipment.em_ID', '=', 'detail_borrow.equiment_ID')
+                            ->join('booking', 'borrow_booking.booking_ID', '=', 'booking.booking_ID')
+                            ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
+                            ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
+                            ->where('booking.user_ID', Auth::user()->id)
+                            ->OrderBy('checkin', 'desc')
+                            ->get();
+        return $dataBorrow;
     }
 }

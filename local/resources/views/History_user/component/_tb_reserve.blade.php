@@ -17,22 +17,22 @@ use App\Officer as officer;
     @foreach($reserves as $key => $reserve)
       <tr>
       <td>{{$reserve->meeting_name}}</td>
-      <td>{{$years_th[$key]}}</td>
-      <td>{{$reserve->checkin}}</td>
+      <td>{{$years_th[0][$key]}}</td>
+      <td>{{$checkin_date[0][$key]}}</td>
       <td>{{$time_start[$key]}} - {{$time_out[$key]}}</td>
       <td>
-      @if($check_date[$key] == 1) <span class="label label-warning">รออนุมัติ</span>
-      @elseif($check_date[$key] == 2) <span class="label label-success">อนุมัติ</span>
-      @elseif($check_date[$key] == 3) <span class="label label-info">เกินวันเข้าใช้งาน</span>
+      @if($check_date[0][$key] == 1) <span class="label label-warning">รออนุมัติ</span>
+      @elseif($check_date[0][$key] == 2) <span class="label label-success">อนุมัติ</span>
+      @elseif($check_date[0][$key] == 3) <span class="label label-info">เกินวันเข้าใช้งาน</span>
       @else <span class="label label-danger">ไม่อนุมัติ</span>
       @endif
       </td>
       <td>
-      @if($check_date[$key] == 1)<a href="{{url('history/'.$reserve->booking_ID)}}" class="btn btn-danger btn-xs">ยกเลิกการจอง</a>
+      @if($check_date[0][$key] == 1)<a href="{{url('history/'.$reserve->booking_ID)}}" class="btn btn-danger btn-xs">ยกเลิกการจอง</a>
       @endif
       </td>
       <td>
-      @if ($check_date[$key] == 2) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">ทำแบบประเมิน</button>
+      @if ($check_date[0][$key] == 2) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">ทำแบบประเมิน</button>
       @endif
       </td>
       </tr>

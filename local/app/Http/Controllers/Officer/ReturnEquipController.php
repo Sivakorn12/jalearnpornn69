@@ -67,4 +67,14 @@ class ReturnEquipController extends Controller
                     ->with('errorMesaage',$e);
         }
     }
+
+    public function cancel($id){
+        DB::table('borrow_booking')
+                ->where('borrow_ID', $id)
+                ->update([
+                    'borrow_status' => 2,
+                ]);
+        return redirect('control/return-eq/')
+                ->with('successMessage','ยกเลิกการยืมเรียบร้อย');
+    }
 }

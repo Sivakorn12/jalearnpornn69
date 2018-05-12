@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Arcanedev\QrCode\QrCode;
 class Officer extends Model
 {
     //* Booking
@@ -188,6 +189,16 @@ class Officer extends Model
                 </tr>
             </table>';
         return $html;
+    }
+
+    public static function genQR_code($link){
+        $qrCode ='';
+            if(isset($link)){
+                $qrCode = new QrCode;
+                $qrCode->setText($link);
+                $qrCode->setSize(150);
+                return $qrCode->image("image alt", ['class' => 'qr-code-img']);
+            }
     }
 
 }

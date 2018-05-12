@@ -26,6 +26,7 @@
     <script src="{{ url('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ url('js/notify.js') }}"></script>
+    
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker-custom.js')}}"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker.th.js')}}"></script>
     <script type="text/javascript" src="{{ url('js/script.js')}}"></script>
@@ -197,14 +198,20 @@
                                 <a href="{{ url ('control/room/') }}"><i class="fa fa-address-card" aria-hidden="true"></i> จัดการห้องประชุม</a>
                         </li>
                         <li class={{ $page === "equipment" ? "active" : "" }}>
-                            <a href="{{ url ('control/equipment/') }}"><i class="fa fa-television" aria-hidden="true"></i> อุปกรณ์</a>
+                            <a href="{{ url ('control/return-eq/') }}"><i class="fa fa-sitemap fa-fw"></i> อุปกรณ์<span class="fa arrow fa-lg"  data-toggle="collapse" href="#collapse1"></span></a>
+                            <ul id="collapse1" class="collapse nav nav-second-level">
+                                <li ><a href="{{ url ('control/return-eq/') }}"><span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> การยืม - คืน</a></li>
+                                <li ><a href="{{ url ('control/equipment/') }}"><span class="glyphicon glyphicon-hdd" aria-hidden="true"></span> อุปกรณ์</a></li>
+                            </ul>
                         </li>
                         <li class={{ $page === "holiday" ? "active" : "" }}>
                             <a href="{{ url ('control/holiday/') }}"><i class="fa fa-flag" aria-hidden="true"></i> วันหยุด</a>
                         </li>
+                        
                         <li class={{ $page === "extratime" ? "active" : "" }}>
                             <a href="{{ url ('control/extratime/') }}"<i class="fa fa-clock-o" aria-hidden="true"></i> เวลาการใช้งาน</a>
                         </li>
+                        
                         <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
                             <a href="{{ route('logout') }}"
                             onclick="event.preventDefault();
@@ -240,7 +247,5 @@
 
        
     </div>
-
-    
 </body>
 </html>

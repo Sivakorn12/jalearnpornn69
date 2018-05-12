@@ -10,32 +10,42 @@
     <div class="col-xs-12">
         <ul class="nav nav-tabs" style="margin-bottom:10px">
             <li class="active"><a data-toggle="tab" href="#borrow">รายการการยืม</a></li>
-            <li><a data-toggle="tab" href="#return">รายการที่คืนแล้ว</a></li>
+            <li><a data-toggle="tab" href="#return">รายการการคืน</a></li>
         </ul>
     </div>
     <div class="col-xs-12" id="tableroom"> 
         <div class="tab-content">
             <div id="borrow" class="tab-pane fade in active">
                 <div class="tbEQ-section">
-                    <h4><i class="fa fa-calendar-check-o" aria-hidden="true"></i> รายการการยืมในวันนี้</h4>
-                    @component('officer.return-eq._tb',[
+                    <h4><b><i class="fa fa-calendar-check-o" aria-hidden="true"></i> รายการการยืมในวันนี้</b></h4>
+                    @component('officer.return-eq._tb-borrow',[
                         "type" => 'borrowtoday'
                         ])
                     @endcomponent
                 </div>
                 <div class="tbEQ-section">
-                    <h4><i class="fa fa-calendar" aria-hidden="true"></i> รายการการยืมอุปกรณ์ทั้งหมด</h4>
-                    @component('officer.return-eq._tb',[
+                    <h4><b><i class="fa fa-calendar" aria-hidden="true"></i> รายการการยืมอุปกรณ์ทั้งหมด</b></h4>
+                    @component('officer.return-eq._tb-borrow',[
                         "type" => 'borrow'
                         ])
                     @endcomponent
                 </div>
             </div>
             <div id="return" class="tab-pane fade">
-                @component('officer.return-eq._tb',[
-                    "type" => 'return'
-                  ])
-                @endcomponent
+                <div class="tbEQ-section">
+                    <h4><b><i class="fa fa-calendar-check-o" aria-hidden="true"></i> รายการที่ยังไม่ได้คืนอุปกรณ์</b></h4>
+                    @component('officer.return-eq._tb-return',[
+                        "type" => 'notreturn'
+                        ])
+                    @endcomponent
+                </div>
+                <div class="tbEQ-section">
+                    <h4><b><i class="fa fa-calendar-check-o" aria-hidden="true"></i> รายการที่คืนอุปกรณ์แล้ว</b></h4>
+                    @component('officer.return-eq._tb-return',[
+                        "type" => 'return'
+                        ])
+                    @endcomponent
+                </div>
             </div>
           </div>
     </div>
@@ -73,14 +83,25 @@
             url: path,
             type: 'GET',
             dataType: 'JSON',
-            data: { id: id  },
+            data: { id: id ,type:'borrow' },
             success: function(data) {
                 $('#msg').html(data.html);
-                //
             }
         });
-        $('#detailModal').modal('show')
-        
+        $('#detailModal').modal('show')  
+    }
+    function viewReturn(id){
+        var path = window.location.pathname+"/viewdetailBorrow"
+        $.ajax({
+            url: path,
+            type: 'GET',
+            dataType: 'JSON',
+            data: { id: id ,type:'returnBooking' },
+            success: function(data) {
+                $('#msg').html(data.html);
+            }
+        });
+        $('#detailModal').modal('show')  
     }
 </script>   
 @endsection

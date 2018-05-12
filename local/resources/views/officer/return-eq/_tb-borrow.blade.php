@@ -11,10 +11,6 @@ elseif($type == 'borrow'){
   $selected_status = '1';
   $datas = officer::getDataBorrow();
 }
-elseif($type == 'return'){
-  $selected_status = '1';
-}
-
 ?>
 <div class="table-responsive">
 <table class="table table-bordered  showroom" id="tb-{{$type}}">
@@ -48,7 +44,7 @@ elseif($type == 'return'){
         </td>
         @if($type=="borrowtoday")
             <td><a title='รายละเอียดการยืม' data-toggle="modal" onclick="viewBorrow({{$data->borrow_ID}})"  data-toggle="tooltip" class="glyphicon glyphicon-search" aria-hidden="true"></a></td>
-          @endif
+        @endif
       </tr>
      @endforeach
    </tbody>

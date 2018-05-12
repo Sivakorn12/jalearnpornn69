@@ -41,42 +41,7 @@ class HolidayController extends Controller
         );
         return view('officer/holiday/index',$data);
     }
-
-    public function index2(){
-        $events = [];  
-        $holidays = DB::table('holiday')
-                 ->get();
-        if(isset($holidays)){  
-            foreach ($holidays as $key => $value) {  
-                $events[] = Calendar::event(  
-                $value->holiday_detail,  
-                true,  
-                new \DateTime($value->holiday_close),  
-                new \DateTime($value->holiday_close),
-                $key,
-                [
-                    'backgroundColor' =>'#3a87ad',
-                    'textColor' => '#fff',
-                    'description' => "Event Description",
-                ]
-            );  
-            }  
-        } 
-        //dd($events) ;
-        $calendar = Calendar::addEvents($events)->setOptions([
-            'firstDay' => 1,
-            'timeFormat'=> 'H:mm',
-            'lang'=> 'th',
-        ])->setCallbacks([ //set fullcalendar callback options (will not be JSON encoded)
-            //'dayClick' => 'function(date, jsEvent, view) {showModal();}',
-        ]);
-       
-        $data = array(
-            'calendar' => $calendar
-        );
-        return view('officer/holiday/index',$data);
-    }
-
+    
     public function add(Request $req){
         try{
             

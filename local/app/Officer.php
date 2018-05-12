@@ -84,6 +84,14 @@ class Officer extends Model
         return $html; 
     }
 
+    public static function getBookingIDbyBorrow($id){
+        $d = DB::table('booking')
+                    ->leftjoin('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
+                    ->where('borrow_booking.borrow_ID',$id)
+                    ->first();
+        return $d->booking_ID;
+    }
+
 
     // * Room 
     public static function getTypeRoom(){
@@ -105,7 +113,7 @@ class Officer extends Model
     }
 
     // Equipment
-    public static function modalViewDetailBorrow($id){
+    public static function modalViewDetailBorrow($id,$type='borrow'){
         $html = '';
         $datas = DB::table('detail_borrow')
                 ->join('equipment','equipment.em_ID','=','detail_borrow.equiment_ID')
@@ -127,16 +135,32 @@ class Officer extends Model
                             <td>".($key+1)."</td>
                             <td>".$data->em_name."</td>
                             <td>".$data->borrow_count."</td>
-                            <td>".officer::statusEquip($data->borrow_count,$data->em_count)."</td>
-                          </tr>";
+                            <td>";
+            if(self::getStatusBorrow($id)=='1')
+                $html =$html.'<span  style="color:green" class="glyphicon glyphicon-ok " aria-hidden="true" title="เพียงพอ"></span>';
+            else $html =$html.self::statusEquip($data->borrow_count,$data->em_count);
+            $html = $html.'</td></tr>';
         }
 
         $html = $html."</table><br>";
-        if(self::checkBorrowStatus($id)){
-        $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณต้องการอนุมัติการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/confirm/'.$data->borrow_ID).'" role="button">ยืนยัน</a>
-                       <a class="btn btn-danger"onclick="return confirm(`คุณต้องการยกเลิกการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/cancel/'.$data->borrow_ID).'" role="button">ยกเลิก</a>';
+
+        if($type=='borrow'){
+            if(self::checkBtnConfirmBorrow($id)){
+                $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณต้องการอนุมัติการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/confirm/'.$data->borrow_ID).'" role="button">ยืนยัน</a>
+                              <a class="btn btn-danger"onclick="return confirm(`คุณต้องการยกเลิกการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/cancel/'.$data->borrow_ID).'" role="button">ยกเลิก</a>';
+            }
+        }
+        elseif($type=='returnBooking'){
+            if(self::checkBtnConfirmReturn($id)){
+                $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณแน่ใจว่าอุปกรณ์เหล่านี้ถูกคืนครบเเล้วหรือไม่`)"  href="'.url('control/return-eq/confirm-return/'.$data->borrow_ID).'" role="button">คืนอุปกรณ์</a>';
+            }
         }
         return $html;
+    }
+
+    public static function getStatusBorrow($id){
+        $data = DB::table('borrow_booking')->select('borrow_status')->where('borrow_ID',$id)->first();
+        return $data->borrow_status;
     }
 
     public static function statusEquip($value,$total){
@@ -146,9 +170,20 @@ class Officer extends Model
         else return '<span style="color:red" class="glyphicon glyphicon-remove" aria-hidden="true" title="ไม่เพียงพอ"></span>';
     }
 
-    public static function checkBorrowStatus($id){
+    public static function checkBtnConfirmBorrow($id){
         $borrow = DB::table('borrow_booking')->select('borrow_status')->where('borrow_ID',$id)->first();
         if($borrow->borrow_status == '3') 
+            return true;
+        return false;
+    }
+
+    public static function checkBtnConfirmReturn($id){
+        $returnBooking = DB::table('booking')
+                  ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
+                  ->join('return_booking','return_booking.booking_ID','=','booking.booking_ID')
+                  ->where('borrow_booking.borrow_ID',$id)
+                  ->first();
+        if(!isset($returnBooking)) 
             return true;
         return false;
     }
@@ -259,6 +294,7 @@ class Officer extends Model
         }
 
     }
+
     public static function getDataBorrowToday(){
         return DB::table('booking')
                 ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
@@ -310,7 +346,66 @@ class Officer extends Model
                 ->get();
     }
 
-    
+    public static function getDataBorrow_success(){
+        return DB::table('booking')
+                ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
+                ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
+                ->leftjoin('return_booking','return_booking.booking_ID','=','booking.booking_ID')
+                ->where('borrow_booking.borrow_status',1)
+                ->orderBy('booking_date','desc')
+                ->select(
+                    "booking.booking_ID",
+                    "booking.status_ID",
+                    "booking.section_ID",
+                    "booking.booking_name",
+                    "booking.booking_phone",
+                    "booking.booking_date",
+                    "booking.checkin",
+                    "detail_booking.detail_topic",
+                    "detail_booking.detail_timestart",
+                    "detail_booking.detail_timeout",
+                    "meeting_room.meeting_name",
+                    "borrow_booking.borrow_ID",
+                    "borrow_booking.borrow_date",
+                    "borrow_booking.borrow_status"
+                )
+                ->get();
+    }
 
+    public static function getDataReturn_success(){
+        return DB::table('booking')
+                ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
+                ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
+                ->join('return_booking','return_booking.booking_ID','=','booking.booking_ID')
+                ->where('borrow_booking.borrow_status',1)
+                ->orderBy('booking_date','desc')
+                ->select(
+                    "booking.booking_ID",
+                    "booking.status_ID",
+                    "booking.section_ID",
+                    "booking.booking_name",
+                    "booking.booking_phone",
+                    "booking.booking_date",
+                    "booking.checkin",
+                    "detail_booking.detail_topic",
+                    "detail_booking.detail_timestart",
+                    "detail_booking.detail_timeout",
+                    "meeting_room.meeting_name",
+                    "borrow_booking.borrow_ID",
+                    "borrow_booking.borrow_date",
+                    "borrow_booking.borrow_status"
+                )
+                ->get();
+    }
 
+    public static function isReturnEquipment($booking_ID){
+        $returnBooking = DB::table('return_booking')
+                  ->where('booking_ID',$booking_ID)
+                  ->first();
+        if(isset($returnBooking)) 
+            return true;
+        return false;
+    }
 }

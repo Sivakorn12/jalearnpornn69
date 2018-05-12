@@ -35,7 +35,7 @@ class ReturnEquipController extends Controller
 
     public function viewdetailBorrow(Request $req){
         if(isset($req->id)){
-            $html = officer::modalViewDetailBorrow($req->id);
+            $html = officer::modalViewDetailBorrow($req->id,$req->type);
             return response()->json(['html'=>$html]);
         }
     }
@@ -76,5 +76,39 @@ class ReturnEquipController extends Controller
                 ]);
         return redirect('control/return-eq/')
                 ->with('successMessage','ยกเลิกการยืมเรียบร้อย');
+    }
+
+    public function confirmReturn($id){
+        try{
+            $datas = DB::table('detail_borrow')
+                    ->join('equipment','equipment.em_ID','=','detail_borrow.equiment_ID')
+                    ->where('detail_borrow.borrow_ID',$id)
+                    ->get();
+            // insert return booking table
+            $return_id=DB::table('return_booking')->insertGetId([
+                            'staff_ID'=>Auth::user()->id,
+                            'booking_ID' => officer::getBookingIDbyBorrow($id),
+                            'return_date' => date('Y-m-d')
+                        ]);
+            foreach($datas as $key => $data){
+                // update em_count
+                DB::table('equipment')
+                    ->where('em_ID', $data->em_ID)
+                    ->update([
+                        'em_count' => ($data->em_count+$data->borrow_count),
+                    ]);
+
+                DB::table('detail_return')->insert([
+                    'return_ID'=>$return_id,
+                    'equiment_ID' => $data->em_ID,	
+                    'return_count' => $data->em_count
+                ]);
+            }
+            return redirect('control/return-eq/')
+                ->with('successMessage','คืนอุปกรณ์เรียบร้อย');
+        }catch (Exception $e) {
+            return redirect('control/return-eq/')
+                    ->with('errorMesaage',$e);
+        } 
     }
 }

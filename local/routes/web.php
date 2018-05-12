@@ -59,6 +59,8 @@ Route::prefix('/control')->group(function () {
   Route::post('/equipment/update','Officer\EquipmentController@update');
   Route::get('/equipment/delete/{id}','Officer\EquipmentController@delete');
 
+  Route::get('/return-eq','Officer\ReturnEquipController@index');
+
   Route::get('/holiday','Officer\HolidayController@index');
   Route::get('/holiday/form','Officer\HolidayController@Form');
   Route::any('/holiday/add','Officer\HolidayController@add');

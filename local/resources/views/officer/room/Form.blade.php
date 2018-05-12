@@ -1,6 +1,5 @@
 <?php
 use App\Officer as officer;
-use Arcanedev\QrCode\QrCode;
 $roomTypes = officer::getTypeRoom();
 $equips = array();
 if(isset($room))
@@ -71,7 +70,7 @@ if(isset($room))
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-7" style="height:180px">
-                                {!!$qrCode->image("image alt", ['class' => 'qr-code-img'])!!}
+                                {!!officer::genQR_code($room->estimate_link)!!}
                             </div>
                         </div>
                         @endif
@@ -162,6 +161,8 @@ if(isset($room))
         equip[equip.length] = [name,amount];
     }
     fetchListEquip(equip);
+    $('#input-equip-name').val('')
+    $('#input-equip-amount').val('')
     $('#changeEq').val('yes');
  }
  function checkDuplicate(newVal,amount, arrVal) {

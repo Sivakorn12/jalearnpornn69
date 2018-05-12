@@ -21,3 +21,10 @@ table.showroom > thead > tr > th {
 .form-group{
   height: auto;
 }
+
+.nav-second-level li{
+  color: #337ab7;
+}
+.nav-second-level li:hover{
+  background-color: #eee;
+}

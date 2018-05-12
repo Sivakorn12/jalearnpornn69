@@ -44,7 +44,6 @@ use App\Officer as officer;
       </div>
   </div>
 
- </div>
 
  <!-- Modal -->
 <div id="booking-detail" class="modal fade" role="dialog">

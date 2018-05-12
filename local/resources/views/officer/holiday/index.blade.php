@@ -26,7 +26,7 @@ use App\Officer as officer;
               <h4 class="modal-title" id="myModalLabel">เพิ่มวันหยุด</h4>
             </div>
             <div class="modal-body">
-                <form action="{{url('control/holiday/add')}}" method="GET" >
+                <form action="{{url('control/holiday/add')}}" class="form-horizontal" method="GET" >
                     <div class="form-group form-room">
                         <label class="col-sm-3 control-label">หัวข้อวันหยุด</label>
                         <div class="col-sm-7">
@@ -39,7 +39,6 @@ use App\Officer as officer;
                                 <textarea name="holiday_detail" class="form-control" id="holiday_detail" cols="30" rows="2"></textarea>
                         </div>
                     </div>
-                    <br>
                     <div class="form-group form-room">
                             <label class="col-sm-3 control-label">วันที่เริ่ม</label>
                             <div class="col-sm-7">

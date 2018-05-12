@@ -68,3 +68,5 @@ function dateThaiYearBC(day){
     var dmy = day.split("-");
     return dmy[2]+"-"+dmy[1]+"-"+dmy[0]
 }
+
+

@@ -133,7 +133,6 @@
      }
     fetchListEquip(equip);
     $('#input-equip-amount').val('')
-    // $('#changeEq').val('yes');
  }
 
  function checkDuplicate(newVal,amount, arrVal) {
@@ -157,7 +156,6 @@
         $('#list-equip').html(html)
         $('#div-show-equip').show()
     }
-    console.log(equipment)
  }
 
  function pushHiddenEquip(equipment){
@@ -171,7 +169,6 @@
  function deleteEquip(index){
     equip.splice(index, 1);
     fetchListEquip(equip)
-    // $('#changeEq').val('yes');
  }
 </script>
 @endsection

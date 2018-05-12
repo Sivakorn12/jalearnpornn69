@@ -24,6 +24,7 @@ Route::get('/reserve/{id}/{timeReserve}/{timeSelect}', 'ReserveController@reserv
 
 Route::get('/history', 'HistoryController@index');
 Route::get('/history/{reserveid}', 'HistoryController@DELETE_RESERVE');
+Route::get('/getQr', 'HistoryController@GET_QRCODE');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });

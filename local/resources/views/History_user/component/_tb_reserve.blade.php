@@ -59,11 +59,10 @@ $(document).ready(function() {
 $('#exampleModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget)
   var recipient = button.data('room')
-  var path = `{{url('history/getQr')}}`
   var modal = $(this)
 
   $.ajax({
-      url: `{{url('getQr')}}`,
+      url: path,
       type: 'GET',
       dataType: 'JSON',
       data: {id: recipient},

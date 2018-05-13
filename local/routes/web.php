@@ -26,6 +26,11 @@ Route::get('/history', 'HistoryController@index');
 Route::get('/history/{reserveid}', 'HistoryController@DELETE_RESERVE');
 Route::get('/deleteborrow/{reserveid}/{borrowid}', 'HistoryController@DELETE_BORROW');
 Route::get('/getQr', 'HistoryController@GET_QRCODE');
+
+Route::get('/admincontrol', 'Admin\AdminController@index');
+Route::get('/manageUser', 'Admin\AdminController@GET_USERS');
+Route::get('/manageUser/editstatus', 'Admin\AdminController@GET_FORM_STATUS');
+Route::get('/setstatusUser/{user_id}', 'Admin\AdminController@SET_STATUS_USER');
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });

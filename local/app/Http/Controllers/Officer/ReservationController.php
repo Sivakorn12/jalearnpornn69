@@ -120,11 +120,12 @@ class ReservationController extends Controller
           $validator = Validator::make($req->all(),$rule);
     
           if ($validator->passes()) {
+            // insert booking
             $bookid = DB::table('booking')->insertGetId([
                 'status_ID' => 1,
                 'section_ID' => $req->section_id,
                 'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
-                'user_ID' => 99999,
+                'user_ID' => Auth::user()->id,
                 'booking_name' => $req->contract_name,
                 'booking_phone' => $req->user_tel,
                 'booking_date' => date('Y-m-d H:i:s'),
@@ -132,6 +133,7 @@ class ReservationController extends Controller
                 'checkin' => $req->checkin,
                 
             ]);
+            // insert detail booking
             $time_start = date($req->checkin.' '.$req->time_reserve.':00');
             $time_out = date($req->checkin.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00');
             DB::table('detail_booking')
@@ -143,6 +145,20 @@ class ReservationController extends Controller
                         'detail_timeout' => $time_out,
                         'detail_count' => $req->detail_count
             ]);
+            // check Do you borrow equipment?
+            if (isset($req->hdnEq)) {
+                for($index = 0 ; $index < count($req->hdnEq); $index++){
+                    $temp = explode(",",$req->hdnEq[$index]);
+                    $data_em = DB::table('equipment')
+                                ->where('em_name', $temp[0])
+                                ->first();
+
+                    $data_id_equipment[$index] = $data_em->em_ID;
+                    $data_count_equipment[$index] = $temp[1];
+                }
+                func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $bookid, $req->checkin);
+            }
+            // check have file
             $files = $req->file('contract_file');
             if(!empty($req->file('contract_file'))){
                 foreach($files as $key => $file){

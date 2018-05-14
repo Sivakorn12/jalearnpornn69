@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
+use Session;
 use DB;
 use Calendar;  
 use App\Event;
@@ -14,7 +15,13 @@ use App\func as func;
 class AdminController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            if(empty(Auth::user())) return redirect('/');
+            if(Auth::user()->user_status!="admin"){
+                return redirect('/');
+            }  
+            return $next($request);
+        });
     }
 
     public function index(){ 
@@ -75,21 +82,49 @@ class AdminController extends Controller
     public function GET_FORM_STATUS (Request $req) {
         if (isset($req->id)) {
             $html = '
-            <div class="form-group">
-                <label class="control-label">สถานะผู้ใช้งาน</label>
-                <div>
-                    <select class="sectionlist form-control" id="user_status">
-                        <option value="user">user</option>
-                        <option value="superuser">superuser</option>
-                    </select>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <form class="form-horizontal" action="'.url("admin/setstatusUser").'" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="user_id" value="'.$req->id.'">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label">สถานะผู้ใช้งาน</label>
+                            <div class="col-sm-5">
+                                <select class="sectionlist form-control" name="user_status">
+                                    <option value="user">ผู้ใช้งานทั่วไป</option>
+                                    <option value="superuser">เจ้าหน้าที่</option>
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" name="_token" id="csrf-token" value="'.Session::token().'">
+                        <div class="form-group">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn-success">ยืนยันการเปลี่ยนสถานะ</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
+                <div class="col-md-1"></div>
             </div>
             ';
             return response()->json(['html'=> $html]);
         }
     }
 
-    public function SET_STATUS_USER ($user_id) {
-        dd('test');
+    public function SET_STATUS_USER (Request $req) {
+        $data_user = DB::table('users')
+                            ->where('id', $req->user_id)
+                            ->first();
+
+        if ($data_user->user_status != $req->user_status) {
+            $data_user = DB::table('users')
+                            ->where('id', $req->user_id)
+                            ->update(['user_status' => $req->user_status]);
+
+            return redirect('admin/manageUser')->with('message', 'เปลี่ยนแปลงสถานะสำเร็จ');
+        } else {
+            return redirect('admin/manageUser')->with('message', 'สถานะไม่มีการเปลี่ยนแปลง');
+        }
     }
 }

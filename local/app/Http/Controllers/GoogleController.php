@@ -60,7 +60,7 @@ class GoogleController extends Controller
                 Auth::loginUsingId($check_user->id);
             }
             if(Auth::user()->user_status=="admin"){
-                return redirect("/admincontrol");
+                return redirect("/admin");
             }
             if(Auth::user()->user_status=="superuser"){
                 return redirect("/control");

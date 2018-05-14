@@ -58,6 +58,7 @@ $(document).ready(function() {
 
 $('#exampleModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget)
+  var path = `{{url('getQr')}}`
   var recipient = button.data('room')
   var modal = $(this)
 

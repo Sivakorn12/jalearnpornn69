@@ -49,10 +49,10 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li {{ (Request::is('/') ? 'class="active"' : 'class="active"') }}>
-                            <a href="{{ url ('/admincontrol') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
+                            <a href="{{ url ('admin') }}"><i class="fa fa-home fa-fw"></i> หน้าหลัก</a>
                         </li>
                         <li >
-                            <a href="{{ url ('manageUser/') }}">
+                            <a href="{{ url ('admin/manageUser/') }}">
                                 <i class="fa fa-bookmark fa-fw"></i> จัดการผู้ใช้งาน
                             </a>
                         </li>

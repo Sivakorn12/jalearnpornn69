@@ -24,7 +24,7 @@
         </td>
         <td>
           @if($user->user_status != 'admin')
-          <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-user="{{$users[$key]->id}}">แก้ไขสถานะผู้ใช้งาน</button>
+          <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-user="{{$users[$key]->id}}">แก้ไขสถานะ</button>
           @endif
         </td>
       </tr>
@@ -47,18 +47,18 @@
 <script>
   $(document).ready(function() {
       $('#table_users').DataTable();
-  });
 
-  var Oncheck_message = '{{session('message')}}'
+      var Oncheck_message = '{{session('message')}}'
         
-  if (Oncheck_message) {
-      $.notify(Oncheck_message, 'success')
-  }
+      if (Oncheck_message) {
+          $.notify(Oncheck_message, 'success')
+      }
+  });
 
   $('#exampleModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget)
     var id_user = button.data('user')
-    var path = `{{url('manageUser/editstatus')}}`
+    var path = `{{url('admin/manageUser/editstatus')}}`
     var modal = $(this)
 
     $.ajax({
@@ -67,6 +67,7 @@
         dataType: 'JSON',
         data: {id: id_user},
         success: function(data){
+          console.log(data.html)
           modal.find('.modal-body').html(data.html)
         }
     })

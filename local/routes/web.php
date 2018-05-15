@@ -23,8 +23,8 @@ Route::get('/checkdate', 'ReserveController@CHECK_DATE_RESERVE');
 Route::get('/reserve/{id}/{timeReserve}/{timeSelect}', 'ReserveController@reserveForm');
 
 Route::get('/history', 'HistoryController@index');
-Route::get('/history/{reserveid}', 'HistoryController@DELETE_RESERVE');
-Route::get('/deleteborrow/{reserveid}/{borrowid}', 'HistoryController@DELETE_BORROW');
+Route::get('/history/deletedata', 'HistoryController@DELETE_RESERVE');
+Route::get('/deleteborrow', 'HistoryController@DELETE_BORROW');
 Route::get('/getQr', 'HistoryController@GET_QRCODE');
 
 Route::get('/admin', 'Admin\AdminController@index');

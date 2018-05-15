@@ -79,38 +79,45 @@ class HistoryController extends Controller
         return view('History_user/index', $data);
     }
 
-    public function DELETE_RESERVE ($reserveId) {
+    public function DELETE_RESERVE (Request $req) {
+        $data_borrow = DB::table('borrow_booking')
+            ->select('borrow_ID')
+            ->where('booking_ID', $req->data_booking)
+            ->first();
+
         DB::table('booking')
-            ->where('booking_ID', $reserveId)
+            ->where('booking_ID', $req->data_booking)
             ->delete();
 
         DB::table('detail_booking')
-            ->where('booking_ID', $reserveId)
+            ->where('booking_ID', $req->data_booking)
             ->delete();
 
-        if (isset($id_borrow)) {
-            $id_borrow = DB::table('borrow_booking')
-                ->select('borrow_ID')
-                ->where('booking_ID', $bookingID)
-                ->first();
+        if (isset($data_borrow)) {
+            DB::table('borrow_booking')
+                ->where('booking_ID', $req->data_booking)
+                ->delete();
 
-            $this->DELETE_BORROW($reserveId, $id_borrow);
+            DB::table('detail_borrow')
+                ->where('borrow_ID', $data_borrow->borrow_ID)
+                ->delete();
+
+            return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
         } else {
-            return redirect('history')->with('message', 'ยกเลิกรายการสำเร็จ');
+            return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
         }
     }
 
-    public function DELETE_BORROW ($bookingID, $borrowID) {
-                            
+    public function DELETE_BORROW (Request $req) {
         DB::table('borrow_booking')
-            ->where('booking_ID', $bookingID)
+            ->where('booking_ID', $req->data_booking)
             ->delete();
 
         DB::table('detail_borrow')
-            ->where('borrow_ID', $borrowID)
+            ->where('borrow_ID', $req->data_borrow)
             ->delete();
 
-        return redirect('history')->with('message', 'ยกเลิกรายการสำเร็จ');
+        return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
     }
 
     public function GET_QRCODE (Request $req) {

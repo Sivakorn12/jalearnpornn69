@@ -67,7 +67,6 @@
         dataType: 'JSON',
         data: {id: id_user},
         success: function(data){
-          console.log(data.html)
           modal.find('.modal-body').html(data.html)
         }
     })

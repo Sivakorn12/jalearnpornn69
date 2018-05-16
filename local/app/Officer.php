@@ -221,7 +221,7 @@ class Officer extends Model
 
     public static function colorEvents(){
         return array(
-            "#3a87ad","#ff4d4d","#33cc33","#ffff1a","#ff531a","#8600b3","#8080ff","#ff1a8c","#ccffcc","#4dff4d","#85adad","#660000","#ff99ff","#ffcc99","#c3c388","#3a87ad","#003300","#3d5c5c","#33331a","#ff8000",
+            "#3a87ad","#ff4d4d","#33cc33","#ff981a","#ff531a","#8600b3","#8080ff","#ff1a8c","#ccffcc","#4dff4d","#85adad","#660000","#ff99ff","#ffcc99","#c3c388","#3a87ad","#003300","#3d5c5c","#33331a","#ff8000",
             "#3a87ad","#3a87ad","#3a87ad","#3a87ad","#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4","#000000","#FFEBCD","#0000FF","#8A2BE2","#A52A2A","#DEB887","#5F9EA0","#7FFF00","#D2691E",
             "#FF7F50","#6495ED","#FFF8DC","#DC143C","#00FFFF","#00008B","#008B8B","#B8860B","#A9A9A9","#A9A9A9","#006400","#BDB76B","#8B008B","#556B2F","#FF8C00","#9932CC","#8B0000","#E9967A","#8FBC8F","#483D8B",
             "#2F4F4F","#2F4F4F","#00CED1","#9400D3","#FF1493","#00BFFF","#696969","#696969","#1E90FF","#B22222","#FFFAF0","#228B22","#FF00FF","#DCDCDC","#F8F8FF","#FFD700","#DAA520","#808080","#808080","#008000",
@@ -300,7 +300,7 @@ class Officer extends Model
                 ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                 ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
                 ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
-                ->orderBy('booking_date','desc')
+                ->orderBy('detail_booking.detail_timestart','desc')
                 ->select(
                     "booking.booking_ID",
                     "booking.status_ID",
@@ -326,7 +326,7 @@ class Officer extends Model
                 ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                 ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
                 ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
-                ->orderBy('booking_date','desc')
+                ->orderBy('detail_booking.detail_timestart','desc')
                 ->select(
                     "booking.booking_ID",
                     "booking.status_ID",
@@ -353,7 +353,7 @@ class Officer extends Model
                 ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
                 ->leftjoin('return_booking','return_booking.booking_ID','=','booking.booking_ID')
                 ->where('borrow_booking.borrow_status',1)
-                ->orderBy('booking_date','desc')
+                ->orderBy('detail_booking.detail_timestart','desc')
                 ->select(
                     "booking.booking_ID",
                     "booking.status_ID",
@@ -380,7 +380,7 @@ class Officer extends Model
                 ->join('borrow_booking','borrow_booking.booking_ID','=','booking.booking_ID')
                 ->join('return_booking','return_booking.booking_ID','=','booking.booking_ID')
                 ->where('borrow_booking.borrow_status',1)
-                ->orderBy('booking_date','desc')
+                ->orderBy('detail_booking.detail_timestart','desc')
                 ->select(
                     "booking.booking_ID",
                     "booking.status_ID",

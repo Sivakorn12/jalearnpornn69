@@ -157,7 +157,7 @@ if(isset($room))
      console.log(equip.length)
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
-     if (checkDuplicate(name,amount, equip)) {
+     if (checkDuplicate(name, equip)) {
         equip[equip.length] = [name,amount];
     }
     fetchListEquip(equip);
@@ -165,9 +165,9 @@ if(isset($room))
     $('#input-equip-amount').val('')
     $('#changeEq').val('yes');
  }
- function checkDuplicate(newVal,amount, arrVal) {
+ function checkDuplicate(newVal, arrVal) {
     for (var m = 0; m < arrVal.length; m++)
-        if (newVal == arrVal[m][0] &&amount == arrVal[m][1] ) return false;
+        if (newVal == arrVal[m][0] ) return false;
     return true;
  }
  function fetchListEquip(equipment){  

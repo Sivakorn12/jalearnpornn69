@@ -29,7 +29,7 @@ use App\Officer as officer;
       @endif
       </td>
       <td>
-      @if($check_date[1][$key] == 1)<a href="{{url('deleteborrow/'.$borrow->booking_ID.'/'.$borrow->borrow_ID)}}" class="btn btn-danger btn-xs">ยกเลิกการยืมอุปกรณ์</a>
+      @if($check_date[1][$key] == 1)<button onclick="checkDecided_Delete({{$borrow->booking_ID}}, {{$borrow->borrow_ID}})" class="btn btn-danger btn-xs">ยกเลิกการยืมอุปกรณ์</button>
       @endif
       </td>
     </tr>
@@ -40,4 +40,31 @@ use App\Officer as officer;
 $(document).ready(function() {
   $('#tb-borrow').DataTable();
 });
+
+function checkDecided_Delete (booking_id, borrow_id) {
+  swal({
+    title: "คุณต้องการลบการยืมใช่ไหม ?",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    buttons: ["ยกเลิก", "ยืนยัน"]
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      $.ajax({
+          url: "{{url('deleteborrow')}}",
+          type: 'GET',
+          dataType: 'JSON',
+          data: { _token: "{{ csrf_token() }}", data_booking: booking_id, data_borrow: borrow_id},
+          success: function(data){
+            swal(data.message, {
+              icon: "success",
+              buttons: false
+            })
+            setTimeout(function(){ window.location.reload() }, 1000);
+          }
+      })
+    }
+  })
+}
 </script>

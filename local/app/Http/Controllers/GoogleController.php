@@ -59,6 +59,9 @@ class GoogleController extends Controller
             } else {
                 Auth::loginUsingId($check_user->id);
             }
+            if(Auth::user()->user_status=="admin"){
+                return redirect("/admin");
+            }
             if(Auth::user()->user_status=="superuser"){
                 return redirect("/control");
             }

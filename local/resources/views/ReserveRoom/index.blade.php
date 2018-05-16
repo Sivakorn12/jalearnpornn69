@@ -2,7 +2,7 @@
 @section('page_heading','จองห้องประชุม')
 @section('content')
 <div class="row">
-          <!-- <div class="col-md-12"> -->
+          <div class="col-md-12">
               <table class="table table-hover showroom" id="table_room">
                 <thead>
                     <tr>
@@ -55,7 +55,7 @@
                     @endforeach
                 </tbody>
               </table>
-          <!-- </div> -->
+          </div>
   </div>
 <script>
     $(document).ready(function() {

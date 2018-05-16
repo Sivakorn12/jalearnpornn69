@@ -25,8 +25,7 @@
                 <td>{{$equipment->em_count}}</td>
                 <td>
                     <a class="btn btn-warning" data-toggle="tooltip" href="{{url('control/equipment/edit/'.$equipment->em_ID)}}" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                    <a class="btn btn-danger" data-toggle="tooltip" href="{{url('control/equipment/delete/'.$equipment->em_ID)}}" 
-                    onclick="return confirm('คุณต้องการลบห้อง {{$equipment->em_name}} หรือไม่?');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
+                    <a class="btn btn-danger" data-toggle="tooltip" onclick="confirmDeleteEquipment({{$equipment->em_ID}},'{{$equipment->em_name}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
                 </td>
             </tr>
             @endforeach
@@ -42,5 +41,21 @@
       if('{{session("successMessage")}}' != null) $.notify('{{session("successMessage")}}',"success");
       else if('{{session("errorMesaage")}}' != null) $.notify('{{session("errorMesaage")}}',"error");
     });
+
+    function confirmDeleteEquipment (id,name) {
+        swal({
+            title: "คุณต้องการลบ "+name+" หรือไม่?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            buttons: ["ยกเลิก", "ยืนยัน"]
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var path = "{{url('control/equipment/delete')}}/"+id
+                window.location.href = path
+            }
+        })
+    }
 </script>   
 @endsection

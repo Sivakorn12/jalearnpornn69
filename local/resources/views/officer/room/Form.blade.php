@@ -77,7 +77,7 @@ if(isset($room))
                         <div class="form-group form-room" >
                             <label class="col-sm-3 control-label" >รูปภาพ</label>
                             <div class="col-sm-7">
-                                <input name="room_image[]" type="file" class="form-control" multiple onchange='handleFiles(this.files)' name="room_image"  accept="image/x-png,image/gif,image/jpeg">
+                                <input name="room_image[]" type="file" class="form-control" multiple onchange='handleFiles(this.files)' name="room_image"  accept="image/x-png,image/gif,image/jpeg" >
                                 <p id="error-pic" style="display:none;color:red">กรุณาเลือกรูปภาพเท่านั้น</p>
                             </div>
                         </div>
@@ -157,7 +157,7 @@ if(isset($room))
      console.log(equip.length)
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
-     if (checkDuplicate(name,amount, equip)) {
+     if (checkDuplicate(name, equip)) {
         equip[equip.length] = [name,amount];
     }
     fetchListEquip(equip);
@@ -165,9 +165,9 @@ if(isset($room))
     $('#input-equip-amount').val('')
     $('#changeEq').val('yes');
  }
- function checkDuplicate(newVal,amount, arrVal) {
+ function checkDuplicate(newVal, arrVal) {
     for (var m = 0; m < arrVal.length; m++)
-        if (newVal == arrVal[m][0] &&amount == arrVal[m][1] ) return false;
+        if (newVal == arrVal[m][0] ) return false;
     return true;
  }
  function fetchListEquip(equipment){  

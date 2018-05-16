@@ -37,7 +37,7 @@ class CheckBookingController extends Controller
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                    ->leftjoin('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
-                   ->orderBy('booking_date','desc')
+                   ->orderBy('detail_booking.detail_timestart','desc')
                    ->get();
         //dd($booking);
         $data = array(
@@ -77,7 +77,7 @@ class CheckBookingController extends Controller
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                    ->leftjoin('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
-                   ->orderBy('booking_date','desc')
+                   ->orderBy('detail_booking.detail_timestart','desc')
                    ->get();
         $tbHtml = array();
         $statusBooking = array("all","wait","confirmed");

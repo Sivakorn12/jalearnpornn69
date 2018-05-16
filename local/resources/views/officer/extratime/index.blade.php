@@ -23,8 +23,7 @@
                 <td>{{substr($ex->extra_start,-8,5)}} - {{substr($ex->extra_end,-8,5)}}</td>
                 <td>
                     <a class="btn btn-warning btn-sm" data-toggle="tooltip" data-toggle="modal" onclick="changeEx('{{$ex->extra_ID}}','{{$ex->extra_start}}','{{$ex->extra_end}}')" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" href="{{url('control/extratime/delete/'.$ex->extra_ID)}}" 
-                    onclick="return confirm('คุณต้องการลบเวลาการใช้ห้องใน วันที่ {{substr($ex->extra_start,0,10)}} หรือไม่?');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
+                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" onclick="confirmDeleteEx({{$ex->extra_ID}},'{{substr($ex->extra_start,0,10)}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
                 </td>
             </tr>
             @endforeach
@@ -124,5 +123,20 @@ function changeEx(id,st,end){
     $('#idHide').html("<input type='hidden' name='id' value='"+id+"'>")
     $('#extratime-form').modal('show')
 }
+function confirmDeleteEx (id,name) {
+        swal({
+            title: "คุณต้องการลบเวลาการใช้งานวันที่ "+name+" หรือไม่?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            buttons: ["ยกเลิก", "ยืนยัน"]
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var path = "{{url('control/extratime/delete')}}/"+id
+                window.location.href = path
+            }
+        })
+    }
 </script>   
 @endsection

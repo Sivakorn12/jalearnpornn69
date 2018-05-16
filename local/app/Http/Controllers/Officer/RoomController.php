@@ -216,9 +216,11 @@ class RoomController extends Controller
                         ->where('meeting_ID',$id)
                         ->first();
         // delete old file
-        $images = explode(',', $meeting_room->meeting_pic);
-        for($i=0;$i<count($images);$i++){
-            officer::deleteFile('asset/rooms/'.$images[$i]);
+        if(isset($meeting_room->meeting_pic) and $meeting_room->meeting_pic != ""){
+            $images = explode(',', $meeting_room->meeting_pic);
+            for($i=0;$i<count($images);$i++){
+                officer::deleteFile('asset/rooms/'.$images[$i]);
+            }
         }
 
         DB::table('meeting_room')->where('meeting_ID',$id)->delete();

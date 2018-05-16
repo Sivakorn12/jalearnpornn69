@@ -30,8 +30,7 @@ use App\Officer as officer;
                 <td>{{$room->meeting_size}}</td>
                 <td>
                     <a class="btn btn-warning" data-toggle="tooltip" href="{{url('control/room/edit/'.$room->meeting_ID)}}" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                    <a class="btn btn-danger" data-toggle="tooltip" href="{{url('control/room/delete/'.$room->meeting_ID)}}" 
-                    onclick="return confirm('คุณต้องการลบห้อง {{$room->meeting_name}} หรือไม่?');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
+                    <a class="btn btn-danger" data-toggle="tooltip" onclick="confirmDeleteRoom({{$room->meeting_ID}},'{{$room->meeting_name}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
                 </td>
             </tr>
             @endforeach
@@ -47,5 +46,21 @@ use App\Officer as officer;
       if('{{session("successMessage")}}' != null) $.notify('{{session("successMessage")}}',"success");
       else if('{{session("errorMesaage")}}' != null) $.notify('{{session("errorMesaage")}}',"error");
     });
+
+    function confirmDeleteRoom (id,name) {
+        swal({
+            title: "คุณต้องการลบห้อง "+name+" หรือไม่?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            buttons: ["ยกเลิก", "ยืนยัน"]
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var path = "{{url('control/room/delete')}}/"+id
+                window.location.href = path
+            }
+        })
+    }
 </script>   
 @endsection

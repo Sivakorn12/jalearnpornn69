@@ -77,7 +77,7 @@ if(isset($room))
                         <div class="form-group form-room" >
                             <label class="col-sm-3 control-label" >รูปภาพ</label>
                             <div class="col-sm-7">
-                                <input name="room_image[]" type="file" class="form-control" multiple onchange='handleFiles(this.files)' name="room_image"  accept="image/x-png,image/gif,image/jpeg">
+                                <input name="room_image[]" type="file" class="form-control" multiple onchange='handleFiles(this.files)' name="room_image"  accept="image/x-png,image/gif,image/jpeg" >
                                 <p id="error-pic" style="display:none;color:red">กรุณาเลือกรูปภาพเท่านั้น</p>
                             </div>
                         </div>

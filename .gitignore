@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /local/storage/*.key
+/local/storage/database_backup
 /local/vendor
 /.idea
 /.vagrant

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c3dcae74528ec41aa833bb4ea1ead4b",
+    "content-hash": "c2aa43aa0559d0d463a09f1931294626",
     "packages": [
         {
             "name": "arcanedev/qr-code",
@@ -665,16 +665,16 @@
         },
         {
             "name": "laravel/tinker",
-            "version": "v1.0.6",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/tinker.git",
-                "reference": "b22fe905fcefdffae76b011e27c7ac09e07e052b"
+                "reference": "e3086ee8cb1f54a39ae8dcb72d1c37d10128997d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/tinker/zipball/b22fe905fcefdffae76b011e27c7ac09e07e052b",
-                "reference": "b22fe905fcefdffae76b011e27c7ac09e07e052b",
+                "url": "https://api.github.com/repos/laravel/tinker/zipball/e3086ee8cb1f54a39ae8dcb72d1c37d10128997d",
+                "reference": "e3086ee8cb1f54a39ae8dcb72d1c37d10128997d",
                 "shasum": ""
             },
             "require": {
@@ -724,7 +724,7 @@
                 "laravel",
                 "psysh"
             ],
-            "time": "2018-04-16T12:10:37+00:00"
+            "time": "2018-05-17T13:42:07+00:00"
         },
         {
             "name": "league/flysystem",
@@ -872,6 +872,43 @@
                 "twitter"
             ],
             "time": "2016-08-17T00:36:58+00:00"
+        },
+        {
+            "name": "levgenij/laravel-db-backup",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Levgenij/laravel-db-backup.git",
+                "reference": "bc2ac9e0d01e500b3f2664378284f402a66bc1bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Levgenij/laravel-db-backup/zipball/bc2ac9e0d01e500b3f2664378284f402a66bc1bf",
+                "reference": "bc2ac9e0d01e500b3f2664378284f402a66bc1bf",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "5.*",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Witty\\LaravelDbBackup": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Larkin Whitaker",
+                    "email": "larkinwhitaker@gmail.com"
+                }
+            ],
+            "description": "Easy commands to backup and restore databases for Laravel 5 applications",
+            "time": "2018-05-05T11:42:23+00:00"
         },
         {
             "name": "maddhatter/laravel-fullcalendar",

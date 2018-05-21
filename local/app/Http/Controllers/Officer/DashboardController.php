@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Calendar;  
 use Arcanedev\QrCode\QrCode;
 use App\Event;  
-use Backup;
-use Illuminate\Console\Command;
+use Artisan;
 use App\Officer as officer;
 
 class DashboardController extends Controller
@@ -85,9 +84,8 @@ class DashboardController extends Controller
         echo $qrCode->image("image alt", ['class' => 'qr-code-img']);
     }
 
-    public function backup(){
-        
-        exec('mysqldump -uroot -p testinglaravel > some_database.sql');
+    public function backup2(){
+        Artisan::call('db:backup');
     }
 
 }

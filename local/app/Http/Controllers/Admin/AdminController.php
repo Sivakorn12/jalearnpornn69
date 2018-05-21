@@ -9,6 +9,7 @@ use Session;
 use DB;
 use Calendar;  
 use App\Event;
+use Artisan;
 use App\Officer as officer;
 use App\func as func;
 
@@ -126,5 +127,9 @@ class AdminController extends Controller
         } else {
             return redirect('admin/manageUser')->with('message', 'สถานะไม่มีการเปลี่ยนแปลง');
         }
+    }
+
+    public function backup_database(){
+        Artisan::call('db:backup');
     }
 }

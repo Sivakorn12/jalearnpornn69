@@ -27,10 +27,7 @@ Route::get('/history/deletedata', 'HistoryController@DELETE_RESERVE');
 Route::get('/deleteborrow', 'HistoryController@DELETE_BORROW');
 Route::get('/getQr', 'HistoryController@GET_QRCODE');
 
-Route::get('/admin', 'Admin\AdminController@index');
-Route::get('/admin/manageUser', 'Admin\AdminController@GET_USERS');
-Route::get('/admin/manageUser/editstatus', 'Admin\AdminController@GET_FORM_STATUS');
-Route::post('/admin/setstatusUser', 'Admin\AdminController@SET_STATUS_USER');
+
 // Route::get('/main', function(){
 //     echo bcrypt('1234');
 // });
@@ -40,7 +37,7 @@ Route::any('/getdataCalendar/{id}', 'HomeController@viewBooking');
 
 Route::prefix('/control')->group(function () {
   Route::get('qr-code','Officer\DashboardController@qr' );
-  Route::get('backup','Officer\DashboardController@backup' );
+  Route::get('backupdb','Officer\DashboardController@backup2' );
   Route::get('/' ,'Officer\DashboardController@index');
   Route::get('/checkbooking','Officer\CheckBookingController@indexReservation');
   Route::get('/checkbooking/fetchTbBooking','Officer\CheckBookingController@fetchTbBooking');
@@ -87,6 +84,14 @@ Route::prefix('/control')->group(function () {
   Route::get('/checkdate', 'Officer\ReservationController@CHECK_DATE_RESERVE');
 
   Route::get('/resetStatus','Officer\CheckBookingController@resetStatus');
+});
+
+Route::prefix('/admin')->group(function () {
+  Route::get('/', 'Admin\AdminController@index');
+  Route::get('/backupdb', 'Admin\AdminController@backup_database');
+  Route::get('/manageUser', 'Admin\AdminController@GET_USERS');
+  Route::get('/manageUser/editstatus', 'Admin\AdminController@GET_FORM_STATUS');
+  Route::post('/setstatusUser', 'Admin\AdminController@SET_STATUS_USER');
 });
 
 Route::get('auth/google', 'GoogleController@redirectToProvider');

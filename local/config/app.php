@@ -163,7 +163,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
-        MaddHatter\LaravelFullcalendar\ServiceProvider::class,  
+        MaddHatter\LaravelFullcalendar\ServiceProvider::class,
+        'Witty\LaravelDbBackup\DBBackupServiceProvider',  
         /*
          * Package Service Providers...
          */

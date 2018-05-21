@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /local/storage/*.key
+/local/storage/database_backup
 /local/vendor
 /.idea
 /.vagrant
@@ -9,3 +10,4 @@
 /local/Homestead.yaml
 /local/npm-debug.log
 /local/yarn-error.log
+some_database.sql

@@ -1,3 +1,36 @@
+.main-navbar{
+  background-color: #ff6600;
+  min-height: 60px!important;
+}
+.navbar-default .navbar-brand {
+  color: #fff;
+}
+
+.navbar-top-links,
+.navbar-top-links a{
+
+  color: #fff;
+}
+
+li.dropdown>a{
+ min-height: 60px;
+}
+.nav .open>a,
+.nav .open>a:hover,
+.nav .open>a:focus{
+  background-color: orange;
+}
+
+.main{
+ /* background-color: #262626;*/
+}
+
+@media(min-width:768px) {
+  .sidebar {
+      margin-top: 61px!important;
+  }
+}
+
 table.showroom > tbody > tr > td,
 table.showroom > thead > tr > th {
   vertical-align: middle;

@@ -1,3 +1,12 @@
+html, 
+body {
+    height: 100%;
+}
+
+#page-wrapper{
+  min-height: 92vh;
+}
+
 .main-navbar{
   background-color: #ff6600;
   min-height: 60px!important;
@@ -15,6 +24,8 @@
 li.dropdown>a{
  min-height: 60px;
 }
+.nav .dropdown:hover>a,
+.nav .dropdown:focus>a,
 .nav .open>a,
 .nav .open>a:hover,
 .nav .open>a:focus{
@@ -22,12 +33,24 @@ li.dropdown>a{
 }
 
 .main{
- /* background-color: #262626;*/
+  background-color: #262626;
+}
+#side-menu>li>a,
+.nav-second-level>li>a{
+  color: #fff;
+}
+#side-menu>li.active > a,
+#side-menu>li > a:hover,
+.nav-second-level>li>a:hover{
+  background-color: dimgray
+}
+.sidebar ul li {
+   border-bottom: 0px solid #e7e7e7; 
 }
 
 @media(min-width:768px) {
   .sidebar {
-      margin-top: 61px!important;
+      margin-top: 60px!important;
   }
 }
 
@@ -65,4 +88,14 @@ table.showroom > thead > tr > th {
   padding-bottom: 40px;
   margin-bottom: 15px;
   border-bottom: 4px solid gray;
+}
+
+.panel-calendar {
+  border-color: dimgray
+}
+
+.panel-calendar > .panel-heading {
+  color: #fff;
+  background-color: dimgray;
+  border-color: dimgray
 }

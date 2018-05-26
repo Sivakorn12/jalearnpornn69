@@ -10,7 +10,7 @@ use App\Officer as officer;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.css" />
 <div class="row">
         <div class="col-xs-12" style="padding-bottom:10px">
-                <div class="panel panel-primary" style="width:100%!important">  
+                <div class="panel panel-calendar" style="width:100%!important">  
                     <div class="panel-heading"> ปฏิทินวันหยุด </div>  
                     <div class="panel-body"> 
                             <div id='calendar'></div>
@@ -125,7 +125,8 @@ use App\Officer as officer;
             eventClick: function(calEvent, jsEvent, view) {detailHoliday(calEvent);},
             eventRender: function(event, element, view) {
                     $(element).height(100);
-            }
+            },  
+            eventColor: '#ff1a1a'
     });
 });
     

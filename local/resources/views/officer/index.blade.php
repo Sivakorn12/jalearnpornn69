@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.css" />
     <div class="row">
       <div class="col-xs-12" style="padding-bottom:10px">
-              <div class="panel panel-primary" style="width:100%!important">  
+              <div class="panel panel-calendar" style="width:100%!important">  
                   <div class="panel-heading"> ปฏิทินการใช้ห้องประชุม </div>  
                   <div class="panel-body"> {!! $calendar->calendar() !!} {!! $calendar->script() !!} </div>  
               </div>  

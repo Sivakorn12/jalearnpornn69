@@ -89,6 +89,7 @@ use App\Officer as officer;
     $(document).ready(function() {
       $('#tb-room').DataTable();
       $('[data-toggle="tooltip"]').tooltip(); 
+      $.notify('เรียบร้อย',"success")
       var msg = ''
       if('{{session("successMessage")}}' != null) $.notify('{{session("successMessage")}}',"success");
       else if('{{session("errorMesaage")}}' != null) $.notify('{{session("errorMesaage")}}',"error");

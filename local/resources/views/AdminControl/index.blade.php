@@ -32,6 +32,17 @@
             </div>
     </div>
 <script>
+  $(document).ready(function() {
+    var Oncheck_message = '{{session('message')}}'
+        
+    if (Oncheck_message) {
+        swal(Oncheck_message, {
+          icon: "success",
+          buttons: false
+        })
+        setTimeout(function(){ window.location.reload() }, 1000);
+    }
+  });
     function  detailreserve(event) {
        var path = '{{url("/getdataCalendar")}}/'+event.id
         $.ajax({

@@ -131,5 +131,6 @@ class AdminController extends Controller
 
     public function backup_database(){
         Artisan::call('db:backup');
+        return redirect('admin/')->with('message', 'สำรองข้อมูลสำเร็จ');
     }
 }

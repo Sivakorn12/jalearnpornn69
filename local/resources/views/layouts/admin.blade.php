@@ -86,6 +86,11 @@
                             </a>
                         </li>
                         <li >
+                            <a href="{{ url ('admin/backupdb/') }}">
+                                <i class="fa fa-bookmark fa-fw"></i> สำรองฐานข้อมูล
+                            </a>
+                        </li>
+                        <li >
                             <a href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">

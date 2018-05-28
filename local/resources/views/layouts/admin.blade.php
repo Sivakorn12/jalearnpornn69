@@ -30,10 +30,10 @@
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker.th.js')}}"></script>
 </head>
 <body>
-    <div id="wrapper">
+    <div id="wrapper" class="main">
 
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <nav class="navbar navbar-default navbar-static-top main-navbar" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -41,11 +41,40 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+                <a href="" style="margin-top:-10px" class="navbar-brand"><img src="{{url('asset/icons/kmutnb-logo.png')}}" width="45" alt=""></a>
                 <a class="navbar-brand" href="{{ url ('') }}">ระบบการจองและการใช้ห้องประชุมออนไลน์</a>
             </div>
             <!-- /.navbar-header -->
 
-            <div class="navbar-default sidebar" role="navigation">
+            <ul class="nav navbar-top-links navbar-right">            
+                <li>
+                <p >วันที่: {{date('Y-m-d')}}</p>
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span><i class="fa fa-user fa-fw"></i> {{Auth::user()->user_name }} :: {{Auth::user()->user_status}}  <i class="fa fa-caret-down"></i></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li {{ (Request::is('*charts') ? 'class="active"' : '') }}>
+                            <a href="{{ route('logout') }}"
+                            onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                <i class="fa fa-power-off" aria-hidden="true"></i>
+                                ออกจากระบบ
+                            </a>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                {{ csrf_field() }}
+                            </form>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+
+            <div class="navbar-default sidebar main" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li {{ (Request::is('/') ? 'class="active"' : 'class="active"') }}>

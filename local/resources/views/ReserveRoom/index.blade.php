@@ -64,14 +64,12 @@
         var Oncheck_message = '{{session('message')}}'
         
         if (Oncheck_message) {
-            $.notify(Oncheck_message, 'success')
+            swal(Oncheck_message, {
+              icon: "success",
+              buttons: false
+            })
+            setTimeout(function(){ window.location.reload() }, 1000);
         }
     });
 </script>
 @endsection
-<style>
-  /* table.showroom > tbody > tr > td {
-      vertical-align: middle;
-      text-align: center;
-  }; */
-</style>

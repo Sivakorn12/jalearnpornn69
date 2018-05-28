@@ -51,7 +51,11 @@
       var Oncheck_message = '{{session('message')}}'
         
       if (Oncheck_message) {
-          $.notify(Oncheck_message, 'success')
+        swal(Oncheck_message, {
+              icon: "success",
+              buttons: false
+            })
+            setTimeout(function(){ window.location.reload() }, 1000);
       }
   });
 

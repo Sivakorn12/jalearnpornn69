@@ -90,8 +90,26 @@ use App\Officer as officer;
       $('#tb-room').DataTable();
       $('[data-toggle="tooltip"]').tooltip(); 
       var msg = ''
-      if('{{session("successMessage")}}' != null) $.notify('{{session("successMessage")}}',"success");
-      else if('{{session("errorMesaage")}}' != null) $.notify('{{session("errorMesaage")}}',"error");
+      if('{{session("successMessage")}}' != null){
+        var Oncheck_message = '{{session("successMessage")}}'
+        if (Oncheck_message) {
+          swal(Oncheck_message, {
+                icon: "success",
+                buttons: false
+              })
+              setTimeout(function(){ window.location.reload() }, 1000);
+        }
+      }
+      else if('{{session("errorMesaage")}}' != null) {
+        var Oncheck_message = '{{session("errorMessage")}}'
+        if (Oncheck_message) {
+          swal(Oncheck_message, {
+                icon: "error",
+                buttons: false
+              })
+              setTimeout(function(){ window.location.reload() }, 1000);
+        }
+      };
     });
 </script>   
 <script>

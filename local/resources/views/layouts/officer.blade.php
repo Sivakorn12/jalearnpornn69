@@ -43,7 +43,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="" style="margin-top:-10px" class="navbar-brand"><img src="{{url('asset/icons/kmutnb-logo.png')}}" width="45" alt=""></a>
+                <a href="{{url("control")}}" style="margin-top:-10px" class="navbar-brand"><img src="{{url('asset/icons/kmutnb-logo.png')}}" width="45" alt=""></a>
                 <a  class="navbar-brand" href="{{ url ('') }}">ระบบการจองและการใช้ห้องประชุมออนไลน์</a>
             </div>
             <!-- /.navbar-header -->

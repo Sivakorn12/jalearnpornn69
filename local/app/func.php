@@ -200,6 +200,27 @@ class func extends Model
         return $id_insert;
     }
 
+    public static function UPDATE_DATA_BOOKING ($req, $time_start, $time_out) {
+        $id_insert = DB::table('booking')
+                        ->where('booking_ID', $req->booking_id)
+                        ->update([
+                            'section_ID' => isset($req->section_id)? $req->section_id : null,
+                            'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
+                            'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                            'booking_date' => date('Y-m-d H:i:s'),
+                        ]);
+        DB::table('detail_booking')
+                ->where('booking_ID', $req->booking_id)
+                ->update([
+                    'detail_topic' => $req->detail_topic,
+                    'detail_timestart' => $time_start,
+                    'detail_timeout' => $time_out,
+                    'detail_count' => $req->detail_count
+                ]);
+
+        return $id_insert;
+    }
+
     public static function SET_DATA_BORROW ($id_equipment, $count_equipment, $id_insert_booking, $time_select) {
         $id_borrow_booking = DB::table('borrow_booking')
                                     ->insertGetId([
@@ -215,6 +236,45 @@ class func extends Model
                     'equiment_ID' => $id_equipment[$index],
                     'borrow_count' => $count_equipment[$index]
                 ]);
+        }
+    }
+
+    public static function UPDATE_DATA_BORROW ($id_equipment, $count_equipment, $id_booking, $time_select, $borrow_id) {
+        $dataBorrow = DB::table('borrow_booking')
+                            ->join('detail_borrow', 'borrow_booking.borrow_ID', '=', 'detail_borrow.borrow_ID')
+                            ->where('borrow_booking.borrow_ID', $borrow_id)
+                            ->get();
+
+        $get_equipID = array();
+        $get_equipCount = array();
+        foreach ($dataBorrow as $key => $value) {
+            $get_equipID[$key] = $value->equiment_ID;
+            $get_equipCount[$key] = $value->borrow_count;
+        }
+
+        for ($index = 0; $index < sizeof($get_equipID); $index++) {
+            for ($inner = 0; $inner < sizeof($id_equipment); $inner++) {
+                if ($id_equipment[$inner] != $get_equipID[$index] && sizeof($get_equipID) > sizeof($id_equipment)) {
+                    DB::table('detail_borrow')
+                        ->where('borrow_ID', $borrow_id)
+                        ->where('equiment_ID', $get_equipID[$index])
+                        ->delete();
+                } else if ($id_equipment[$inner] != $get_equipID[$index] && sizeof($get_equipID) < sizeof($id_equipment)) {
+                    DB::table('detail_borrow')
+                        ->insert([
+                            'borrow_ID' => $borrow_id,
+                            'equiment_ID' => $id_equipment[$inner],
+                            'borrow_count' => $count_equipment[$inner]
+                        ]);
+                } else if ($id_equipment[$inner] == $get_equipID[$index] && $count_equipment[$inner] != $get_equipCount[$index]) {
+                    DB::table('detail_borrow')
+                        ->where('borrow_ID', $borrow_id)
+                        ->where('equiment_ID', $get_equipID[$index])
+                        ->update([
+                            'borrow_count' => $count_equipment[$inner]
+                        ]);
+                }
+            }
         }
     }
 }

@@ -171,4 +171,90 @@ class ReserveController extends Controller
             }
         }
     }
+
+    public function EDIT_DATA_RESERVE ($reserveId, $timeSelect) {
+        $dataReserve = DB::table('booking')
+            ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
+            ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
+            ->where('booking.booking_ID', $reserveId)
+            ->first();
+
+        $dataBorrow = DB::table('borrow_booking')
+            ->join('detail_borrow', 'borrow_booking.borrow_ID', '=', 'detail_borrow.borrow_ID')
+            ->where('borrow_booking.booking_ID', $reserveId)
+            ->get();
+
+        $tmp_timeStart = substr($dataReserve->detail_timestart, -8, -6);
+        $tmp_timeEnd = substr($dataReserve->detail_timestart, -8, -6);
+        $time_reamain = func::CHECK_TIME_REAMAIN ($dataReserve->meeting_ID, $tmp_timeStart, $dataReserve->checkin);
+
+        // for($index = 0; $index < count((array)$dataBorrow); $index++) {
+        //     dd($dataBorrow[$index]->equiment_ID);
+        // }
+
+        $data = array(
+            'room_id' => $dataReserve->meeting_ID,
+            'room_name' => $dataReserve->meeting_name,
+            'time_reserve' => $tmp_timeStart.':00',
+            'time_remain' => $time_reamain,
+            'time_select' => $dataReserve->checkin,
+            'dataReserve' => $dataReserve,
+            'dataBorrow' => $dataBorrow
+        );
+
+        return view('ReserveRoom/reserveFormEdit', $data);
+    }
+
+    public function SET_EDIT_DATA_RESERVE (Request $req) {
+        $msg = [
+        'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
+        'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+        'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
+        ];
+    
+        $rule = [
+        'detail_topic' => 'required|string',
+        'detail_count' => 'required|numeric',
+        'user_tel' => 'required|numeric'
+        ];
+
+        $validator = Validator::make($req->all(),$rule,$msg);
+
+        if ($validator->passes()) {
+            if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
+                $time_start = $req->time_select.' '.$req->time_reserve.':00';
+                $time_out = $req->time_select.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00';
+
+                if(isset($req)) {
+                    if (isset($req->hdnEq)) {
+                        for($index = 0 ; $index < count($req->hdnEq); $index++){
+                            $temp = explode(",",$req->hdnEq[$index]);
+                            $data_em = DB::table('equipment')
+                                        ->where('em_name', $temp[0])
+                                        ->first();
+
+                            $data_id_equipment[$index] = $data_em->em_ID;
+                            $data_count_equipment[$index] = $temp[1];
+                        }
+
+                        $id_insert_booking = func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
+                        func::UPDATE_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select, $req->borrow_id);
+                    } else {
+                        func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
+                    }
+                    return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
+                }
+            } else {
+                return redirect()
+                    ->back()
+                    ->withErrors($validator)
+                    ->withInput($req->input());
+            }
+        } else {
+            return redirect()
+                    ->back()
+                    ->withErrors($validator)
+                    ->withInput($req->input());
+        }
+    }
 }

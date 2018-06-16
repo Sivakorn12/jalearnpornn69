@@ -30,8 +30,7 @@ use App\Officer as officer;
             @endif
             </td>
             <td>
-            @if($check_date[0][$key] == 1)<button type="button" onclick="checkDecided({{$reserve->booking_ID}})" class="btn btn-danger btn-xs">ยกเลิกการจอง</button>
-            @elseif($check_date[0][$key] == 1)<button type="button" class="btn btn-warning btn-xs">แก้ไขการจอง</button>
+            @if($check_date[0][$key] == 1) <a type="button" href="{{ url('history/editdata/'.$reserve->booking_ID.'/'.$time_start[$key]) }}" class="btn btn-warning btn-xs">แก้ไขการจอง</a> <button type="button" onclick="checkDecided({{$reserve->booking_ID}})" class="btn btn-danger btn-xs">ยกเลิกการจอง</button>
             @endif
             </td>
             <td>

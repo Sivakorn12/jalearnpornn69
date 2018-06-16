@@ -132,6 +132,7 @@ class ReserveController extends Controller
         $check_weekend = date_create($date_select);
         $check_weekend = date_format($check_weekend, 'r');
         $date_now = date('Y-m-d');
+        $timenow = date('H');
         $empty_timeuse = array();
         $data_openExtra = DB::table('meeting_open_extra')
                                 ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
@@ -147,7 +148,11 @@ class ReserveController extends Controller
         }
 
         for ($index = $time_start; $index < $time_end; $index++) {
-            array_push($empty_timeuse, 0);
+            if ($timenow >= $index) {
+                array_push($empty_timeuse, 1);
+            } else if ($timenow <= $index) {
+                array_push($empty_timeuse, 0);
+            }
             if (strlen($index) < 2) {
                 array_push($time_reserve, '0'.$index.':00');
             } else {

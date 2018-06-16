@@ -91,7 +91,6 @@ class func extends Model
                             ->get();
 
         if (isset($datatimes)) {
-            $timeStart = array();
             foreach ($datatimes as $reserves) {
                 for ($index = 0; $index < sizeof($times); $index++) {
                     if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {

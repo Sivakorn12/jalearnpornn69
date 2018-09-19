@@ -15,6 +15,14 @@
                             margin-top: 3rem;
                             ">
                         LOGIN TO USE WEBSITE</p>
+                        <p
+                            style="
+                            text-align: center;
+                            font-size: 10px;
+                            color: #1a0dab;
+                            ">
+                            ** กรุณา login ด้วยอีเมลของมหาวิทยาลัยเท่านั้น
+                        </span>
 
                         <div class="form-group">
                             <div class="col-xs-3"></div>

@@ -21,18 +21,18 @@ class HistoryController extends Controller
                             ->join('status_room', 'booking.status_ID', '=', 'status_room.status_ID')
                             ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
                             ->where('booking.user_ID', Auth::user()->id)
-                            ->OrderBy('checkin', 'desc')
+                            ->OrderBy('booking_date', 'desc')
                             ->get();
 
         $dataBorrow = $this->GET_HISTORY_BORROW();
         
         $time_th = $time_start = $time_out = $check_dateCheckin = $checkin_date = $checkin_borrow = array();
         for ($index = 0; $index < sizeof($dataHistory); $index++) {
-            $time_th[0][$index] = str_replace(date('Y'), date('Y') + 543, $dataHistory[$index]->booking_date);
+            $time_th[0][$index] = str_replace(date('Y'), date('Y') + 543, substr($dataHistory[$index]->booking_date, 0, 16));
             $time_start[$index] = substr($dataHistory[$index]->detail_timestart, -8, 5);
             $time_out[$index] = substr($dataHistory[$index]->detail_timeout, -8, 5);
             $temp = explode('-', $dataHistory[$index]->checkin);
-            $checkin_date[0][$index] = ($temp[0] + 543).'-'.$temp[1].'-'.$temp[2];
+            $checkin_date[0][$index] = $temp[2].'-'.$temp[1].'-'.($temp[0] + 543);
             
             if ($dataHistory[$index]->checkin >= $date_now) {
                 if ($dataHistory[$index]->status_ID == 3) {
@@ -50,8 +50,8 @@ class HistoryController extends Controller
         for ($index = 0; $index < sizeof($dataBorrow); $index++) {
             $temp_checkin = explode('-', $dataBorrow[$index]->checkin);
             $temp_borrow_date = explode('-', $dataBorrow[$index]->borrow_date);
-            $checkin_date[1][$index] = ($temp_checkin[0] + 543).'-'.$temp_checkin[1].'-'.$temp_checkin[2];
-            $checkin_borrow[$index] = ($temp_borrow_date[0] + 543).'-'.$temp_borrow_date[1].'-'.$temp_borrow_date[2];
+            $checkin_date[1][$index] = $temp_checkin[2].'-'.$temp_checkin[1].'-'.($temp_checkin[0] + 543);
+            $checkin_borrow[$index] = $temp_borrow_date[2].'-'.$temp_borrow_date[1].'-'.($temp_borrow_date[0] + 543);
             
             if ($dataBorrow[$index]->checkin >= $date_now) {
                 if ($dataBorrow[$index]->borrow_status == 3) {

@@ -245,6 +245,14 @@ class Officer extends Model
         ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
         ->where('booking.booking_ID',$id)
         ->first();
+
+        $dateCheckIn = explode("-", $booking->checkin);
+        $dateTHCheckIn = $dateCheckIn[2].'-'.$dateCheckIn[1].'-'.($dateCheckIn[0] + 543);
+        
+        $resultBooking = date("d-m-Y", strtotime(explode(" ", $booking->booking_date)[0]));
+        $bookingDate = explode("-", $resultBooking);
+        $bookingDate = $bookingDate[0].'-'.$bookingDate[1].'-'.($bookingDate[2] + 543).' ';
+        $bookingTHTime = explode(" ", date("d-m-Y H:i",strtotime($booking->booking_date)))[1];
         
         $html = '<table cellpadding=3>
                 <tr>
@@ -257,7 +265,7 @@ class Officer extends Model
                 </tr>
                 <tr>
                     <td width="100"><b>วันที่</b></td>
-                    <td>'.$booking->checkin.'</td>
+                    <td>'.$dateTHCheckIn.'</td>
                 </tr>
                 <tr>
                     <td width="100"><b>เวลา</b></td>
@@ -268,8 +276,12 @@ class Officer extends Model
                     <td>'.((isset($booking->user_name))?$booking->user_name:'-').'</td>
                 </tr>
                 <tr>
-                    <td width="100"><b>วันเวลาที่จอง</b></td>
-                    <td>'.$booking->booking_date.'</td>
+                    <td width="100"><b>วันที่จอง</b></td>
+                    <td>'.$bookingDate.'</td>
+                </tr>
+                <tr>
+                    <td width="100"><b>เวลาที่จอง</b></td>
+                    <td>'.$bookingTHTime.'</td>
                 </tr>
             </table>';
         return $html;

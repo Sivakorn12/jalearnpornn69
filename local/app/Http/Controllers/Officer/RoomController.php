@@ -65,16 +65,26 @@ class RoomController extends Controller
             "type.required" => "กรุณาระบุประเภทห้องประชุม",
             'room_size.required' => "กรุณาระบุขนาดห้องประชุม",
             'room_building.required' => "กรุณาระบุอาคาร",
+            'est_link.required' => "ลิ้งประเมินไม่ถูกต้อง"
           ];
     
           $rule = [
             'room_name' => 'required',
             'type' => 'required',
             'room_size' => 'required',
-            'room_building' => 'required',
+            'room_building' => 'required'
           ];
+
+          $regex='/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/';
+          $resultUrl = preg_match($regex, $request->est_link);
     
           $validator = Validator::make($request->all(),$rule,$msg);
+
+          if(!$resultUrl) {
+            return redirect('control/room/form')
+            ->withErrors($validator)
+            ->withInput($request->input());
+          }
     
           if ($validator->passes()) {
                 $pic = array();

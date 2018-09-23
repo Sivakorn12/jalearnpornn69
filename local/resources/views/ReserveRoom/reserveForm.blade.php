@@ -62,7 +62,7 @@
           <div class="form-group">
             <label class="col-sm-2 control-label">เบอร์โทรติดต่อ</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="user_tel" maxlength="10" placeholder="0123456789">
+              <input type="text" class="form-control" name="user_tel" placeholder="0123456789">
               <p  style="color:red">@if($errors->has('user_tel')) {{$errors->first('user_tel')}}@endif</p>
             </div>
           </div>

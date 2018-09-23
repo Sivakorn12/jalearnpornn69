@@ -34,7 +34,7 @@ use App\Officer as officer;
             @endif
             </td>
             <td>
-            @if ($check_date[0][$key] == 2) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">ทำแบบประเมิน</button>
+            @if ($check_date[0][$key] == 2) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">QR Code</button> <a type="button" class="btn btn-info btn-xs" href="{{$reserves[$key]->estimate_link}}" target="_blank">ไปลิ้งประเมิน</a>
             @endif
             </td>
           </tr>
@@ -79,11 +79,11 @@ $('#exampleModal').on('show.bs.modal', function (event) {
 
 function checkDecided (booking_id) {
   swal({
-    title: "คุณต้องการลบการจองใช่ไหม ?",
+    title: "คุณต้องการยกเลิกการจองใช่หรือไม่ ?",
     icon: "warning",
     buttons: true,
     dangerMode: true,
-    buttons: ["ยกเลิก", "ยืนยัน"]
+    buttons: ["cancel", "ยกเลิก"]
   })
   .then((willDelete) => {
     if (willDelete) {

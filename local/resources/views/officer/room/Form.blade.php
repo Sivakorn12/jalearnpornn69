@@ -63,7 +63,8 @@ if(isset($room))
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label">ลิ้งค์แบบประเมิน</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" name="est_link" value="{{(isset($room->estimate_link))?$room->estimate_link:old('est_link')}}" >
+                                <input type="text" class="form-control" id="est_link" name="est_link" value="{{(isset($room->estimate_link))?$room->estimate_link:old('est_link')}}">
+                                <p  style="color:red">@if($errors->has('est_link')) {{$errors->first('est_link')}}@endif</p>
                             </div>
                         </div>
                         @if(isset($room->estimate_link))

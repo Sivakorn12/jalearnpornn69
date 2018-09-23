@@ -64,8 +64,7 @@ class RoomController extends Controller
             'room_name.required' => "กรุณาระบุชื่อห้องประชุม",
             "type.required" => "กรุณาระบุประเภทห้องประชุม",
             'room_size.required' => "กรุณาระบุขนาดห้องประชุม",
-            'room_building.required' => "กรุณาระบุอาคาร",
-            'est_link.required' => "ลิ้งประเมินไม่ถูกต้อง"
+            'room_building.required' => "กรุณาระบุอาคาร"
           ];
     
           $rule = [
@@ -81,9 +80,10 @@ class RoomController extends Controller
           $validator = Validator::make($request->all(),$rule,$msg);
 
           if(!$resultUrl) {
+            $validator->getMessageBag()->add('est_link', 'ลิ้งประเมินไม่ถูกต้อง');
             return redirect('control/room/form')
-            ->withErrors($validator)
-            ->withInput($request->input());
+                        ->withErrors($validator)
+                        ->withInput($request->input());
           }
     
           if ($validator->passes()) {

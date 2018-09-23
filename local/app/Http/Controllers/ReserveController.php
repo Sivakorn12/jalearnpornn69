@@ -148,10 +148,14 @@ class ReserveController extends Controller
         }
 
         for ($index = $time_start; $index < $time_end; $index++) {
-            if ($timenow >= $index) {
-                array_push($empty_timeuse, 1);
-            } else if ($timenow <= $index) {
+            if ($date_select > $date_now) {
                 array_push($empty_timeuse, 0);
+            } else {
+                if ($timenow >= $index) {
+                    array_push($empty_timeuse, 1);
+                } else if ($timenow <= $index) {
+                    array_push($empty_timeuse, 0);
+                }
             }
             if (strlen($index) < 2) {
                 array_push($time_reserve, '0'.$index.':00');

@@ -68,6 +68,7 @@ class ReserveController extends Controller
             'time_reserve' => $timeReserve.':00',
             'time_remain' => $time_reamain,
             'time_select' => $date_select,
+            'timeTH_select' => $timeSelect,
             'data_equipment' => $dataequipment
         );
         return view('ReserveRoom/reserveForm', $data);
@@ -191,15 +192,12 @@ class ReserveController extends Controller
         $dataBorrow = DB::table('borrow_booking')
             ->join('detail_borrow', 'borrow_booking.borrow_ID', '=', 'detail_borrow.borrow_ID')
             ->where('borrow_booking.booking_ID', $reserveId)
+            ->where('detail_borrow.borrow_count', '!=', '0')
             ->get();
 
         $tmp_timeStart = substr($dataReserve->detail_timestart, -8, -6);
         $tmp_timeEnd = substr($dataReserve->detail_timestart, -8, -6);
         $time_reamain = func::CHECK_TIME_REAMAIN ($dataReserve->meeting_ID, $tmp_timeStart, $dataReserve->checkin);
-
-        // for($index = 0; $index < count((array)$dataBorrow); $index++) {
-        //     dd($dataBorrow[$index]->equiment_ID);
-        // }
 
         $data = array(
             'room_id' => $dataReserve->meeting_ID,

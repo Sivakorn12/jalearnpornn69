@@ -24,6 +24,12 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label">วันที่ใช้งาน</label>
+            <div class="col-sm-10">
+              <p class="form-control-static">{{$timeTH_select}}</p>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="col-sm-2 control-label">เวลาเริ่มใช้</label>
             <div class="col-sm-10">
               <p class="form-control-static">{{$time_reserve}}</p>

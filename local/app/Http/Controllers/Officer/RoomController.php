@@ -70,7 +70,7 @@ class RoomController extends Controller
           $rule = [
             'room_name' => 'required',
             'type' => 'required',
-            'room_size' => 'required',
+            'room_size' => 'required|Numeric',
             'room_building' => 'required'
           ];
 
@@ -149,7 +149,7 @@ class RoomController extends Controller
           $rule = [
             'room_name' => 'required',
             'type' => 'required',
-            'room_size' => 'required',
+            'room_size' => 'required|Numeric',
             'room_building' => 'required',
           ];
     

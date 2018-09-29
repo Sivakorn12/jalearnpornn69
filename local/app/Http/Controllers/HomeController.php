@@ -59,4 +59,24 @@ class HomeController extends Controller
         $html = officer::viewBooking($id);
         return response()->json(['html'=>$html]);
     }
+
+    public function getNoti(){
+        $datas = DB::table('booking')
+                    ->select(
+                        'booking.booking_ID',
+                        'booking.booking_name',
+                        'booking.checkin',
+                        'booking.booking_date',
+                        'detail_topic',
+                        'meeting_name'
+                    )
+                    ->join('detail_booking as db','booking.booking_ID','=','db.booking_ID')
+                    ->join('meeting_room as mr','db.meeting_ID','=','mr.meeting_ID')
+                    ->where('status_ID',3)
+                    ->where('booking.checkin','>=',date('Y-m-d H:i:s'))
+                    ->where('db.detail_timestart','>=',date('Y-m-d H:i:s'))
+                    ->orderBy('booking.booking_ID')
+                    ->get();
+        return response()->json(['data'=>$datas]);;
+    }
 }

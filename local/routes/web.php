@@ -35,6 +35,7 @@ Route::get('/getQr', 'HistoryController@GET_QRCODE');
 // });
 Route::any('/getdataReserve/{id}', 'Officer\DashboardController@viewBooking');
 Route::any('/getdataCalendar/{id}', 'HomeController@viewBooking');
+Route::any('/getNoti', 'HomeController@getNoti');
 
 
 Route::prefix('/control')->group(function () {

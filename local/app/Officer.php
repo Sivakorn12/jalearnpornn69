@@ -420,4 +420,23 @@ class Officer extends Model
             return true;
         return false;
     }
+
+    public static function dateDBtoBE($date){
+        $dt = explode(" ", $date);
+        if(sizeof($dt)>1){
+            $d = explode("-", $dt[0]);
+            $dd = $d[2];
+            $mm = $d[1];
+            $yy = $d[0];
+            $time = substr($dt[1],0,5);
+            return $dd.'-'.$mm.'-'.$yy.' '.$time;
+        }
+        else{
+            $d = explode("-", $dt[0]);
+            $dd = $d[2];
+            $mm = $d[1];
+            $yy = $d[0];
+            return $dd.'-'.$mm.'-'.$yy;
+        }
+    }
 }

@@ -99,3 +99,31 @@ table.showroom > thead > tr > th {
   background-color: dimgray;
   border-color: dimgray
 }
+
+.button {
+  color: white;
+  display: inline-block; /* Inline elements with width and height. TL;DR they make the icon buttons stack from left-to-right instead of top-to-bottom */
+  position: relative; /* All 'absolute'ly positioned elements are relative to this one */
+  padding: 2px 5px; /* Add some padding so it looks nice */
+}
+
+/* Make the badge float in the top right corner of the button */
+.button_badge {
+  background-color: #fa3e3e;
+  border-radius: 2px;
+  color: white;
+  text-align: center;
+  padding:4px 5px;
+  font-size: 10px;
+  width:15px;
+  position: absolute; /* Position the badge within the relatively positioned button */
+  top: 0;
+  right: 0;
+}
+
+ul.noti>li{
+  width: 300px;
+
+  border-bottom: 1px solid #ddd;
+}
+

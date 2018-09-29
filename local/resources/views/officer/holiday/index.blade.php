@@ -132,7 +132,7 @@ use App\Officer as officer;
                     id: '{{ $holiday->holiday_ID }}',
                     title : '{{ $holiday->holiday_name }}',
                     start: new Date('{{ $holiday->holiday_start }}'),
-                    end: new Date('{{$holiday->holiday_end}}T23:59:59.0+0100'),
+                    end: setDateEndCalendar('{{ $holiday->holiday_end }}'),
                     description :'{{ $holiday->holiday_detail }}',
                     allDay: true,    
                     className: 'moreBorder'

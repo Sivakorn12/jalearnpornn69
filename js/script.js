@@ -58,6 +58,7 @@ function detailHoliday(event){
 
 function FormaddHoliday(day){
     $("#date_start").val(dateThai(day))
+    $("#date_end").val(dateThai(day))
     $('#formModal').modal('show')
 }
 function dateThai(day){
@@ -67,6 +68,43 @@ function dateThai(day){
 function dateThaiYearBC(day){
     var dmy = day.split("-");
     return dmy[2]+"-"+dmy[1]+"-"+dmy[0]
+}
+
+function getNoti(){
+    $.ajax({
+        url: '/project/getNoti',
+        type: 'GET',
+        dataType: 'JSON',
+        data: '',
+        success: function(res) {
+            //console.log(res.data)
+            $('.button_badge').text(Object.keys(res.data).length)
+            var list = setListNoti(res.data)
+            $('.noti').html(list)
+        }
+    });
+}
+
+function setListNoti(data){
+    var html =''
+    if(Object.keys(data).length > 0){
+        for(d in data){
+            var dt = moment(data[d]["booking_date"]+ "+07:00", "YYYY-MM-DD HH:mm:ssZ")
+            html += '<li><a href="/project/control/checkbooking">'+
+                        '<b>'+data[d]["booking_name"] + '</b> ได้จองห้อง <b>'+data[d]["meeting_name"]+'</b>'+
+                        '<br><i style="font-size:12px;color:#b3b3b3">'+dt.fromNow()+'</i>'
+
+                    '</a></li>'
+        }
+    }
+    else{
+        html +='<li><a>ไม่มีเเจ้งเตือน</a></li>'
+    }
+    return html
+}
+
+function setDateEndCalendar(dt){
+    return moment(dt, "YYYY-MM-DD").add(1, 'days');
 }
 
 

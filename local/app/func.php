@@ -253,18 +253,32 @@ class func extends Model
 
         for ($index = 0; $index < sizeof($get_equipID); $index++) {
             for ($inner = 0; $inner < sizeof($id_equipment); $inner++) {
-                if ($id_equipment[$inner] != $get_equipID[$index] && sizeof($get_equipID) > sizeof($id_equipment)) {
-                    DB::table('detail_borrow')
+                if ($id_equipment[$inner] != $get_equipID[$index]) {
+                    if (sizeof($get_equipID) > sizeof($id_equipment)) {
+                        DB::table('detail_borrow')
                         ->where('borrow_ID', $borrow_id)
                         ->where('equiment_ID', $get_equipID[$index])
-                        ->delete();
-                } else if ($id_equipment[$inner] != $get_equipID[$index] && sizeof($get_equipID) < sizeof($id_equipment)) {
-                    DB::table('detail_borrow')
+                        ->update(['borrow_count' => 0]);
+                    } else if (sizeof($get_equipID) < sizeof($id_equipment)) {
+                        DB::table('detail_borrow')
                         ->insert([
                             'borrow_ID' => $borrow_id,
                             'equiment_ID' => $id_equipment[$inner],
                             'borrow_count' => $count_equipment[$inner]
                         ]);
+                    } else if (sizeof($get_equipID) == sizeof($id_equipment)) {
+                        DB::table('detail_borrow')
+                        ->where('borrow_ID', $borrow_id)
+                        ->where('equiment_ID', $get_equipID[$index])
+                        ->update(['borrow_count' => 0]);
+
+                        DB::table('detail_borrow')
+                        ->insert([
+                            'borrow_ID' => $borrow_id,
+                            'equiment_ID' => $id_equipment[$inner],
+                            'borrow_count' => $count_equipment[$inner]
+                        ]);
+                    }
                 } else if ($id_equipment[$inner] == $get_equipID[$index] && $count_equipment[$inner] != $get_equipCount[$index]) {
                     DB::table('detail_borrow')
                         ->where('borrow_ID', $borrow_id)

@@ -21,6 +21,7 @@ class HistoryController extends Controller
                             ->join('status_room', 'booking.status_ID', '=', 'status_room.status_ID')
                             ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
                             ->where('booking.user_ID', Auth::user()->id)
+                            ->where('booking.status_ID', '!=', 4)
                             ->OrderBy('booking_date', 'desc')
                             ->get();
 
@@ -87,20 +88,12 @@ class HistoryController extends Controller
 
         DB::table('booking')
             ->where('booking_ID', $req->data_booking)
-            ->delete();
-
-        DB::table('detail_booking')
-            ->where('booking_ID', $req->data_booking)
-            ->delete();
+            ->update(['status_ID' => 4]);
 
         if (isset($data_borrow)) {
             DB::table('borrow_booking')
                 ->where('booking_ID', $req->data_booking)
-                ->delete();
-
-            DB::table('detail_borrow')
-                ->where('borrow_ID', $data_borrow->borrow_ID)
-                ->delete();
+                ->update(['borrow_status' => 4]);
 
             return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
         } else {
@@ -111,11 +104,7 @@ class HistoryController extends Controller
     public function DELETE_BORROW (Request $req) {
         DB::table('borrow_booking')
             ->where('booking_ID', $req->data_booking)
-            ->delete();
-
-        DB::table('detail_borrow')
-            ->where('borrow_ID', $req->data_borrow)
-            ->delete();
+            ->update(['borrow_status' => 4]);
 
         return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
     }
@@ -136,6 +125,8 @@ class HistoryController extends Controller
                             ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
                             ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
                             ->where('booking.user_ID', Auth::user()->id)
+                            ->where('borrow_booking.borrow_status', '!=', '4')
+                            ->where('detail_borrow.borrow_count', '!=', '0')
                             ->OrderBy('checkin', 'desc')
                             ->get();
         return $dataBorrow;

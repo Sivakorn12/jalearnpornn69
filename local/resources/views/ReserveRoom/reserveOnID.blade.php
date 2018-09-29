@@ -46,12 +46,12 @@
             <div class="table-responsive">
               <table width="100%">
                 <tr>
-                  <td valign="top" width="130px"><b>ข้อกำหนดการ : </b></td>
+                  <td valign="top" width="130px"><b>ลักษณะการใช้งาน : </b></td>
                   <td>{{$rooms->provision}}</td>
                 </tr>
                 <tr>
                   <td valign="top"><b>ขนาดห้อง : </b></td>
-                  <td>{{$rooms->meeting_size}}</td>
+                  <td>{{$rooms->meeting_size}} ที่นั่ง</td>
                 </tr>
                 <tr>
                   <td valign="top"><b>อาคารห้องประชุม : </b></td>

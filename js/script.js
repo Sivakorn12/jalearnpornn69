@@ -69,4 +69,33 @@ function dateThaiYearBC(day){
     return dmy[2]+"-"+dmy[1]+"-"+dmy[0]
 }
 
+function getNoti(){
+    $.ajax({
+        url: '/project/getNoti',
+        type: 'GET',
+        dataType: 'JSON',
+        data: '',
+        success: function(res) {
+            //console.log(res.data)
+            $('.button_badge').text(Object.keys(res.data).length)
+            var list = setListNoti(res.data)
+            $('.noti').html(list)
+        }
+    });
+}
+
+function setListNoti(data){
+    var html =''
+    if(Object.keys(data).length > 0){
+        for(d in data){
+            html += '<li><a href="/project/control/checkbooking">'+
+                        data[d]["booking_name"] + ' จองห้อง'+data[d]["meeting_name"]+'</a></li>'
+        }
+    }
+    else{
+        html +='<li><a>ไม่มีเเจ้งเตือน</a></li>'
+    }
+    return html
+}
+
 

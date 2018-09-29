@@ -52,6 +52,16 @@
                 <li>
                 <p >วันที่: {{date('Y-m-d')}}</p>
                 </li>
+
+                <li class="dropdown">
+                    <a class="button dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-bell fa-lg"></i>
+                            <span class="button_badge">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user noti">
+                        
+                    </ul>
+                </li>
                 <!-- /.dropdown -->
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -143,4 +153,13 @@
        
     </div>
 </body>
+<script>
+$(document).ready(function(){
+    getNoti()
+    setInterval(function(){ getNoti()}, 10000);
+})
+ 
+  //setTimeout(function(){ fecthdataBooking() }, 3000);
+  //setTimeout(function(){ window.location.reload() }, 5000);
+</script>
 </html>

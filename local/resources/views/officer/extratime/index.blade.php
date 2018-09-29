@@ -6,7 +6,7 @@ use App\Officer as officer;
 @section('content')
 <div class="row">
     <div class="col-md-12" id="tableroom"> 
-        <div style="float:right;margin-bottom:10px"> 
+        <div style="float:right;margin-bottom:10px">
             <a data-toggle="modal" onclick="addEx()" class="btn btn-success" data-toggle="tooltip" title="เพิ่ม"><i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
         <table class="table table-hover showroom" id="tb-room">

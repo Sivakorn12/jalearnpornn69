@@ -1,9 +1,11 @@
 <?php
 use App\Officer as officer;
 $roomTypes = officer::getTypeRoom();
+$buildings = officer::getBuilding();
 $equips = array();
-if(isset($room))
+if(isset($room)){
     $equips = officer::getEquips($room->meeting_ID);
+}
 //dd($equips);
 
 
@@ -43,14 +45,18 @@ if(isset($room))
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label">ขนาดห้อง(ที่นั่ง)</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" name="room_size" value="{{(isset($room->meeting_size))?$room->meeting_size:old('room_size')}}" >
+                                <input type="number" style="text-align:right" class="form-control" name="room_size" value="{{(isset($room->meeting_size))?$room->meeting_size:old('room_size')}}" >
                                 <p  style="color:red">@if($errors->has('room_size')) {{$errors->first('room_size')}}@endif</p>
                             </div>
                         </div>
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label">อาคาร</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" name="room_building" value="{{(isset($room->meeting_buiding))?$room->meeting_buiding:old('room_building')}}" >
+                                <select class="form-control" name="room_building"  id="">
+                                @foreach($buildings as $bd)
+                                    <option value="{{$bd->building_id}}" @if(isset($room->meeting_buiding) and ($bd->building_id == $room->meeting_buiding) ) selected @endif>{{$bd->building_name}}</option>
+                                @endforeach
+                                </select>
                                 <p  style="color:red">@if($errors->has('room_building')) {{$errors->first('room_building')}}@endif</p>
                             </div>
                         </div>
@@ -155,10 +161,10 @@ if(isset($room))
     return file['type'].split('/')[0]=='image';//returns true or false
  }
  function addEquioment(){
-     console.log(equip.length)
+     //console.log(equip.length)
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
-     if (checkDuplicate(name, equip)) {
+     if (checkDuplicate(name, equip) && name!='') {
         equip[equip.length] = [name,amount];
     }
     fetchListEquip(equip);

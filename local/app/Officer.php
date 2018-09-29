@@ -439,4 +439,8 @@ class Officer extends Model
             return $dd.'-'.$mm.'-'.$yy;
         }
     }
+
+    public static function getBuilding(){
+        return DB::table('building')->get();
+    }
 }

@@ -21,6 +21,8 @@ Route::post('/reserve/confirm', 'ReserveController@submitReserve');
 Route::post('/reserve/confirmedit', 'ReserveController@SET_EDIT_DATA_RESERVE');
 Route::get('/reserve/{id}', 'ReserveController@ReservrRoom');
 Route::get('/checkdate', 'ReserveController@CHECK_DATE_RESERVE');
+// Route::get('/testController', 'ReserveController@testController');
+Route::get('/reserve/form/reserve', 'ReserveController@testController');
 Route::get('/reserve/{id}/{timeReserve}/{timeSelect}', 'ReserveController@reserveForm');
 Route::get('/history/editdata/{id}/{timeSelect}', 'ReserveController@EDIT_DATA_RESERVE');
 

@@ -101,6 +101,9 @@
 </div>
 @endif
 <script>
+var arrTime = []
+var tmpString
+const meetingId = <?php echo $rooms->meeting_ID ?>;
 $(document).ready(function() {
   $('.datepicker').datepicker({
     format: 'dd-mm-yyyy',
@@ -133,10 +136,54 @@ $(document).ready(function() {
       if (time[index] == 1) {
         viewHTML += "<a type='button' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+time_reserve[index]+"</a>"
       } else {
-        viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' href="+path+">"+time_reserve[index]+"</a>"
+        // viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' href="+path+">"+time_reserve[index]+"</a>"
+        viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' onclick='addTime(`"+time_reserve[index]+"`)'>"+time_reserve[index]+"</a>"
       }
     }
+    // console.log(arrTime)
+    // let tmpString = JSON.stringify(arrTime)
+    // console.log(tmpString, '<<<<<')
+    
+    viewHTML += "<div><form action='{{ url('reserve/form/reserve') }}' method='get' enctype='multipart/form-data'>"
+    viewHTML += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
+    viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
+    viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"
+    // viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value="+tmpString+">"
+    viewHTML += "<button type='submit' class='btn btn-success'>ยืนยัน</button></form</div>"
     $('#time-reserve').html(viewHTML)
+  }
+
+  function addTime (value) {
+    if (arrTime.length > 0) {
+      const checkIndex = arrTime.findIndex( element => {
+        return element === value
+      })
+      if (checkIndex === -1) {
+        arrTime.push(value)
+      } else {
+        arrTime.splice(checkIndex, 1)
+      }
+    } else {
+      arrTime.push(value)
+    }
+    tmpString = JSON.stringify(arrTime)
+    console.log(tmpString)
+  }
+
+  function submitReserveTime () {
+    $.ajax({
+        url: "{{url('testController')}}",
+        type: 'GET',
+        dataType: 'JSON',
+        data: {  _token: "{{ csrf_token() }}", timeSelect: arrTime, meetingId: meetingId },
+        success: function(data) {
+          if (data.tmpRespone) {
+            // console.log('success')
+          } else {
+            // console.log('not success')
+          }
+        }
+    })
   }
 </script>
 @endsection

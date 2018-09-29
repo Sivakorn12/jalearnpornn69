@@ -264,4 +264,8 @@ class ReserveController extends Controller
                     ->withInput($req->input());
         }
     }
+
+    public function testController (Request $req) {
+        dd($req->timeSelect);
+    }
 }

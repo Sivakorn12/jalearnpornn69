@@ -1,3 +1,6 @@
+<?php
+use App\Officer as officer;
+?>
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
@@ -26,10 +29,13 @@
     <script src="{{ url('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ url('js/notify.js') }}"></script>
-    
+   
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker-custom.js')}}"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker.th.js')}}"></script>
     <script type="text/javascript" src="{{ url('js/script.js')}}"></script>
+    <script src="{{ url('js/moment.js') }}"></script>
+    <script src="{{ url('js/moment-timezone.js') }}"></script>
+    <script src="{{ url('js/moment-timezone-with-data-2012-2022.js') }}"></script>
 </head>
 <body>
     <div id="wrapper" class="main">
@@ -50,13 +56,13 @@
 
             <ul class="nav navbar-top-links navbar-right">
                 <li>
-                <p >วันที่: {{date('Y-m-d')}}</p>
+                <p >วันที่: {{officer::dateDBtoBE(date('Y-m-d'))}}</p>
                 </li>
 
                 <li class="dropdown">
                     <a class="button dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="fa fa-bell fa-lg"></i>
-                            <span class="button_badge">0</span>
+                            <span class="button_badge"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-user noti">
                         
@@ -156,7 +162,7 @@
 <script>
 $(document).ready(function(){
     getNoti()
-    setInterval(function(){ getNoti()}, 10000);
+    setInterval(function(){ getNoti()}, 60000);
 })
  
   //setTimeout(function(){ fecthdataBooking() }, 3000);

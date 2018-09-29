@@ -66,6 +66,7 @@ class HomeController extends Controller
                         'booking.booking_ID',
                         'booking.booking_name',
                         'booking.checkin',
+                        'booking.booking_date',
                         'detail_topic',
                         'meeting_name'
                     )

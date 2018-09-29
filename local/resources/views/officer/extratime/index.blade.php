@@ -1,3 +1,6 @@
+<?php
+use App\Officer as officer;
+?>
 @extends('layouts.officer',['page'=>'extratime'])
 @section('page_heading','เวลาการใช้งาน')
 @section('content')
@@ -19,7 +22,7 @@
             @foreach($exs as $key => $ex )
             <tr>
                 <td>{{$key+1}}</td>
-                <td>{{substr($ex->extra_start,0,10)}}</td>
+                <td>{{officer::dateDBtoBE(substr($ex->extra_start,0,10))}}</td>
                 <td>{{substr($ex->extra_start,-8,5)}} - {{substr($ex->extra_end,-8,5)}}</td>
                 <td>
                     <a class="btn btn-warning btn-sm" data-toggle="tooltip" data-toggle="modal" onclick="changeEx('{{$ex->extra_ID}}','{{$ex->extra_start}}','{{$ex->extra_end}}')" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>

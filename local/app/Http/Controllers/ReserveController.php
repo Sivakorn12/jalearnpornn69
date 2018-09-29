@@ -266,6 +266,6 @@ class ReserveController extends Controller
     }
 
     public function testController (Request $req) {
-        dd($req->timeSelect);
+        dd(json_decode($req->timeSelect));
     }
 }

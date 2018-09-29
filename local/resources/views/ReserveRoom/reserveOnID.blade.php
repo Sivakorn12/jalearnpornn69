@@ -103,6 +103,9 @@
 <script>
 var arrTime = []
 var tmpString
+var times = [] 
+var time_reserve = []
+var date_select = ''
 const meetingId = <?php echo $rooms->meeting_ID ?>;
 $(document).ready(function() {
   $('.datepicker').datepicker({
@@ -119,7 +122,10 @@ $(document).ready(function() {
           data: {  _token: "{{ csrf_token() }}", date: dataOnchange, roomid: "{{$rooms->meeting_ID}}" },
           success: function(data) {
             if (data.time_empty) {
-              render_button_time(data.time_empty, data.time_reserve, dataOnchange)
+              times = data.time_empty
+              time_reserve = data.time_reserve
+              date_select = dataOnchange
+              render_button_time()
               $('#time-reserve').show()
             } else {
               swal('ไม่สำเร็จ', data.error, 'error')
@@ -129,15 +135,55 @@ $(document).ready(function() {
   });
 });
 
-  function render_button_time (time, time_reserve, date_select) {
+  // function render_button_time (time, time_reserve, date_select) {
+  //   var viewHTML = ""
+  //   for (index = 0; index < time.length; index++) {
+  //     let path = "{{url('reserve')}}"+"/{{$rooms->meeting_ID}}/"+time_reserve[index].substring(-8, 2)+"/"+date_select
+  //     if (time[index] == 1) {
+  //       viewHTML += "<a type='button' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+time_reserve[index]+"</a>"
+  //     } else {
+  //       // viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' href="+path+">"+time_reserve[index]+"</a>"
+  //       viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' onclick='addTime(`"+time_reserve[index]+"`)'>"+time_reserve[index]+"</a>"
+  //     }
+  //   }
+  //   // console.log(arrTime)
+  //   // let tmpString = JSON.stringify(arrTime)
+  //   // console.log(tmpString, '<<<<<')
+    
+  //   viewHTML += "<div><form action='{{ url('reserve/form/reserve') }}' method='get' enctype='multipart/form-data'>"
+  //   viewHTML += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
+  //   viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
+  //   viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"
+  //   // viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value="+tmpString+">"
+  //   viewHTML += "<button type='submit' class='btn btn-success'>ยืนยัน</button></form</div>"
+  //   $('#time-reserve').html(viewHTML)
+  // }
+
+  // function addTime (value) {
+  //   if (arrTime.length > 0) {
+  //     const checkIndex = arrTime.findIndex( element => {
+  //       return element === value
+  //     })
+  //     if (checkIndex === -1) {
+  //       arrTime.push(value)
+  //     } else {
+  //       arrTime.splice(checkIndex, 1)
+  //     }
+  //   } else {
+  //     arrTime.push(value)
+  //   }
+  //   tmpString = JSON.stringify(arrTime)
+  //   console.log(tmpString)
+  // }
+  function render_button_time(){
     var viewHTML = ""
-    for (index = 0; index < time.length; index++) {
+    for (index = 0; index < times.length; index++) {
       let path = "{{url('reserve')}}"+"/{{$rooms->meeting_ID}}/"+time_reserve[index].substring(-8, 2)+"/"+date_select
-      if (time[index] == 1) {
-        viewHTML += "<a type='button' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+time_reserve[index]+"</a>"
+      if (times[index] == 1 ) {
+        viewHTML += "<a type='button' id='btnTime"+(parseInt(time_reserve[index].substring(0,2)))+"' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+time_reserve[index]+"</a>"
       } else {
         // viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' href="+path+">"+time_reserve[index]+"</a>"
-        viewHTML += "<a type='button' class='btn btn-success' style='margin-right: 1rem;' onclick='addTime(`"+time_reserve[index]+"`)'>"+time_reserve[index]+"</a>"
+        viewHTML += "<a type='button' id='btnTime"+(parseInt(time_reserve[index].substring(0,2)))+"' class='btn btn-success' style='margin-right: 1rem;' onclick='addTime(`"+time_reserve[index]+"`)'>"+time_reserve[index]+"</a>"
       }
     }
     // console.log(arrTime)
@@ -148,26 +194,51 @@ $(document).ready(function() {
     viewHTML += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
     viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
     viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"
-    // viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value="+tmpString+">"
+    viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value='"+(JSON.stringify(arrTime))+"'>"
     viewHTML += "<button type='submit' class='btn btn-success'>ยืนยัน</button></form</div>"
     $('#time-reserve').html(viewHTML)
+    setColorBtn()
   }
 
   function addTime (value) {
-    if (arrTime.length > 0) {
+    if(arrTime.length == 2){
+      arrTime = []
+      arrTime[0] = value
+    }
+    else{
+      var hrs_st = parseInt(value.substring(0,2))
       const checkIndex = arrTime.findIndex( element => {
         return element === value
       })
+      const checkErrorBackTime = arrTime.findIndex( element => {
+        return parseInt(element.substring(0,2)) >= hrs_st
+      })
       if (checkIndex === -1) {
         arrTime.push(value)
-      } else {
-        arrTime.splice(checkIndex, 1)
       }
-    } else {
-      arrTime.push(value)
+      if (checkErrorBackTime === 0) {
+        arrTime = []
+        arrTime[0] = value
+      }
     }
-    tmpString = JSON.stringify(arrTime)
-    console.log(tmpString)
+    console.log(arrTime)
+    render_button_time()
+  }
+
+  function setColorBtn(){
+    var st,end = 0
+    if(arrTime.length == 2){
+      st = parseInt(arrTime[0].substring(0,2))
+      end = parseInt(arrTime[1].substring(0,2))
+    }
+    else if(arrTime.length == 1){
+      st = parseInt(arrTime[0].substring(0,2))
+      end = parseInt(arrTime[0].substring(0,2))
+    }
+    for(var n = st;n<=end;n++){
+      $('#btnTime'+n).removeClass('btn-success')
+      $('#btnTime'+n).addClass('btn-danger')
+    }
   }
 
   function submitReserveTime () {

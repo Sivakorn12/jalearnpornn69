@@ -47,7 +47,7 @@
               <div class="table-responsive">
                 <table width="100%">
                   <tr>
-                    <td valign="top" width="130px"><b>ข้อกำหนดการ : </b></td>
+                    <td valign="top" width="130px"><b>ลักษณะการใช้งาน : </b></td>
                     <td>{{$rooms->provision}}</td>
                   </tr>
                   <tr>

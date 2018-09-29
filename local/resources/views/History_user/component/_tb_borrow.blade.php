@@ -25,7 +25,6 @@ use App\Officer as officer;
       @if($check_date[1][$key] == 1) <span class="label label-warning">รออนุมัติ</span>
       @elseif($check_date[1][$key] == 2) <span class="label label-success">อนุมัติ</span>
       @elseif($check_date[1][$key] == 3) <span class="label label-info">เกินวันยืมอุปกรณ์</span>
-      @else <span class="label label-danger">ไม่อนุมัติ</span>
       @endif
       </td>
       <td>

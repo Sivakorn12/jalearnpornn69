@@ -41,7 +41,7 @@ if(isset($room))
                             </div>
                         </div>
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label">ขนาดห้อง</label>
+                            <label class="col-sm-3 control-label">ขนาดห้อง(ที่นั่ง)</label>
                             <div class="col-sm-7">
                                 <input type="text" class="form-control" name="room_size" value="{{(isset($room->meeting_size))?$room->meeting_size:old('room_size')}}" >
                                 <p  style="color:red">@if($errors->has('room_size')) {{$errors->first('room_size')}}@endif</p>
@@ -55,7 +55,7 @@ if(isset($room))
                             </div>
                         </div>
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label" >ข้อกำหนด</label>
+                            <label class="col-sm-3 control-label" >ลักษณะการใช้งาน</label>
                             <div class="col-sm-7">
                                 <textarea name="provision" class="form-control"  rows="3">{{(isset($room->provision))?$room->provision:old('provision')}}</textarea>
                             </div>
@@ -63,7 +63,8 @@ if(isset($room))
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label">ลิ้งค์แบบประเมิน</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" name="est_link" value="{{(isset($room->estimate_link))?$room->estimate_link:old('est_link')}}" >
+                                <input type="text" class="form-control" id="est_link" name="est_link" value="{{(isset($room->estimate_link))?$room->estimate_link:old('est_link')}}">
+                                <p  style="color:red">@if($errors->has('est_link')) {{$errors->first('est_link')}}@endif</p>
                             </div>
                         </div>
                         @if(isset($room->estimate_link))

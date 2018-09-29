@@ -38,7 +38,7 @@
                                 {{$room->meeting_name}}
                             </td>
                             <td>
-                                {{$room->meeting_size}}
+                                {{$room->meeting_size}} ที่นั่ง
                             </td>
                             <td>
                                 {{$room->meeting_type_name}}

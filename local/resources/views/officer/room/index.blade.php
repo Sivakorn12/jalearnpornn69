@@ -27,7 +27,7 @@ use App\Officer as officer;
                 <td><img src='{{url ("asset/rooms/".officer::getAImage($room->meeting_pic))}}' width="80"></td>
                 <td>{{$room->meeting_name}}</td>
                 <td>{{$room->meeting_buiding}}</td>
-                <td>{{$room->meeting_size}}</td>
+                <td>{{$room->meeting_size}} ที่นั่ง</td>
                 <td>
                     <a class="btn btn-warning" data-toggle="tooltip" href="{{url('control/room/edit/'.$room->meeting_ID)}}" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                     <a class="btn btn-danger" data-toggle="tooltip" onclick="confirmDeleteRoom({{$room->meeting_ID}},'{{$room->meeting_name}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>

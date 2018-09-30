@@ -30,19 +30,11 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">เวลาเริ่มใช้</label>
-            <div class="col-sm-10">
-              <p class="form-control-static">{{$time_reserve}}</p>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">จำนวนเวลา</label>
+            <label class="col-sm-2 control-label">เวลาที่จอง</label>
             <div class="col-sm-5">
-              <select class="sectionlist form-control" name="time_use">
-                @for($index = 1; $index <= $time_remain; $index++)
-                  <option value="{{$index}}">{{$index}}</option>
+                @for($index = 0; $index < sizeof($time_start); $index++)
+                  <p class="form-control-static">{{$time_start[$index]}} - {{$time_end[$index]}}</p>
                 @endfor
-              </select>
             </div>
           </div>
           <div class="form-group">
@@ -112,8 +104,9 @@
           <input type="hidden" name="user_id" value="{{$user_id}}">
           <input type="hidden" name="user_name" value="{{$user_name}}">
           <input type="hidden" name="meeting_id" value="{{$room->meeting_ID}}">
-          <input type="hidden" name="time_reserve" value="{{$time_reserve}}">
           <input type="hidden" name="time_select" value="{{$time_select}}">
+          <input type="hidden" name="reserve_start" value="{{$reserve_start}}">
+          <input type="hidden" name="reserve_end" value="{{$reserve_end}}">
           <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
           <div class="form-group">
             <div class="col-sm-2"></div>

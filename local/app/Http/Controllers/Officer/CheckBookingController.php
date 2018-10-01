@@ -59,6 +59,23 @@ class CheckBookingController extends Controller
                         'status_ID' => 1,
                         'approve_date' => date('Y-m-d H:i:s')
                     ]);
+        $equips = DB::table('booking')
+                    ->select(
+                        'eq.em_ID',
+                        'dbr.borrow_count',
+                        'eq.em_count'
+                    )
+                    ->join('borrow_booking as bbr','booking.booking_ID','=','bbr.booking_ID')
+                    ->join('detail_borrow as dbr','bbr.borrow_ID','=','dbr.borrow_ID')
+                    ->join('equipment as eq','dbr.equiment_ID','=','em_ID')
+                    ->where('booking.booking_ID',$id)
+                    ->get();
+        foreach($equips as $eq){
+            DB::table('equipment')->where('em_ID', $eq->em_ID)
+            ->update([
+                'em_count' => ($eq->em_count-$eq->borrow_count)
+            ]);
+        }
        return response()->json(['id'=>$id]);
     }
     

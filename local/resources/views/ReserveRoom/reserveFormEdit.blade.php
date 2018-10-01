@@ -24,19 +24,17 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">เวลาเริ่มใช้</label>
+            <label class="col-sm-2 control-label">วันที่ใช้งาน</label>
             <div class="col-sm-10">
-              <p class="form-control-static">{{$time_reserve}}</p>
+              <p class="form-control-static">{{$timeTH_select}}</p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">จำนวนเวลา</label>
+            <label class="col-sm-2 control-label">เวลาที่จอง</label>
             <div class="col-sm-5">
-              <select class="sectionlist form-control" name="time_use">
-                @for($index = 1; $index <= $time_remain; $index++)
-                  <option value="{{$index}}">{{$index}}</option>
+                @for($index = 0; $index < sizeof($time_start); $index++)
+                  <p class="form-control-static">{{$time_start[$index]}} - {{$time_end[$index]}}</p>
                 @endfor
-              </select>
             </div>
           </div>
           <div class="form-group">
@@ -113,9 +111,10 @@
           <input type="hidden" name="user_name" value="{{$user_name}}">
           <input type="hidden" name="meeting_id" value="{{$room_id}}">
           <input type="hidden" name="booking_id" value="{{$dataReserve->booking_ID}}">
-          <input type="hidden" name="borrow_id" value="{{$dataBorrow[0]->borrow_ID}}">
-          <input type="hidden" name="time_reserve" value="{{$time_reserve}}">
+          <input type="hidden" name="borrow" value="{{$dataBorrow}}">
           <input type="hidden" name="time_select" value="{{$time_select}}">
+          <input type="hidden" name="reserve_start" value="{{$reserve_start}}">
+          <input type="hidden" name="reserve_end" value="{{$reserve_end}}">
           <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
           <div class="form-group">
             <div class="col-sm-2"></div>

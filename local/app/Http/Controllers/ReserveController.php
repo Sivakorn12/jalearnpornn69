@@ -212,18 +212,25 @@ class ReserveController extends Controller
             ->where('detail_borrow.borrow_count', '!=', '0')
             ->get();
 
-        $tmp_timeStart = substr($dataReserve->detail_timestart, -8, -6);
-        $tmp_timeEnd = substr($dataReserve->detail_timestart, -8, -6);
-        $time_reamain = func::CHECK_TIME_REAMAIN ($dataReserve->meeting_ID, $tmp_timeStart, $dataReserve->checkin);
+        $tmp_timeStart = substr($dataReserve->detail_timestart, -8, -3);
+        $tmp_timeEnd = substr($dataReserve->detail_timeout, -8, -3);
+        $arrTimeReserve = array($tmp_timeStart, $tmp_timeEnd);
+
+        $time_reamain = func::CHECK_TIME_REAMAIN ($dataReserve->meeting_ID, $arrTimeReserve, $dataReserve->checkin);
+        $tmpDate = explode("-", $dataReserve->checkin);
+        $timeTH = $tmpDate[2].'-'.$tmpDate[1].'-'.($tmpDate[0] + 543);
 
         $data = array(
             'room_id' => $dataReserve->meeting_ID,
             'room_name' => $dataReserve->meeting_name,
-            'time_reserve' => $tmp_timeStart.':00',
-            'time_remain' => $time_reamain,
+            'time_start' => $time_reamain[0],
+            'time_end' => $time_reamain[1],
             'time_select' => $dataReserve->checkin,
+            'timeTH_select' => $timeTH,
+            'reserve_start' => $tmp_timeStart,
+            'reserve_end' => $tmp_timeEnd,
             'dataReserve' => $dataReserve,
-            'dataBorrow' => $dataBorrow
+            'dataBorrow' => $dataBorrow,
         );
 
         return view('ReserveRoom/reserveFormEdit', $data);
@@ -242,12 +249,14 @@ class ReserveController extends Controller
         'user_tel' => 'required|numeric'
         ];
 
+        $dataBorrow = json_decode($req->borrow);
+
         $validator = Validator::make($req->all(),$rule,$msg);
 
         if ($validator->passes()) {
             if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
-                $time_start = $req->time_select.' '.$req->time_reserve.':00';
-                $time_out = $req->time_select.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00';
+                $time_start = $req->time_select.' '.$req->reserve_start;
+                $time_out = $req->time_select.' '.$req->reserve_start;
 
                 if(isset($req)) {
                     if (isset($req->hdnEq)) {
@@ -261,8 +270,13 @@ class ReserveController extends Controller
                             $data_count_equipment[$index] = $temp[1];
                         }
 
-                        $id_insert_booking = func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
-                        func::UPDATE_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select, $req->borrow_id);
+                        func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
+
+                        if (empty($dataBorrow[0]->borrow_ID)) {
+                            func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, null);
+                        } else {
+                            func::UPDATE_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, $dataBorrow[0]->borrow_ID);
+                        }
                     } else {
                         func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
                     }
@@ -281,31 +295,4 @@ class ReserveController extends Controller
                     ->withInput($req->input());
         }
     }
-
-    // public function testController (Request $req) {
-    //     $timeSelect = json_decode($req->timeSelect);
-    //     $temp_date = explode('-', $req->dateSelect);
-    //     $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-
-    //     $dataRoom = DB::table('meeting_room')
-    //         ->where('meeting_ID', $req->meetingId)
-    //         ->first();
-
-    //     $dataequipment = DB::table('equipment')
-    //                             ->get();
-    //     $time_reamain = func::CHECK_TIME_REAMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
-
-    //     $data = array(
-    //         'room' => $dataRoom,
-    //         // 'time_reserve' => $timeReserve.':00',
-    //         // 'time_remain' => $time_reamain,
-    //         'time_start' => $time_reamain[0],
-    //         'time_end' => $time_reamain[1],
-    //         'time_select' => $date_select,
-    //         'timeTH_select' => $timeSelect,
-    //         'data_equipment' => $dataequipment
-    //     );
-
-    //     return view('ReserveRoom/reserveForm', $data);
-    // }
 }

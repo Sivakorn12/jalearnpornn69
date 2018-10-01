@@ -216,15 +216,15 @@ class ReserveController extends Controller
         $tmp_timeEnd = substr($dataReserve->detail_timeout, -8, -3);
         $arrTimeReserve = array($tmp_timeStart, $tmp_timeEnd);
 
-        $time_reamain = func::CHECK_TIME_REAMAIN ($dataReserve->meeting_ID, $arrTimeReserve, $dataReserve->checkin);
+        $time_remain = func::CHECK_TIME_REMAIN ($dataReserve->meeting_ID, $arrTimeReserve, $dataReserve->checkin);
         $tmpDate = explode("-", $dataReserve->checkin);
         $timeTH = $tmpDate[2].'-'.$tmpDate[1].'-'.($tmpDate[0] + 543);
 
         $data = array(
             'room_id' => $dataReserve->meeting_ID,
             'room_name' => $dataReserve->meeting_name,
-            'time_start' => $time_reamain[0],
-            'time_end' => $time_reamain[1],
+            'time_start' => $time_remain[0],
+            'time_end' => $time_remain[1],
             'time_select' => $dataReserve->checkin,
             'timeTH_select' => $timeTH,
             'reserve_start' => $tmp_timeStart,

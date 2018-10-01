@@ -308,8 +308,6 @@ class func extends Model
     }
 
     public static function UPDATE_DATA_BORROW ($id_equipment, $count_equipment, $id_booking, $time_select, $borrow_id) {
-        dd($id_booking);
-
         if ($borrow_id != null) {
             $dataBorrow = DB::table('borrow_booking')
                             ->join('detail_borrow', 'borrow_booking.borrow_ID', '=', 'detail_borrow.borrow_ID')

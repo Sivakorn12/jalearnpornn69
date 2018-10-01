@@ -213,7 +213,7 @@ class ReserveController extends Controller
             ->get();
 
         $tmp_timeStart = substr($dataReserve->detail_timestart, -8, -3);
-        $tmp_timeEnd = substr($dataReserve->detail_timeout, -8, -3);
+        $tmp_timeEnd = ((int)substr($dataReserve->detail_timeout, -8, -3) - 1).':00';
         $arrTimeReserve = array($tmp_timeStart, $tmp_timeEnd);
 
         $time_remain = func::CHECK_TIME_REMAIN ($dataReserve->meeting_ID, $arrTimeReserve, $dataReserve->checkin);
@@ -256,7 +256,7 @@ class ReserveController extends Controller
         if ($validator->passes()) {
             if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
                 $time_start = $req->time_select.' '.$req->reserve_start;
-                $time_out = $req->time_select.' '.$req->reserve_start;
+                $time_out = $req->time_select.' '.$req->reserve_end;
 
                 if(isset($req)) {
                     if (isset($req->hdnEq)) {

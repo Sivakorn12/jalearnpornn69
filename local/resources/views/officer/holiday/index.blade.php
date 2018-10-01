@@ -4,9 +4,6 @@ use App\Officer as officer;
 @extends('layouts.officer',['page'=>'holiday'])
 @section('page_heading','จัดการวันหยุด')
 @section('content')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>  
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.js"></script>  
-<script type="text/javascript" src="{{ url('js/fullcalendar.th.js')}}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.css" />
 <div class="row">
         <div class="col-xs-12" style="padding-bottom:10px">

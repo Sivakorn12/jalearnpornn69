@@ -25,8 +25,8 @@ use App\Officer as officer;
             @foreach($rooms as $key => $room )
             <tr>
                 <td><img src='{{url ("asset/rooms/".officer::getAImage($room->meeting_pic))}}' width="80"></td>
-                <td>{{$room->meeting_name}}</td>
-                <td>{{$room->meeting_buiding}}</td>
+                <td style="text-align:left">{{$room->meeting_name}}</td>
+                <td style="text-align:left">{{$room->building_name}}</td>
                 <td>{{$room->meeting_size}} ที่นั่ง</td>
                 <td>
                     <a class="btn btn-warning" data-toggle="tooltip" href="{{url('control/room/edit/'.$room->meeting_ID)}}" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>

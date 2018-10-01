@@ -36,6 +36,8 @@ use App\Officer as officer;
     <script src="{{ url('js/moment.js') }}"></script>
     <script src="{{ url('js/moment-timezone.js') }}"></script>
     <script src="{{ url('js/moment-timezone-with-data-2012-2022.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.js"></script>      
+    <script type="text/javascript" src="{{ url('js/fullcalendar.th.js')}}"></script>
 </head>
 <body>
     <div id="wrapper" class="main">

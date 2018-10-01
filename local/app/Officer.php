@@ -256,10 +256,6 @@ class Officer extends Model
         
         $html = '<table cellpadding=3>
                 <tr>
-                    <td width="120"><b>รหัสการจอง</b></td>
-                    <td>'.$booking->booking_ID.'</td>
-                </tr>
-                <tr>
                     <td width="100"><b>ห้อง</b></td>
                     <td>'.$booking->meeting_name.'</td>
                 </tr>
@@ -427,7 +423,7 @@ class Officer extends Model
             $d = explode("-", $dt[0]);
             $dd = $d[2];
             $mm = $d[1];
-            $yy = $d[0];
+            $yy = $d[0]+543;
             $time = substr($dt[1],0,5);
             return $dd.'-'.$mm.'-'.$yy.' '.$time;
         }
@@ -435,8 +431,12 @@ class Officer extends Model
             $d = explode("-", $dt[0]);
             $dd = $d[2];
             $mm = $d[1];
-            $yy = $d[0];
+            $yy = $d[0]+543;
             return $dd.'-'.$mm.'-'.$yy;
         }
+    }
+
+    public static function getBuilding(){
+        return DB::table('building')->get();
     }
 }

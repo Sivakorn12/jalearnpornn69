@@ -31,6 +31,7 @@ class RoomController extends Controller
     public function index(){
         $rooms = DB::table('meeting_room')
                  ->join('meeting_type','meeting_room.meeting_type_ID','=','meeting_type.meeting_type_ID')
+                 ->join('building as b','meeting_room.meeting_buiding','=','b.building_id')
                  ->get();
         $data = array(
             'rooms' => $rooms

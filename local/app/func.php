@@ -264,7 +264,7 @@ class func extends Model
         return $id_insert;
     }
 
-    public static function SET_DATA_BORROW ($id_equipment, $count_equipment, $id_insert_booking, $time_select) {
+    public static function SET_DATA_BORROW ($id_equipment, $count_equipment, $id_insert_booking, $time_select,$reduce_equipment_now = false) {
         $id_borrow_booking = array();
 
         if (is_array($id_insert_booking)) {
@@ -289,7 +289,7 @@ class func extends Model
                 }
             }
         } else {
-            $id = DB::table('borrow_booking')
+            /*$id = DB::table('borrow_booking')
                                         ->insertGetId([
                                             'booking_ID' => $id_insert_booking[$index],
                                             'borrow_date' => $time_select,
@@ -303,7 +303,7 @@ class func extends Model
                         'equiment_ID' => $id_equipment[$inner],
                         'borrow_count' => $count_equipment[$inner]
                     ]);
-            }
+            }*/
         }
     }
 

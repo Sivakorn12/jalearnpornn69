@@ -246,6 +246,17 @@ class Officer extends Model
         ->where('booking.booking_ID',$id)
         ->first();
 
+        $equips = DB::table('booking')
+                        ->select(
+                            'eq.em_name',
+                            'dbr.borrow_count'
+                        )
+                        ->join('borrow_booking as bbr','booking.booking_ID','=','bbr.booking_ID')
+                        ->join('detail_borrow as dbr','bbr.borrow_ID','=','dbr.borrow_ID')
+                        ->join('equipment as eq','dbr.equiment_ID','=','em_ID')
+                        ->where('booking.booking_ID',$id)->get();
+        //dd($equip);
+
         $dateCheckIn = explode("-", $booking->checkin);
         $dateTHCheckIn = $dateCheckIn[2].'-'.$dateCheckIn[1].'-'.($dateCheckIn[0] + 543);
         
@@ -278,6 +289,15 @@ class Officer extends Model
                 <tr>
                     <td width="100"><b>เวลาที่จอง</b></td>
                     <td>'.$bookingTHTime.'</td>
+                </tr>
+                <tr>
+                    <td valign="top" width="100"><b>การยืมอุปกรณ์</b></td>
+                    <td>';
+        foreach($equips as $eq){
+            $html .= '<span>'.$eq->em_name.' x '.$eq->borrow_count.'</span><br>'  ;
+        }
+                    
+        $html .=    '</td>
                 </tr>
             </table>';
         return $html;

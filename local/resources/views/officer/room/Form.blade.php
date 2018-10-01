@@ -5,8 +5,8 @@ $buildings = officer::getBuilding();
 $equips = array();
 if(isset($room)){
     $equips = officer::getEquips($room->meeting_ID);
+    $pics = explode(",", $room->meeting_pic);
 }
-//dd($equips);
 
 
 ?>
@@ -74,12 +74,12 @@ if(isset($room)){
                             </div>
                         </div>
                         @if(isset($room->estimate_link))
-                        <div class="form-group form-room">
+                        {{-- <div class="form-group form-room">
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-7" style="height:180px">
                                 {!!officer::genQR_code($room->estimate_link)!!}
                             </div>
-                        </div>
+                        </div> --}}
                         @endif
                         <div class="form-group form-room" >
                             <label class="col-sm-3 control-label" >รูปภาพ</label>
@@ -88,6 +88,35 @@ if(isset($room)){
                                 <p id="error-pic" style="display:none;color:red">กรุณาเลือกรูปภาพเท่านั้น</p>
                             </div>
                         </div>
+                        @if(isset($room->meeting_pic))
+                        <div class="form-group form-room">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-4" >
+                                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">
+                                      <div class="item active">
+                                        <img class="img-responsive" src='{{url ("asset/rooms/".$pics[0])}}'>
+                                      </div>
+                        
+                                      @foreach($pics as $key => $img)
+                                      <div class="item">
+                                        <img class="img-responsive" src='{{url ("asset/rooms/".$img)}}'>
+                                      </div>
+                                      @endforeach
+                                    </div>
+                        
+                                    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                                      <span class="glyphicon glyphicon-chevron-left"></span>
+                                      <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                                      <span class="glyphicon glyphicon-chevron-right"></span>
+                                      <span class="sr-only">Next</span>
+                                    </a>
+                                  </div>
+                            </div>
+                        </div>
+                        @endif
                         <div class="form-group form-room" >
                                 <label class="col-sm-3 control-label" >อุปกรณ์ภายใน</label>
                                 <div class="col-sm-4">
@@ -98,7 +127,7 @@ if(isset($room)){
                                         <input type="number" class="form-control" min="1" id="input-equip-amount" >
                                 </div>
                                 <div class="col-sm-1 control-label" >
-                                    <button style="margin-top: -3px" type="button" class="btn btn-default btn-circle" onclick="addEquioment()">
+                                    <button style="margin-top: -3px" type="button" class="btn btn-default btn-circle" onclick="addEquipment()">
                                         <i style="margin-top:3px"class="fa fa-lg fa-plus" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -160,7 +189,7 @@ if(isset($room)){
   function isImage(file){
     return file['type'].split('/')[0]=='image';//returns true or false
  }
- function addEquioment(){
+ function addEquipment(){
      //console.log(equip.length)
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()

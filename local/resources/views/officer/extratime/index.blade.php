@@ -26,7 +26,7 @@ use App\Officer as officer;
                 <td>{{substr($ex->extra_start,-8,5)}} - {{substr($ex->extra_end,-8,5)}}</td>
                 <td>
                     <a class="btn btn-warning btn-sm" data-toggle="tooltip" data-toggle="modal" onclick="changeEx('{{$ex->extra_ID}}','{{$ex->extra_start}}','{{$ex->extra_end}}')" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" onclick="confirmDeleteEx({{$ex->extra_ID}},'{{substr($ex->extra_start,0,10)}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
+                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" onclick="confirmDeleteEx({{$ex->extra_ID}},'{{officer::dateDBtoBE(substr($ex->extra_start,0,10))}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
                 </td>
             </tr>
             @endforeach
@@ -45,7 +45,7 @@ use App\Officer as officer;
         <div class="modal-body">
             <form action="{{url('control/extratime/add')}}" class="form-horizontal" method="POST" >
                 <div class="form-group form-room">
-                        <label class="col-sm-3 control-label">วันที่เริ่ม</label>
+                        <label class="col-sm-3 control-label">วันที่</label>
                         <div class="col-sm-7">
                             <input type="text" name="date_start" id="date_start" class="datepicker" data-provide="datepicker" data-date-language="th-th">
                         </div>

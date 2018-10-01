@@ -286,6 +286,13 @@ class func extends Model
                             'equiment_ID' => $id_equipment[$inner],
                             'borrow_count' => $count_equipment[$inner]
                         ]);
+                    if($reduce_equipment_now){
+                        $eq = DB::table('equipment')->where('em_ID', $id_equipment[$inner])->first();
+                        DB::table('equipment')->where('em_ID', $id_equipment[$inner])
+                        ->update([
+                            'em_count' => ($eq->em_count-$count_equipment[$inner])
+                        ]);
+                    }
                 }
             }
         } else {

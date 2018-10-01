@@ -88,13 +88,13 @@ class ReservationController extends Controller
             ->where('meeting_ID', $id)
             ->get();
         
-        $time_reamain = func::CHECK_TIME_REAMAIN ($id, $timeReserve, $timeSelect);
+        $time_remain = func::CHECK_TIME_REMAIN ($id, $timeReserve, $timeSelect);
         $temp_date = explode('-', $timeSelect);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
         $data = array(
             'room' => $dataRoom,
             'time_reserve' => $timeReserve.':00',
-            'time_remain' => $time_reamain,
+            'time_remain' => $time_remain,
             'checkin' =>$date_select,
         );
         return view('officer/reservation/Form', $data);

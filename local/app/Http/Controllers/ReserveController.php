@@ -58,7 +58,7 @@ class ReserveController extends Controller
 
         $dataequipment = DB::table('equipment')
                                 ->get();
-        $time_reamain = func::CHECK_TIME_REAMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
+        $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
 
         $reserveEnd = false;
         if (sizeof($timeSelect) > 1) {
@@ -67,11 +67,11 @@ class ReserveController extends Controller
 
         $data = array(
             'room' => $dataRoom,
-            'time_start' => $time_reamain[0],
-            'time_end' => $time_reamain[1],
+            'time_start' => $time_remain[0],
+            'time_end' => $time_remain[1],
             'time_select' => $date_select,
             'reserve_start' => $timeSelect[0],
-            'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_reamain[1][0],
+            'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_remain[1][0],
             'timeTH_select' => $req->dateSelect,
             'data_equipment' => $dataequipment
         );
@@ -101,14 +101,14 @@ class ReserveController extends Controller
                 $temp_date = explode('-', $req->time_select);
                 $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
 
-                $time_reamain = func::CHECK_TIME_REAMAIN ($req->meeting_id, $time_reserve, $date_select);
+                $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $time_reserve, $date_select);
 
                 $booking_startTime = array();
                 $booking_endTime = array();
 
-                for ($index = 0; $index < sizeof($time_reamain[0]); $index++) {
-                    array_push($booking_startTime, $req->time_select.' '.$time_reamain[0][$index]);
-                    array_push($booking_endTime, $req->time_select.' '.$time_reamain[1][$index]);
+                for ($index = 0; $index < sizeof($time_remain[0]); $index++) {
+                    array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
+                    array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
                 }
 
                 if(isset($req)) {

@@ -105,7 +105,7 @@ class func extends Model
         return $checkTimeuse;
     }
 
-    public static function CHECK_TIME_REAMAIN ($id, $time_reserve, $time_select) {
+    public static function CHECK_TIME_REMAIN ($id, $time_reserve, $time_select) {
         $temp_date = explode('-', $time_select);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
 

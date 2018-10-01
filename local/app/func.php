@@ -108,7 +108,7 @@ class func extends Model
     public static function CHECK_TIME_REAMAIN ($id, $time_reserve, $time_select) {
         $temp_date = explode('-', $time_select);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-        
+
         $data_openExtra = DB::table('meeting_open_extra')
                                 ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
                                 ->first();
@@ -117,6 +117,7 @@ class func extends Model
         $time_end = 16;
         $times = array();
         $checkTimeuse = array();
+        $checktimeReserve = array();
 
         if (isset($data_openExtra)) {
             $time_start = substr($data_openExtra->extra_start, -8, 2);
@@ -125,16 +126,13 @@ class func extends Model
 
         for ($index = $time_start; $index < $time_end; $index++) {
             array_push($checkTimeuse, 0);
+            array_push($checktimeReserve, 0);
             if (strlen($index) < 2) {
                 array_push($times, '0'.$index.':00');
             } else {
                 array_push($times, $index.':00');
             }
         }
-
-        $time_reserve = $time_reserve.':00';
-        $count_time = 0;
-        $pos_timeuse = array_search($time_reserve, $times);
         
         $datatimes = DB::table('detail_booking')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
@@ -143,7 +141,6 @@ class func extends Model
                             ->get();
 
         if (isset($datatimes)) {
-            $timeStart = array();
             foreach ($datatimes as $reserves) {
                 if (substr($reserves->detail_timestart, 0, 10) == $date_select) {
                     for ($index = 0; $index < sizeof($times); $index++) {
@@ -158,12 +155,32 @@ class func extends Model
             }
         }
 
-        for ($index = $pos_timeuse; $index < sizeof($checkTimeuse); $index++) {
-            if ($checkTimeuse[$index] == 0) {
-                $count_time++;
-            } else break;
+        for ($index = 0; $index < sizeof($times); $index++) {
+            if ($time_reserve[0] == $times[$index] || $times[$index] <= $time_reserve[1]) {
+                $checktimeReserve[$index] = 1;
+            } else {
+                $checktimeReserve[$index] = 0;
+            }
         }
-        return $count_time;
+
+        $bookingStart = array();
+        $bookingEnd = array();
+        $count = 0;
+
+        for ($index = 0; $index < sizeof($checkTimeuse); $index++) {
+            if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && $count == 0) {
+                array_push($bookingStart, $times[$index]);
+                $count++;
+            } else if (($checkTimeuse[$index] == 1 && $checktimeReserve[$index] == 1) && $count != 0) {
+                array_push($bookingEnd, $times[$index]);
+                $count = 0;
+            } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 0) && $count != 0) {
+                array_push($bookingEnd, $times[$index]);
+                $count = 0;
+            }
+        }
+
+        return array($bookingStart, $bookingEnd);
     }
 
     public static function GET_EXTRATIME () {
@@ -175,27 +192,30 @@ class func extends Model
     }
 
     public static function SET_DATA_BOOKING ($req, $time_start, $time_out) {
-        $id_insert = DB::table('booking')
-                        ->insertGetId([
-                            'status_ID' => 3,
-                            'section_ID' => isset($req->section_id)? $req->section_id : null,
-                            'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
-                            'user_ID' => $req->user_id,
-                            'booking_name' => $req->user_name,
-                            'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
-                            'booking_date' => date('Y-m-d H:i:s'),
-                            'checkin' => $req->time_select
-                        ]);
-        DB::table('detail_booking')
-                ->insert([
-                    'booking_ID' => $id_insert,
-                    'meeting_ID' => $req->meeting_id,
-                    'detail_topic' => $req->detail_topic,
-                    'detail_timestart' => $time_start,
-                    'detail_timeout' => $time_out,
-                    'detail_count' => $req->detail_count
-                ]);
-
+        $id_insert = array();
+        for ($index = 0; $index < sizeof($time_start); $index++) {
+            $id = DB::table('booking')
+                            ->insertGetId([
+                                'status_ID' => 3,
+                                'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
+                                'user_ID' => $req->user_id,
+                                'booking_name' => $req->user_name,
+                                'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                                'booking_date' => date('Y-m-d H:i:s'),
+                                'checkin' => $req->time_select
+                            ]);
+            DB::table('detail_booking')
+                    ->insert([
+                        'booking_ID' => $id,
+                        'meeting_ID' => $req->meeting_id,
+                        'detail_topic' => $req->detail_topic,
+                        'detail_timestart' => $time_start[$index],
+                        'detail_timeout' => $time_out[$index],
+                        'detail_count' => $req->detail_count
+                    ]);
+            array_push($id_insert, $id);
+        }
         return $id_insert;
     }
 
@@ -221,20 +241,26 @@ class func extends Model
     }
 
     public static function SET_DATA_BORROW ($id_equipment, $count_equipment, $id_insert_booking, $time_select) {
-        $id_borrow_booking = DB::table('borrow_booking')
+        $id_borrow_booking = array();
+        for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+            $id = DB::table('borrow_booking')
                                     ->insertGetId([
-                                        'booking_ID' => $id_insert_booking,
+                                        'booking_ID' => $id_insert_booking[$index],
                                         'borrow_date' => $time_select,
                                         'borrow_status' => 3
                                     ]);
+            array_push($id_borrow_booking, $id);
+        }
 
-        for($index = 0 ; $index < sizeof($count_equipment); $index++){
-            DB::table('detail_borrow')
-                ->insert([
-                    'borrow_ID' => $id_borrow_booking,
-                    'equiment_ID' => $id_equipment[$index],
-                    'borrow_count' => $count_equipment[$index]
-                ]);
+        for($index = 0; $index < sizeof($id_borrow_booking); $index++) {
+            for($inner = 0 ; $inner < sizeof($count_equipment); $inner++){
+                DB::table('detail_borrow')
+                    ->insert([
+                        'borrow_ID' => $id_borrow_booking[$index],
+                        'equiment_ID' => $id_equipment[$inner],
+                        'borrow_count' => $count_equipment[$inner]
+                    ]);
+            }
         }
     }
 

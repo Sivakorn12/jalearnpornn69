@@ -119,7 +119,7 @@ $(document).ready(function() {
           url: "{{url('checkdate')}}",
           type: 'GET',
           dataType: 'JSON',
-          data: {  _token: "{{ csrf_token() }}", date: dataOnchange, roomid: "{{$rooms->meeting_ID}}" },
+          data: {  date: dataOnchange, roomid: "{{$rooms->meeting_ID}}" },
           success: function(data) {
             if (data.time_empty) {
               times = data.time_empty

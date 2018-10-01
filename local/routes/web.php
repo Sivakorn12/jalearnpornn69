@@ -52,7 +52,7 @@ Route::prefix('/control')->group(function () {
   Route::get('/reservation','Officer\ReservationController@index');
   Route::post('/reservation/confirm','Officer\ReservationController@confirm');
   Route::get('/reservation/{id}','Officer\ReservationController@Form');
-  Route::get('/reservation/{id}/{timeReserve}/{timeSelect}', 'Officer\ReservationController@reserveForm');
+  Route::get('/reservation/form/reserve', 'Officer\ReservationController@reserveForm');
 
   Route::get('/room','Officer\RoomController@index');
   Route::get('/room/form','Officer\RoomController@Form');

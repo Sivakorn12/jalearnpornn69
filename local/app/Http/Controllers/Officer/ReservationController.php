@@ -37,8 +37,14 @@ class ReservationController extends Controller
             ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name','b.building_name')
             ->get();
 
+        $imgs_room = array();
+        for($index = 0; $index < sizeof($dataRoom); $index++) {
+            $imgs_room[$index] = explode(',', $dataRoom[$index]->meeting_pic);
+        }
+
         $data = array(
-            'rooms' => $dataRoom
+            'rooms' => $dataRoom,
+            'imgs' => $imgs_room
         );
         return view('officer/reservation/index', $data);
     }
@@ -79,29 +85,39 @@ class ReservationController extends Controller
         }
     }
 
-    public function reserveForm($id, $timeReserve, $timeSelect){
+    public function reserveForm(Request $req){
+        $timeSelect = json_decode($req->timeSelect);
+        $temp_date = explode('-', $req->dateSelect);
+        $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+        
         $dataRoom = DB::table('meeting_room')
-            ->where('meeting_ID', $id)
+            ->where('meeting_ID', $req->meetingId)
             ->first();
         
-        $dataTimeReserve = DB::table('detail_booking')
-            ->where('meeting_ID', $id)
-            ->get();
+        $dataequipment = DB::table('equipment')
+                            ->get();
+        $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
         
-        $time_remain = func::CHECK_TIME_REMAIN ($id, $timeReserve, $timeSelect);
-        $temp_date = explode('-', $timeSelect);
-        $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+        $reserveEnd = false;
+        if (sizeof($timeSelect) > 1) {
+            $reserveEnd = true;
+        }
+
         $data = array(
             'room' => $dataRoom,
-            'time_reserve' => $timeReserve.':00',
-            'time_remain' => $time_remain,
-            'checkin' =>$date_select,
+            'time_start' => $time_remain[0],
+            'time_end' => $time_remain[1],
+            'time_select' => $date_select,
+            'reserve_start' => $timeSelect[0],
+            'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_remain[1][0],
+            'timeTH_select' => $req->dateSelect,
+            'data_equipment' => $dataequipment
         );
         return view('officer/reservation/Form', $data);
     }
 
     public function confirm(Request $req){
-        //dd($req);
+        //dd($req->all());
         $msg = [
             'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",
@@ -118,35 +134,25 @@ class ReservationController extends Controller
             'user_tel' => 'required',
             'contract_file' => 'required',
           ];
-          $validator = Validator::make($req->all(),$rule);
-    
+          $validator = Validator::make($req->all(),$rule,$msg);
+          if(empty($req->file('contract_file'))){
+            $validator->getMessageBag()->add('contract_file', 'โปรดแนบเอกสารการจอง');
+          }
           if ($validator->passes()) {
-            // insert booking
-            $bookid = DB::table('booking')->insertGetId([
-                'status_ID' => 1,
-                'section_ID' => $req->section_id,
-                'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
-                'user_ID' => Auth::user()->id,
-                'booking_name' => $req->contract_name,
-                'booking_phone' => $req->user_tel,
-                'booking_date' => date('Y-m-d H:i:s'),
-                'approve_date' => date('Y-m-d H:i:s'),
-                'checkin' => $req->checkin,
-                
-            ]);
-            // insert detail booking
-            $time_start = date($req->checkin.' '.$req->time_reserve.':00');
-            $time_out = date($req->checkin.' '.(substr($req->time_reserve, 0, 2) + $req->time_use).':00');
-            DB::table('detail_booking')
-                    ->insert([
-                        'booking_ID' => $bookid,
-                        'meeting_ID' => $req->meeting_id,
-                        'detail_topic' => $req->detail_topic,
-                        'detail_timestart' => $time_start,
-                        'detail_timeout' => $time_out,
-                        'detail_count' => $req->detail_count
-            ]);
-            // check Do you borrow equipment?
+            $time_reserve = array( $req->reserve_start, $req->reserve_end );
+            $temp_date = explode('-', $req->time_select);
+            $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
+
+            $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $time_reserve, $date_select);
+
+            $booking_startTime = array();
+            $booking_endTime = array();
+
+            for ($index = 0; $index < sizeof($time_remain[0]); $index++) {
+                array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
+                array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
+            }
+
             if (isset($req->hdnEq)) {
                 for($index = 0 ; $index < count($req->hdnEq); $index++){
                     $temp = explode(",",$req->hdnEq[$index]);
@@ -157,7 +163,11 @@ class ReservationController extends Controller
                     $data_id_equipment[$index] = $data_em->em_ID;
                     $data_count_equipment[$index] = $temp[1];
                 }
-                func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $bookid, $req->checkin);
+
+                $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime,1);
+                func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select);
+            } else {
+                $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime,1);
             }
             // check have file
             $files = $req->file('contract_file');
@@ -167,18 +177,20 @@ class ReservationController extends Controller
                     $fileType = $fileType[count($fileType)-1];
                     $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
                     $file->move('asset/documents',$fileFullName);
-                    DB::table('document')->insert([
-                        'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
-                        'section_ID' => isset($req->section_id)? $req->section_id : null,
-                        'document_file' => $fileFullName,
-                        'booking_id' => $bookid
-                    ]);
+                    for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                        DB::table('document')->insert([
+                            'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                            'section_ID' => isset($req->section_id)? $req->section_id : null,
+                            'document_file' => $fileFullName,
+                            'booking_id' => $id_insert_booking[$index]
+                        ]);
+                    }
                 }
             }
             return redirect('control/reservation/')
                         ->with('successMessage','จองห้องเรียบร้อย');
           }else{
-            return redirect()->back()->withInput($req->input());
+            return redirect()->back()->withInput($req->input())->withErrors($validator);
           }
     }
 }

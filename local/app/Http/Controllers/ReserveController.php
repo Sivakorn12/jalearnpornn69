@@ -60,13 +60,18 @@ class ReserveController extends Controller
                                 ->get();
         $time_reamain = func::CHECK_TIME_REAMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
 
+        $reserveEnd = false;
+        if (sizeof($timeSelect) > 1) {
+            $reserveEnd = true;
+        }
+
         $data = array(
             'room' => $dataRoom,
             'time_start' => $time_reamain[0],
             'time_end' => $time_reamain[1],
             'time_select' => $date_select,
             'reserve_start' => $timeSelect[0],
-            'reserve_end' => $timeSelect[1],
+            'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_reamain[1][0],
             'timeTH_select' => $req->dateSelect,
             'data_equipment' => $dataequipment
         );

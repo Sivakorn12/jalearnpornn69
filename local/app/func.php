@@ -147,7 +147,7 @@ class func extends Model
                         if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
                             $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
                             for ($inner = 0; $inner < $hour; $inner++) {
-                            $checkTimeuse[$inner + $index] = 1;
+                                $checkTimeuse[$inner + $index] = 1;
                             }
                         }
                     }
@@ -155,11 +155,20 @@ class func extends Model
             }
         }
 
-        for ($index = 0; $index < sizeof($times); $index++) {
-            if ($time_reserve[0] == $times[$index] || $times[$index] <= $time_reserve[1]) {
-                $checktimeReserve[$index] = 1;
-            } else {
-                $checktimeReserve[$index] = 0;
+        if (sizeof($time_reserve) > 1) {
+            for ($index = 0; $index < sizeof($times); $index++) {
+                if ($time_reserve[0] == $times[$index] && $times[$index] <= $time_reserve[1]) {
+                    $hour = ((int)$time_reserve[1] - (int)$time_reserve[0]) + 1;
+                    for ($inner = 0; $inner < $hour; $inner++) {
+                        $checktimeReserve[$inner + $index] = 1;
+                    }
+                }
+            }
+        } else {
+            for ($index = 0; $index < sizeof($times); $index++) {
+                if ($time_reserve[0] == $times[$index]) {
+                    $checktimeReserve[$index] = 1;
+                }
             }
         }
 
@@ -177,6 +186,21 @@ class func extends Model
             } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 0) && $count != 0) {
                 array_push($bookingEnd, $times[$index]);
                 $count = 0;
+            } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && ($index == sizeof($checkTimeuse) - 1)) {
+                array_push($bookingEnd, $time_end.':00');
+                $count = 0;
+            }
+            if (sizeof($time_reserve) < 2 && (sizeof($bookingStart) > 0 && $count == 1)) {
+                if ($index != sizeof($checkTimeuse) - 1) {
+                    array_push($bookingEnd, $times[$index + 1]);
+                } else {
+                    if (strlen($time_end) < 2) {
+                        array_push($bookingEnd, '0'.$time_end.':00');
+                    } else {
+                        array_push($bookingEnd, $time_end.':00');
+                    }
+                }
+                break;
             }
         }
 

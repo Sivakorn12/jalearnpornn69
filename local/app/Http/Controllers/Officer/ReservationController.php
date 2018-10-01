@@ -165,7 +165,8 @@ class ReservationController extends Controller
                 }
 
                 $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime,1);
-                func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select);
+                $reduce_equipment_now = true;
+                func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select,$reduce_equipment_now);
             } else {
                 $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime,1);
             }

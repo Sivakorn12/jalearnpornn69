@@ -2,6 +2,7 @@
   use App\func as func;
 
   $user_id = Auth::user()->id;
+  $user_name = Auth::user()->user_name;
   $sections = func::GetSection();
   $dataEquipment = func::GET_EQUIPMENT();
 ?>
@@ -24,41 +25,43 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" >เวลาเริ่มใช้</label>
             <div class="col-sm-10">
-              <p class="form-control-static">{{$time_reserve}}</p>
+              <p class="form-control-static">{{$timeTH_select}}</p>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">จำนวนเวลา</label>
             <div class="col-sm-5">
-              <select class="sectionlist form-control" name="time_use">
-                @for($index = 1; $index <= $time_remain; $index++)
-                  <option value="{{$index}}">{{$index}}</option>
+                @for($index = 0; $index < sizeof($time_start); $index++)
+                  <p class="form-control-static">{{$time_start[$index]}} - {{$time_end[$index]}}</p>
                 @endfor
-              </select>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">หัวข้อการประชุม</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_topic" maxlength="100">
+              <p  style="color:red">@if($errors->has('detail_topic')) {{$errors->first('detail_topic')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">จำนวนผู้เข้าประชุม</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_count" maxlength="3">
+              <p  style="color:red">@if($errors->has('detail_count')) {{$errors->first('detail_count')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">ชื่อผู้ติดต่อ</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="contract_name" maxlength="100">
+              <p  style="color:red">@if($errors->has('contract_name')) {{$errors->first('contract_name')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">เบอร์โทรติดต่อ</label>
             <div class="col-sm-5">
               <input type="text" class="form-control" name="user_tel" maxlength="10" placeholder="0123456789">
+              <p  style="color:red">@if($errors->has('user_tel')) {{$errors->first('user_tel')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
@@ -75,6 +78,7 @@
             <label class="col-sm-2 control-label">เอกสารการจอง</label>
             <div class="col-sm-5">
               <input type="file" class="form-control" name="contract_file[]" multiple>
+              <p  style="color:red">@if($errors->has('contract_file')) {{$errors->first('contract_file')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
@@ -104,11 +108,12 @@
             </div>
           </div>
           <div id="hideEquip"></div>
-    
           <input type="hidden" name="user_id" value="{{$user_id}}">
+          <input type="hidden" name="user_name" value="{{$user_name}}">
           <input type="hidden" name="meeting_id" value="{{$room->meeting_ID}}">
-          <input type="hidden" name="time_reserve" value="{{$time_reserve}}">
-          <input type="hidden" name="checkin" value="{{$checkin}}">
+          <input type="hidden" name="time_select" value="{{$time_select}}">
+          <input type="hidden" name="reserve_start" value="{{$reserve_start}}">
+          <input type="hidden" name="reserve_end" value="{{$reserve_end}}">
           <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
           <div class="form-group">
             <div class="col-sm-2"></div>

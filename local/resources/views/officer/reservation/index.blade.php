@@ -9,7 +9,7 @@ use App\Officer as officer;
     <div class="col-xs-12" id="tableroom"> 
         <table class="table table-hover showroom" id="table_room">
             <thead>
-                <tr>
+                <tr >
                     <th>
                         รูปภาพ
                     </th>

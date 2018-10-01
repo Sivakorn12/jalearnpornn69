@@ -215,12 +215,12 @@ class func extends Model
         return $data_openExtra;
     }
 
-    public static function SET_DATA_BOOKING ($req, $time_start, $time_out) {
+    public static function SET_DATA_BOOKING ($req, $time_start, $time_out,$status=3) {
         $id_insert = array();
         for ($index = 0; $index < sizeof($time_start); $index++) {
             $id = DB::table('booking')
                             ->insertGetId([
-                                'status_ID' => 3,
+                                'status_ID' => $status,
                                 'section_ID' => isset($req->section_id)? $req->section_id : null,
                                 'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                                 'user_ID' => $req->user_id,

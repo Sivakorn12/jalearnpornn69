@@ -19,7 +19,8 @@ class ReserveController extends Controller
     public function index() {
         $dataRoom = DB::table('meeting_room')
                             ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
-                            ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name')
+                            ->join('building as b','meeting_room.meeting_buiding','=','b.building_id')
+                            ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name','b.building_name')
                             ->get();
 
         $imgs_room = array();

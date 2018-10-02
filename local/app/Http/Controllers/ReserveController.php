@@ -60,14 +60,11 @@ class ReserveController extends Controller
         $dataequipment = DB::table('equipment')
                                 ->get();
         $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
-
-        // dd($time_remain);
+        
         $reserveEnd = false;
         if (sizeof($timeSelect) > 1) {
             $reserveEnd = true;
         }
-
-        // dd($timeSelect);
 
         $data = array(
             'room' => $dataRoom,
@@ -101,7 +98,7 @@ class ReserveController extends Controller
 
         if ($validator->passes()) {
             if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
-                
+
                 $timeSelect = json_decode($req->reserve_time);
                 $temp_date = explode('-', $req->time_select);
                 $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
@@ -109,8 +106,6 @@ class ReserveController extends Controller
                 $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
                 $booking_startTime = array();
                 $booking_endTime = array();
-
-                dd($time_remain);
 
                 for ($index = 0; $index < sizeof($time_remain[0]); $index++) {
                     array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);

@@ -105,8 +105,7 @@
           <input type="hidden" name="user_name" value="{{$user_name}}">
           <input type="hidden" name="meeting_id" value="{{$room->meeting_ID}}">
           <input type="hidden" name="time_select" value="{{$time_select}}">
-          <input type="hidden" name="reserve_start" value="{{$reserve_start}}">
-          <input type="hidden" name="reserve_end" value="{{$reserve_end}}">
+          <input type="hidden" name="reserve_time" value="{{$reserve_time}}">
           <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
           <div class="form-group">
             <div class="col-sm-2"></div>

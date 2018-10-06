@@ -38,7 +38,7 @@ class CheckBookingController extends Controller
                    ->leftjoin('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
                    ->leftjoin('borrow_booking','booking.booking_ID','=','borrow_booking.booking_ID')
-                   ->orderBy('detail_booking.detail_timestart','desc')
+                   ->orderBy('booking.booking_date','desc')
                    ->get();
         //dd($booking);
         $booking = $this->map_equipment($booking);
@@ -96,7 +96,7 @@ class CheckBookingController extends Controller
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                    ->leftjoin('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
-                   ->orderBy('detail_booking.detail_timestart','desc')
+                   ->orderBy('booking.booking_date','desc')
                    ->get();
         $bookings = $this->map_equipment($bookings);
         $tbHtml = array();

@@ -1,8 +1,8 @@
 $('#booking-detail').on('show.bs.modal', function(event) {
   var button = $(event.relatedTarget)
   var id = button.data('id'); 
-    var modal = $(this)
-  console.log(window.location.pathname + "/view/" + id)  
+  var modal = $(this)
+  //console.log(window.location.pathname + "/view/" + id)  
   $.ajax({
       url: window.location.pathname + "/view/" + id,
       type: 'GET',

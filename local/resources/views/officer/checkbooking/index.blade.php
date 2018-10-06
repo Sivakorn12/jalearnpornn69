@@ -71,6 +71,7 @@ use App\Officer as officer;
 
 <script src="{{ url('js/script.js') }}"></script>
 <script>
+  fecthdataBooking()
   setInterval(function(){ fecthdataBooking()}, 60000);
   //setTimeout(function(){ fecthdataBooking() }, 3000);
   //setTimeout(function(){ window.location.reload() }, 5000);

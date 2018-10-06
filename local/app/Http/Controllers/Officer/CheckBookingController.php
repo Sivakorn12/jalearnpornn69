@@ -37,9 +37,11 @@ class CheckBookingController extends Controller
                    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
                    ->leftjoin('users','booking.user_ID','=','users.id')
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+                   ->leftjoin('borrow_booking','booking.booking_ID','=','borrow_booking.booking_ID')
                    ->orderBy('detail_booking.detail_timestart','desc')
                    ->get();
         //dd($booking);
+        $booking = $this->map_equipment($booking);
         $data = array(
             'bookings' => $booking
         );
@@ -96,6 +98,7 @@ class CheckBookingController extends Controller
                    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
                    ->orderBy('detail_booking.detail_timestart','desc')
                    ->get();
+        $bookings = $this->map_equipment($bookings);
         $tbHtml = array();
         $statusBooking = array("all","wait","confirmed");
         for($i = 0; $i<count($statusBooking);$i++){
@@ -114,6 +117,29 @@ class CheckBookingController extends Controller
             ->update([
             'status_ID' => 3,
         ]);
+    }
+
+    public function map_equipment($booking){
+        $eqm = DB::table('borrow_booking')
+                    ->select(
+                        'borrow_booking.booking_ID',
+                        DB::raw("GROUP_CONCAT(
+                            DISTINCT CONCAT(eq.em_name,' x ',dbw.borrow_count) 
+                            ) as eq_list")
+                    )
+                    ->join('detail_borrow as dbw','borrow_booking.borrow_ID','=','dbw.borrow_ID')
+                    ->join('equipment as eq','dbw.equiment_ID','=','eq.em_ID')
+                    ->groupBy('borrow_booking.booking_ID')
+                    ->get();
+        foreach( $booking as $key => &$bk){
+            $bk->eqiupment_list = '';
+            foreach($eqm as $eq){
+                if($bk->booking_ID == $eq->booking_ID){
+                    $bk->eqiupment_list = $eq->eq_list;
+                }
+            }
+        }
+        return $booking;
     }
 
     

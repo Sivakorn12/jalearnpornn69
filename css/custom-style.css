@@ -123,7 +123,14 @@ table.showroom > thead > tr > th {
 
 ul.noti>li{
   width: 300px;
-
   border-bottom: 1px solid #ddd;
 }
 
+p.text-noti {
+  padding-left: 15px;
+  padding-right: 5px;
+  margin-bottom: -10px;
+  width: 300px;
+  word-wrap: break-word;
+  color: #000000;
+}

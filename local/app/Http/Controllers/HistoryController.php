@@ -30,6 +30,11 @@ class HistoryController extends Controller
         $time_th = $time_start = $time_out = $check_dateCheckin = $checkin_date = $checkin_borrow = array();
         for ($index = 0; $index < sizeof($dataHistory); $index++) {
             $time_th[0][$index] = str_replace(date('Y'), date('Y') + 543, substr($dataHistory[$index]->booking_date, 0, 16));
+            // dd($time_th[0][$index]);
+            $temp_date = explode(" ", $dataHistory[$index]->booking_date);
+            $temp_date = explode("-", $temp_date[0]);
+            $time_th[0][$index] = $temp_date[2]."-".$temp_date[1]."-".($temp_date[0] + 543)." ".substr($dataHistory[$index]->booking_date, 11, 5);
+            // dd($time_th);
             $time_start[$index] = substr($dataHistory[$index]->detail_timestart, -8, 5);
             $time_out[$index] = substr($dataHistory[$index]->detail_timeout, -8, 5);
             $temp = explode('-', $dataHistory[$index]->checkin);

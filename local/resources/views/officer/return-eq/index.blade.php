@@ -1,16 +1,16 @@
 @extends('layouts.officer',['page'=>'equipment'])
-@section('page_heading','การยืม - การคืนอุปกรณ์')
+@section('page_heading','การคืนอุปกรณ์')
 @section('content')
 <div class="row">
     <div class="col-xs-12">
         <ul class="nav nav-tabs" style="margin-bottom:10px">
-            <li class="active"><a data-toggle="tab" href="#borrow">รายการการยืม</a></li>
-            <li><a data-toggle="tab" href="#return">รายการการคืน</a></li>
+            {{-- <li class="active"><a data-toggle="tab" href="#borrow">รายการการยืม</a></li> --}}
+            <li class="active"><a data-toggle="tab" href="#return">รายการการคืน</a></li>
         </ul>
     </div>
     <div class="col-xs-12" id="tableroom"> 
         <div class="tab-content">
-            <div id="borrow" class="tab-pane fade in active">
+            {{-- <div id="borrow" class="tab-pane fade in active">
                 <div class="tbEQ-section">
                     <h4><b><i class="fa fa-calendar-check-o" aria-hidden="true"></i> รายการการยืมในวันนี้</b></h4>
                     @component('officer.return-eq._tb-borrow',[
@@ -25,8 +25,8 @@
                         ])
                     @endcomponent
                 </div>
-            </div>
-            <div id="return" class="tab-pane fade">
+            </div> --}}
+            <div id="return" class="tab-pane fade in active">
                 <div class="tbEQ-section">
                     <h4><b><i class="fa fa-calendar-times-o" aria-hidden="true"></i> รายการที่ยังไม่ได้คืนอุปกรณ์</b></h4>
                     @component('officer.return-eq._tb-return',[

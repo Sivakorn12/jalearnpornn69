@@ -44,6 +44,7 @@ class Officer extends Model
                             <th>ห้อง</th>
                             <th>วันที่</th>
                             <th>เวลา</th>
+                            <th>อุปกรณ์</th>
                             <th>สถานะ</th>
                             <th></th>
                         </tr>
@@ -55,11 +56,19 @@ class Officer extends Model
                 if($selected_status == ''){ $selectRow = true;}
                 if($selected_status == '1'){ $selectRow = ($booking->status_ID == 1) ;}
                 if($selected_status == '3'){ $selectRow = (date('Y-m-d')<$booking->checkin and $booking->status_ID==3 and $booking->detail_timestart>date('Y-m-d H:i:s')) ;}
+                $eq_list = explode(",", $booking->eqiupment_list);
                 if($selectRow){
                 $html=$html.'<tr>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'"><img src="'.url("asset/rooms/".self::getAImage($booking->meeting_pic)).'" width="80"></td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->meeting_name.'</td>
-                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.$booking->checkin.'</td>
+                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.self::dateDBtoBE($booking->checkin).'</td>
+                <td data-toggle="modal" style="text-align:left" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">
+                <ul>';
+                foreach($eq_list as $eq){
+                  if($eq != '') $html=$html.'<li>'.$eq.'</li>';
+                }
+                $html=$html.'</ul>
+                </td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.substr($booking->detail_timestart, -8,5).' - '.substr($booking->detail_timeout, -8,5).'</td>
                 <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)).'</td>
                 <td>';

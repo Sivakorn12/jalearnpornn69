@@ -1,3 +1,6 @@
+<?php
+use App\Officer as officer;
+?>
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
@@ -48,7 +51,7 @@
 
             <ul class="nav navbar-top-links navbar-right">            
                 <li>
-                <p >วันที่: {{date('d-m-Y')}}</p>
+                <p >วันที่: {{officer::dateDBtoBE(date('Y-m-d'))}}</p>
                 </li>
                 <!-- /.dropdown -->
                 <li class="dropdown">

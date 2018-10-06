@@ -44,7 +44,7 @@
                                 {{$room->meeting_type_name}}
                             </td>
                             <td>
-                                {{$room->meeting_buiding}}
+                                {{$room->building_name}}
                             </td>
                             <td>
                                 @if ($room->meeting_status == 1) <i class="fa fa-check-circle fa-lg" style="color: green" aria-hidden="true"></i>

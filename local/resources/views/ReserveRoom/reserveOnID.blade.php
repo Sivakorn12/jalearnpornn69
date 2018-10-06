@@ -150,7 +150,7 @@ $(document).ready(function() {
     viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
     viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"
     viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value='"+(JSON.stringify(arrTime))+"'>"
-    viewHTML += "<button type='submit' class='btn btn-success'>ยืนยัน</button></form</div>"
+    viewHTML += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
     $('#time-reserve').html(viewHTML)
     setColorBtn()
   }

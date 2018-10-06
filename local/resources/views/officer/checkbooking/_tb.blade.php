@@ -46,6 +46,16 @@ elseif($type == 'confirmed'){
                 </ul>
               </td>
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">{{substr($booking->detail_timestart, -8,5)}} - {{substr($booking->detail_timeout, -8,5)}}</td>
+<<<<<<< Updated upstream
+=======
+              <td data-toggle="modal" style="text-align:left" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">
+                <ul>
+                @foreach($eq_list as $eq)
+                  @if($eq != '') <li>{{$eq}}</li> @endif
+                @endforeach
+                </ul>
+              </td>
+>>>>>>> Stashed changes
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">
                 {!!($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)!!}
               </td>

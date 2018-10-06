@@ -48,7 +48,7 @@
 
             <ul class="nav navbar-top-links navbar-right">            
                 <li>
-                <p >วันที่: {{date('Y-m-d')}}</p>
+                <p >วันที่: {{date('d-m-Y')}}</p>
                 </li>
                 <!-- /.dropdown -->
                 <li class="dropdown">

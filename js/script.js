@@ -90,11 +90,9 @@ function setListNoti(data){
     if(Object.keys(data).length > 0){
         for(d in data){
             var dt = moment(data[d]["booking_date"]+ "+07:00", "YYYY-MM-DD HH:mm:ssZ")
-            html += '<li><a href="/project/control/checkbooking">'+
-                        '<b>'+data[d]["booking_name"] + '</b> ได้จองห้อง <b>'+data[d]["meeting_name"]+'</b>'+
-                        '<br><i style="font-size:12px;color:#b3b3b3">'+dt.fromNow()+'</i>'
-
-                    '</a></li>'
+            html += '<li>'+
+                        '<p class="text-noti"><b>'+data[d]["booking_name"] + '</b> ได้จองห้อง ' + data[d]["meeting_name"]+'</p>'+
+                        '<br><i style="font-size:12px;color:#b3b3b3;padding-left:15px;">'+dt.fromNow()+'</i></li>'
         }
     }
     else{

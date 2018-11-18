@@ -74,7 +74,7 @@ elseif($type == 'confirmed'){
 <script>
 
 $(document).ready(function() {
-  $('#tb-{{$type}}').DataTable();
+  //$('#tb-{{$type}}').DataTable();
 });
 
 

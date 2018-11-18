@@ -78,6 +78,11 @@ class CheckBookingController extends Controller
                 'em_count' => ($eq->em_count-$eq->borrow_count)
             ]);
         }
+        DB::table('borrow_booking')
+            ->where('booking_ID', $id)
+            ->update([
+                'borrow_status' => 1
+            ]);
        return response()->json(['id'=>$id]);
     }
     

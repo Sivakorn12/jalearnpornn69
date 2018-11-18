@@ -180,8 +180,8 @@ class Officer extends Model
     }
 
     public static function checkBtnConfirmBorrow($id){
-        $borrow = DB::table('borrow_booking')->select('borrow_status')->where('borrow_ID',$id)->first();
-        if($borrow->borrow_status == '3') 
+        $borrow = DB::table('borrow_booking')->select('borrow_status')->where('borrow_ID',$id)->where('borrow_date','>=', date('Y-m-d',strtotime(date('Y-m-d'). "+1 days")))->first();
+        if(sizeof($borrow) >0 and $borrow->borrow_status == '3') 
             return true;
         return false;
     }

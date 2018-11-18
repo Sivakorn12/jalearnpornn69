@@ -22,9 +22,9 @@ elseif($type == 'borrow'){
             <th>เวลา</th>
             <th>ผู้ติดต่อ</th>
             <th>สถานะ</th>
-          @if($type=="borrowtoday")
+          {{-- @if($type=="borrowtoday") --}}
             <th></th>
-          @endif
+          {{-- @endif --}}
         </tr>
     </thead>
    <tbody>
@@ -42,9 +42,9 @@ elseif($type == 'borrow'){
         <td>
           {!!($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($data->borrow_status,1)!!}
         </td>
-        @if($type=="borrowtoday")
+        {{-- @if($type=="borrowtoday") --}}
             <td><a title='รายละเอียดการยืม' data-toggle="modal" onclick="viewBorrow({{$data->borrow_ID}})"  data-toggle="tooltip" class="glyphicon glyphicon-search" aria-hidden="true"></a></td>
-        @endif
+        {{-- @endif --}}
       </tr>
      @endforeach
    </tbody>

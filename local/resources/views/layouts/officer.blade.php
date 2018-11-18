@@ -113,7 +113,7 @@ use App\Officer as officer;
                         <li class={{ $page === "equipment" ? "active" : "" }}>
                             <a href="{{ url ('control/return-eq/') }}"><i class="fa fa-sitemap fa-fw"></i> อุปกรณ์<span class="fa arrow fa-lg"  data-toggle="collapse" href="#collapse1"></span></a>
                             <ul id="collapse1" class="collapse nav nav-second-level">
-                                <li ><a href="{{ url ('control/return-eq/') }}"><span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> การยืม - คืน</a></li>
+                                <li ><a href="{{ url ('control/return-eq/') }}"><span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> การยืม-คืน</a></li>
                                 <li ><a href="{{ url ('control/equipment/') }}"><span class="glyphicon glyphicon-hdd" aria-hidden="true"></span> อุปกรณ์</a></li>
                             </ul>
                         </li>

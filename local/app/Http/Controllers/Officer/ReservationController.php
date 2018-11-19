@@ -89,6 +89,8 @@ class ReservationController extends Controller
         $timeSelect = json_decode($req->timeSelect);
         $temp_date = explode('-', $req->dateSelect);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+        $temp_date_now = explode('-', date('Y-m-d'));
+        $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
         
         $dataRoom = DB::table('meeting_room')
             ->where('meeting_ID', $req->meetingId)
@@ -108,6 +110,7 @@ class ReservationController extends Controller
             'time_start' => $time_remain[0],
             'time_end' => $time_remain[1],
             'time_select' => $date_select,
+            'date_reserve' => $date_now,
             'reserve_start' => $timeSelect[0],
             'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_remain[1][0],
             'timeTH_select' => $req->dateSelect,
@@ -117,7 +120,6 @@ class ReservationController extends Controller
     }
 
     public function confirm(Request $req){
-        //dd($req->all());
         $msg = [
             'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",

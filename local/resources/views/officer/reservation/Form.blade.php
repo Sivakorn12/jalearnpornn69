@@ -23,6 +23,12 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label">วันที่จอง</label>
+            <div class="col-sm-10">
+              <p class="form-control-static">{{$date_reserve}}</p>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="col-sm-2 control-label" >เวลาเริ่มใช้</label>
             <div class="col-sm-10">
               <p class="form-control-static">{{$timeTH_select}}</p>
@@ -37,30 +43,30 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">หัวข้อการประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>หัวข้อการประชุม</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_topic" maxlength="100">
               <p  style="color:red">@if($errors->has('detail_topic')) {{$errors->first('detail_topic')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">จำนวนผู้เข้าประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>จำนวนผู้เข้าประชุม</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_count" maxlength="3">
               <p  style="color:red">@if($errors->has('detail_count')) {{$errors->first('detail_count')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">ชื่อผู้ติดต่อ</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>ชื่อผู้ติดต่อ</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="contract_name" maxlength="100">
               <p  style="color:red">@if($errors->has('contract_name')) {{$errors->first('contract_name')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">เบอร์โทรติดต่อ</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>เบอร์โทรติดต่อ</label>
             <div class="col-sm-5">
-              <input type="text" class="form-control" name="user_tel" maxlength="10" placeholder="0123456789">
+              <input type="text" class="form-control" name="user_tel" maxlength="10">
               <p  style="color:red">@if($errors->has('user_tel')) {{$errors->first('user_tel')}}@endif</p>
             </div>
           </div>
@@ -75,7 +81,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">เอกสารการจอง</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>เอกสารการจอง</label>
             <div class="col-sm-5">
               <input type="file" class="form-control" name="contract_file[]" multiple>
               <p  style="color:red">@if($errors->has('contract_file')) {{$errors->first('contract_file')}}@endif</p>
@@ -130,6 +136,7 @@
 <script>
   var equip =[]
   var data_equip = <?php echo $dataEquipment ?>;
+  var remainEquip = <?php echo json_encode($dataEquipment) ?>;
   
   function addEquioment() {
      var name = $('#input-equip-name').val()
@@ -141,11 +148,17 @@
             break
          } else if (data_equip[index].em_name == name && data_equip[index].em_count >= amount) {
             if (checkDuplicate(name,amount, equip)) {
+              remainEquip[index].em_count -= amount
               equip[equip.length] = [name,amount];
             }
          }
       }
     }
+    var html = ''
+    for (let index = 0; index < remainEquip.length; index++) {
+      html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน '+remainEquip[index].em_count+')</option>'
+    }
+    $('#input-equip-name').html(html)
     fetchListEquip(equip);
     $('#input-equip-amount').val('')
  }
@@ -182,7 +195,16 @@
  }
 
  function deleteEquip(index){
+    var html = ''
+    for (let i = 0; i < remainEquip.length; i++) {
+      if (remainEquip[i].em_count != data_equip[i].em_count) {
+        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+data_equip[i].em_count+')</option>'
+      } else {
+        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+remainEquip[i].em_count+')</option>'
+      }
+    }
     equip.splice(index, 1);
+    $('#input-equip-name').html(html)
     fetchListEquip(equip)
  }
 </script>

@@ -6,9 +6,8 @@ use App\Officer as officer;
       <table class="table table-hover showroom" id="tb-reserve">
         <thead>
             <tr>
-              <th>ลำดับ</th>
-              <th id="sort-th-header">วันที่จองห้อง</th>
               <th>ห้อง</th>
+              <th id="sort-th-header">วันที่จองห้อง</th>
               <th>วันที่เข้าใช้ห้อง</th>
               <th>เวลาที่เข้าใช้ห้อง</th>
               <th>สถานะ</th>
@@ -19,9 +18,8 @@ use App\Officer as officer;
         <tbody>
           @foreach($reserves as $key => $reserve)
           <tr>
-            <td>{{$key + 1}}</td>
-            <td class="td-head-reserve">{{$years_th[0][$key]}}</td>
             <td>{{$reserve->meeting_name}}</td>
+            <td class="td-head-reserve">{{$years_th[0][$key]}}</td>
             <td>{{$checkin_date[0][$key]}}</td>
             <td>{{$time_start[$key]}} - {{$time_out[$key]}}</td>
             <td>

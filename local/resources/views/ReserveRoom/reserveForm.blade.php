@@ -24,6 +24,12 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label">วันที่จอง</label>
+            <div class="col-sm-10">
+              <p class="form-control-static">{{$date_reserve}}</p>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="col-sm-2 control-label">วันที่ใช้งาน</label>
             <div class="col-sm-10">
               <p class="form-control-static">{{$timeTH_select}}</p>
@@ -38,14 +44,14 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">หัวข้อการประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>หัวข้อการประชุม</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_topic" maxlength="100">
               <p  style="color:red">@if($errors->has('detail_topic')) {{$errors->first('detail_topic')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">จำนวนผู้เข้าประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>จำนวนผู้เข้าประชุม</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_count" maxlength="3">
               <p  style="color:red">@if($errors->has('detail_count')) {{$errors->first('detail_count')}}@endif</p>
@@ -58,9 +64,9 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">เบอร์โทรติดต่อ</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>เบอร์โทรติดต่อ</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="user_tel" placeholder="0123456789">
+              <input type="text" class="form-control" name="user_tel">
               <p  style="color:red">@if($errors->has('user_tel')) {{$errors->first('user_tel')}}@endif</p>
             </div>
           </div>
@@ -78,8 +84,8 @@
             <label class="col-sm-2 control-label">อุปกรณ์ที่ยืมเพิ่ม</label>
             <div class="col-sm-5">
               <select class="sectionlist form-control" id="input-equip-name">
-                @foreach($data_equipment as $equipment)
-                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}} : (เหลือจำนวน {{$equipment->em_count}})</option>
+                @foreach($dataEquipment as $equipment)
+                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}} : (เหลือจำนวน {{$equipment->em_count}} ชิ้น)</option>
                 @endforeach
               </select>
             </div>
@@ -120,24 +126,31 @@
   <div class="col-md-1"></div>
 </div>
 <script>
-  var equip =[]
+  var equip = []
   var data_equip = <?php echo $dataEquipment ?>;
+  var remainEquip = <?php echo json_encode($dataEquipment) ?>;
   
   function addEquioment() {
-     var name = $('#input-equip-name').val()
-     var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
+    var name = $('#input-equip-name').val()
+    var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
      if (amount && amount > 0) {
        for (let index = 0; index < data_equip.length; index++) {
-         if (data_equip[index].em_name == name && data_equip[index].em_count < amount) {
-            swal('ไม่สำเร็จ', 'อุปกรณ์ '+data_equip[index].em_name+' ไม่เพียงพอ กรุณาเลือกจำนวนใหม่อีกครั้ง' , 'error')
-            break
-         } else if (data_equip[index].em_name == name && data_equip[index].em_count >= amount) {
-            if (checkDuplicate(name,amount, equip)) {
-              equip[equip.length] = [name,amount];
-            }
-         }
+        if (data_equip[index].em_name == name && data_equip[index].em_count < amount) {
+          swal('ไม่สำเร็จ', 'อุปกรณ์ '+data_equip[index].em_name+' ไม่เพียงพอ กรุณาเลือกจำนวนใหม่อีกครั้ง' , 'error')
+          break
+        } else if (data_equip[index].em_name == name && data_equip[index].em_count >= amount) {
+          if (checkDuplicate(name,amount, equip)) {
+            remainEquip[index].em_count -= amount
+            equip[equip.length] = [name,amount];
+          }
+        }
       }
     }
+    var html = ''
+    for (let index = 0; index < remainEquip.length; index++) {
+      html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน '+remainEquip[index].em_count+')</option>'
+    }
+    $('#input-equip-name').html(html)
     fetchListEquip(equip);
     $('#input-equip-amount').val('')
  }
@@ -155,7 +168,7 @@
         var html = ''
         for(var i = 0 ; i < equipment.length ; i++){
             html +='<li>'+
-                        '<b>'+equipment[i][0]+'</b> จำนวน : '+equipment[i][1]+
+                        '<b>'+equipment[i][0]+'</b> จำนวน : '+equipment[i][1]+' ชิ้น'+
                         ' <i class="fa fa-times" aria-hidden="true" title="ลบ" onclick="deleteEquip('+i+')"></i>'+
                     '</li>'
         }
@@ -174,7 +187,16 @@
  }
 
  function deleteEquip(index){
+    var html = ''
+    for (let i = 0; i < remainEquip.length; i++) {
+      if (remainEquip[i].em_count != data_equip[i].em_count) {
+        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+data_equip[i].em_count+' ชิ้น)</option>'
+      } else {
+        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+remainEquip[i].em_count+' ชิ้น)</option>'
+      }
+    }
     equip.splice(index, 1);
+    $('#input-equip-name').html(html)
     fetchListEquip(equip)
  }
 </script>

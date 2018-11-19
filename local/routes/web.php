@@ -61,6 +61,26 @@ Route::prefix('/control')->group(function () {
   Route::post('/room/update','Officer\RoomController@update');
   Route::get('/room/delete/{id}','Officer\RoomController@delete');
 
+  Route::get('/roomtype','Officer\RoomTypeController@index');
+  Route::post('/roomtype/save','Officer\RoomTypeController@save');
+  Route::any('/roomtype/delete/{id}','Officer\RoomTypeController@delete');
+
+  Route::get('/building','Officer\BuildingController@index');
+  Route::post('/building/save','Officer\BuildingController@save');
+  Route::any('/building/delete/{id}','Officer\BuildingController@delete');
+
+  Route::get('/section','Officer\SectionController@index');
+  Route::post('/section/save','Officer\SectionController@save');
+  Route::any('/section/delete/{id}','Officer\SectionController@delete');
+
+  Route::get('/department','Officer\DepartmentController@index');
+  Route::post('/department/save','Officer\DepartmentController@save');
+  Route::any('/department/delete/{id}','Officer\DepartmentController@delete');
+  
+  Route::get('/faculty','Officer\FacultyController@index');
+  Route::post('/faculty/save','Officer\FacultyController@save');
+  Route::any('/faculty/delete/{id}','Officer\FacultyController@delete');
+
   Route::get('/equipment','Officer\EquipmentController@index');
   Route::get('/equipment/form','Officer\EquipmentController@Form');
   Route::post('/equipment/add','Officer\EquipmentController@add');

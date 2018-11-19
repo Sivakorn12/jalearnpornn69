@@ -134,7 +134,6 @@ function addEx(){
 }
 function changeEx(id,st,end){
     var dThai = dateThaiYearBC(st.substring(0,10))
-    console.log(st.substring(11,13))
     $('#ex_start').val(parseInt(st.substring(11,13)))
     setExEnd()
     $('#ex_end').val(parseInt(end.substring(11,13)))

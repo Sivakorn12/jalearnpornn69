@@ -162,7 +162,6 @@ use App\Officer as officer;
             }
           }
         });
-        console.log($('#holiday_name').val())
     }
 </script>
 

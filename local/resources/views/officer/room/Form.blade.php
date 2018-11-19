@@ -190,7 +190,6 @@ if(isset($room)){
     return file['type'].split('/')[0]=='image';//returns true or false
  }
  function addEquipment(){
-     //console.log(equip.length)
      var name = $('#input-equip-name').val()
      var amount = ($('#input-equip-amount').val()=='')? 0:$('#input-equip-amount').val()
      if (checkDuplicate(name, equip) && name!='') {
@@ -210,7 +209,6 @@ if(isset($room)){
      if(equipment.length == 0){
         $('#div-show-equip').hide()
      }else{
-        console.log("process fetch")
         var html = ''
         for(var i = 0 ; i < equipment.length ; i++){
             html +='<li>'+
@@ -222,7 +220,6 @@ if(isset($room)){
         $('#list-equip').html(html)
         $('#div-show-equip').show()
     }
-    console.log(equipment)
  }
 
  function pushHiddenEquip(equipment){

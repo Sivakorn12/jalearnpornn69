@@ -176,7 +176,6 @@ $(document).ready(function() {
         arrTime[0] = value
       }
     }
-    console.log(arrTime)
     render_button_time()
   }
 

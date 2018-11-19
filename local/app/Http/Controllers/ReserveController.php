@@ -52,6 +52,9 @@ class ReserveController extends Controller
         $timeSelect = json_decode($req->timeSelect);
         $temp_date = explode('-', $req->dateSelect);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+        $temp_date_now = explode('-', date('Y-m-d'));
+        $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
+
 
         $dataRoom = DB::table('meeting_room')
             ->where('meeting_ID', $req->meetingId)
@@ -72,8 +75,7 @@ class ReserveController extends Controller
             'time_end' => $time_remain[1],
             'time_select' => $date_select,
             'reserve_time' => $req->timeSelect,
-            // 'reserve_start' => $timeSelect[0],
-            // 'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_remain[1][0],
+            'date_reserve' => $date_now,
             'timeTH_select' => $req->dateSelect,
             'data_equipment' => $dataequipment
         );

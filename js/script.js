@@ -92,7 +92,7 @@ function setListNoti(data){
             var dt = moment(data[d]["booking_date"]+ "+07:00", "YYYY-MM-DD HH:mm:ssZ")
             html += '<li>'+
                         '<p class="text-noti"><b>'+data[d]["booking_name"] + '</b> ได้จองห้อง ' + data[d]["meeting_name"]+'</p>'+
-                        '<br><i style="font-size:12px;color:#b3b3b3;padding-left:15px;">'+dt.fromNow()+'</i></li>'
+                        '<i style="font-size:12px;color:#b3b3b3;padding-left:15px;">'+dt.fromNow()+'</i></li>'
         }
     }
     else{

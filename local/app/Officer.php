@@ -45,8 +45,8 @@ class Officer extends Model
                             <th>วันที่</th>
                             <th>เวลา</th>
                             <th>อุปกรณ์</th>
-                            <th>สถานะ</th>
-                            <th></th>
+                            <th>สถานะห้อง</th>
+                                <th>สถานะการจอง</th>
                         </tr>
                     </thead>
                 <tbody>';
@@ -70,7 +70,6 @@ class Officer extends Model
                 }
                 $html=$html.'</ul>
                 </td>
-                <td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)).'</td>
                 <td>';
                     if($chk){
                         $html=$html.'<i style="color:#777" class=" fa fa-clock-o fa-lg" aria-hidden="true"></i>';
@@ -83,9 +82,10 @@ class Officer extends Model
                         }elseif($booking->status_ID==1){
                         $html=$html.'<i class="fa fa-check-circle fa-lg" aria-hidden="true" style="color: green"></i>';
                         }
-                    $html=$html.'</td>
-                    </tr>';
                     }
+                $html=$html.'</td>';
+                $html=$html.'<td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)).'</td>
+                </tr>';
                 }
             }   
             $html=$html.'</tbody>
@@ -181,7 +181,7 @@ class Officer extends Model
 
     public static function checkBtnConfirmBorrow($id){
         $borrow = DB::table('borrow_booking')->select('borrow_status')->where('borrow_ID',$id)->where('borrow_date','>=', date('Y-m-d',strtotime(date('Y-m-d'). "+1 days")))->first();
-        if(sizeof($borrow) >0 and $borrow->borrow_status == '3') 
+        if(isset($borrow)  and $borrow->borrow_status == '3') 
             return true;
         return false;
     }

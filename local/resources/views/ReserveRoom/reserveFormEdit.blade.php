@@ -154,6 +154,9 @@
   var equip = <?php echo $dataBorrow ?>;
   var data_equip = <?php echo $dataEquipment ?>;
   var remainEquip = <?php echo json_encode($dataEquipment) ?>;
+  var fac = <?php echo json_encode($faculty); ?>;
+  var sec = <?php echo json_encode($sections); ?>;
+  var dep = <?php echo json_encode($dept); ?>;
   var newdata = []
 
   $(document).ready(function() {

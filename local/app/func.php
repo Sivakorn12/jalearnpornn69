@@ -216,6 +216,11 @@ class func extends Model
     }
 
     public static function SET_DATA_BOOKING ($req, $time_start, $time_out,$status=3) {
+        $data_meetingroom = DB::table('meeting_room')
+                                ->where('meeting_ID', $req->meeting_id)
+                                ->first();
+
+        $estimate_link = $data_meetingroom->estimate_link.'#responses';
         $id_insert = array();
         for ($index = 0; $index < sizeof($time_start); $index++) {
             $id = DB::table('booking')
@@ -236,7 +241,8 @@ class func extends Model
                         'detail_topic' => $req->detail_topic,
                         'detail_timestart' => $time_start[$index],
                         'detail_timeout' => $time_out[$index],
-                        'detail_count' => $req->detail_count
+                        'detail_count' => $req->detail_count,
+                        'link' => $estimate_link
                     ]);
             array_push($id_insert, $id);
         }

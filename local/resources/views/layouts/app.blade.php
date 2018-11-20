@@ -26,6 +26,7 @@ use App\Officer as officer;
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="{{ url('js/bootstrap.min.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="{{ url('js/script.js')}}"></script>
     <script src="{{ url('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ url('js/notify.js') }}"></script>

@@ -114,7 +114,10 @@ class ReservationController extends Controller
             'reserve_start' => $timeSelect[0],
             'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_remain[1][0],
             'timeTH_select' => $req->dateSelect,
-            'data_equipment' => $dataequipment
+            'data_equipment' => $dataequipment,
+            'sections' => func::GetSection(),
+            'dept' => func::GetDepartment(),
+            'faculty' => func::GetFaculty()
         );
         return view('officer/reservation/Form', $data);
     }

@@ -73,9 +73,23 @@ class func extends Model
 
     public static function GetSection () {
         $dataSection = DB::table('section')
-                            ->get();
+                            ->get()->toArray();
         return $dataSection;
     }
+
+    public static function GetDepartment () {
+        $data = DB::table('department')
+                        ->get()->toArray();
+        return $data;
+    }
+
+    public static function GetFaculty () {
+        $data = DB::table('faculty')
+                            ->get()->toArray();
+        return $data;
+    }
+
+    
 
     public static function GET_EQUIPMENT () {
         $dataEquipment = DB::table('equipment')
@@ -216,12 +230,19 @@ class func extends Model
     }
 
     public static function SET_DATA_BOOKING ($req, $time_start, $time_out,$status=3) {
+        $data_meetingroom = DB::table('meeting_room')
+                                ->where('meeting_ID', $req->meeting_id)
+                                ->first();
+
+        $estimate_link = $data_meetingroom->estimate_link.'#responses';
         $id_insert = array();
         for ($index = 0; $index < sizeof($time_start); $index++) {
             $id = DB::table('booking')
                             ->insertGetId([
                                 'status_ID' => $status,
                                 'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'department_ID' => $req->department_id ?? null,
+                                'faculty_ID' => $req->faculty_id ?? null,
                                 'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                                 'user_ID' => $req->user_id,
                                 'booking_name' => $req->user_name,
@@ -236,7 +257,8 @@ class func extends Model
                         'detail_topic' => $req->detail_topic,
                         'detail_timestart' => $time_start[$index],
                         'detail_timeout' => $time_out[$index],
-                        'detail_count' => $req->detail_count
+                        'detail_count' => $req->detail_count,
+                        'link' => $estimate_link
                     ]);
             array_push($id_insert, $id);
         }

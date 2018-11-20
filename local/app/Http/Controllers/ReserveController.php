@@ -193,7 +193,7 @@ class ReserveController extends Controller
         if ($date_now > $date_select) {
             return response()->json(['error'=> 'ไม่สามารถจองห้องได้ย้อนหลังได้']);
         } else {
-            if (substr($check_weekend, 0, 3) == 'Sat' || substr($check_weekend, 0, 3) == 'Sun' || isset($dataHolidays)) {
+            if (isset($dataHolidays)) {
                 return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);
             } else {
                 $time_empty = func::GET_TIMEUSE ($date_select, $time_reserve, $empty_timeuse, $req->roomid);

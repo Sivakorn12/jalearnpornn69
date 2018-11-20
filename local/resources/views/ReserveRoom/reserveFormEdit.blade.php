@@ -107,7 +107,7 @@
             <div class="col-sm-5">
               <select class="sectionlist form-control" id="input-equip-name">
                 @foreach($dataEquipment as $equipment)
-                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}} : (เหลือจำนวน {{$equipment->em_count}} ชิ้น)</option>
+                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}}</option>
                 @endforeach
               </select>
             </div>
@@ -157,6 +157,9 @@
   var newdata = []
 
   $(document).ready(function() {
+    for (let index = 0; index < remainEquip.length; index++) {
+      remainEquip[index].em_status = false
+    }
     addEquioment()
   });
   
@@ -170,7 +173,7 @@
             break
          } else if (data_equip[index].em_name == name && data_equip[index].em_count >= amount) {
             if (checkDuplicate(name,amount, newdata)) {
-              remainEquip[index].em_count -= amount
+              remainEquip[index].em_status = true
               newdata[newdata.length] = [name,amount];
             }
          }
@@ -184,7 +187,7 @@
               break
             } else if (data_equip[index].em_ID == equip[inner].equiment_ID && data_equip[index].em_count >= equip[inner].borrow_count) {
               if (checkDuplicate(data_equip[index].em_name, equip[inner].borrow_count, newdata)) {
-                remainEquip[index].em_count -= equip[inner].borrow_count
+                remainEquip[index].em_status = true
                 newdata[newdata.length] = [data_equip[index].em_name, equip[inner].borrow_count];
               }
             }
@@ -193,8 +196,10 @@
       }
     }
     var html = ''
-    for (let index = 0; index < remainEquip.length; index++) {
-      html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน '+remainEquip[index].em_count+')</option>'
+    for (let index = 0; index < data_equip.length; index++) {
+      if (remainEquip[index].em_status != true) {
+        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
+      }
     }
     $('#input-equip-name').html(html)
     fetchListEquip(newdata);
@@ -234,13 +239,17 @@
 
  function deleteEquip(index){
   var html = ''
-    for (let i = 0; i < remainEquip.length; i++) {
-      if (remainEquip[i].em_count != data_equip[i].em_count) {
-        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+data_equip[i].em_count+' ชิ้น)</option>'
-      } else {
-        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+remainEquip[i].em_count+' ชิ้น)</option>'
-      }
+  for (let i = 0; i < data_equip.length; i++) {
+    if (newdata[index][0] == remainEquip[i].em_name && remainEquip[i].em_status == true) {
+      remainEquip[i].em_status = false
     }
+  }
+
+  for (let index = 0; index < data_equip.length; index++) {
+    if (remainEquip[index].em_status != true) {
+      html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
+    }
+  }
   newdata.splice(index, 1);
   $('#input-equip-name').html(html)
   fetchListEquip(newdata)

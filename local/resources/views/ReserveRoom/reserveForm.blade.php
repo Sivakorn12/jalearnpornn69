@@ -107,7 +107,7 @@
             <div class="col-sm-5">
               <select class="sectionlist form-control" id="input-equip-name">
                 @foreach($dataEquipment as $equipment)
-                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}} : (เหลือจำนวน {{$equipment->em_count}} ชิ้น)</option>
+                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}}</option>
                 @endforeach
               </select>
             </div>
@@ -154,6 +154,12 @@
   var fac = <?php echo json_encode($faculty); ?>;
   var sec = <?php echo json_encode($sections); ?>;
   var dep = <?php echo json_encode($dept); ?>;
+
+  $(document).ready(function() {
+    for (let index = 0; index < remainEquip.length; index++) {
+      remainEquip[index].em_status = false
+    }
+  })
   
   function addEquioment() {
     var name = $('#input-equip-name').val()
@@ -165,15 +171,17 @@
           break
         } else if (data_equip[index].em_name == name && data_equip[index].em_count >= amount) {
           if (checkDuplicate(name,amount, equip)) {
-            remainEquip[index].em_count -= amount
+            remainEquip[index].em_status = true
             equip[equip.length] = [name,amount];
           }
         }
       }
     }
     var html = ''
-    for (let index = 0; index < remainEquip.length; index++) {
-      html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน '+remainEquip[index].em_count+')</option>'
+    for (let index = 0; index < data_equip.length; index++) {
+      if (remainEquip[index].em_status != true) {
+        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
+      }
     }
     $('#input-equip-name').html(html)
     fetchListEquip(equip);
@@ -213,11 +221,15 @@
 
  function deleteEquip(index){
     var html = ''
-    for (let i = 0; i < remainEquip.length; i++) {
-      if (remainEquip[i].em_count != data_equip[i].em_count) {
-        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+data_equip[i].em_count+' ชิ้น)</option>'
-      } else {
-        html += '<option value="'+remainEquip[i].em_name+'">'+remainEquip[i].em_name+' : (เหลือจำนวน '+remainEquip[i].em_count+' ชิ้น)</option>'
+    for (let i = 0; i < data_equip.length; i++) {
+      if (equip[index][0] == remainEquip[i].em_name && remainEquip[i].em_status == true) {
+        remainEquip[i].em_status = false
+      }
+    }
+
+    for (let index = 0; index < data_equip.length; index++) {
+      if (remainEquip[index].em_status != true) {
+        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
       }
     }
     equip.splice(index, 1);

@@ -3,7 +3,6 @@
 
   $user_id = Auth::user()->id;
   $user_name = Auth::user()->user_name;
-  $sections = func::GetSection();
   $dataEquipment = func::GET_EQUIPMENT();
 ?>
 
@@ -71,15 +70,38 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">สาขา</label>
-            <div class="col-sm-5">
-              <select class="sectionlist form-control" name="section_id">
-                @foreach($sections as $section)
-                  <option value="{{$section->section_ID}}">{{$section->section_name}}</option>
-                @endforeach
-              </select>
+              <label class="col-sm-2 control-label">คณะ</label>
+              <div class="col-sm-5">
+                <select class="sectionlist form-control" name="faculty_id" id="faculty_id" required>
+                  <option value="">-- เลือกคณะ --</option>
+                  @foreach($faculty as $fac)
+                    <option value="{{$fac->faculty_ID}}" @if($fac_id == $fac->faculty_ID) selected @endif>{{$fac->faculty_name}}</option>
+                  @endforeach
+                </select>
+              </div>
             </div>
-          </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">ภาควิชา</label>
+              <div class="col-sm-5">
+                <select class="sectionlist form-control" name="department_id" id="department_id">
+                  <option value="">-- เลือกภาควิชา --</option>
+                  @foreach($dept as $department)
+                    <option value="{{$department->department_ID}}" @if($dep_id == $department->department_ID) selected @endif>{{$department->department_name}}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">สาขา</label>
+              <div class="col-sm-5">
+                <select class="sectionlist form-control" name="section_id" id="section_id" >
+                  <option value="">-- เลือกสาขา --</option>
+                  @foreach($sections as $section)
+                    <option value="{{$section->section_ID}}" @if($section_id == $section->section_ID) selected @endif>{{$section->section_name}}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">อุปกรณ์ที่ยืมเพิ่ม</label>
             <div class="col-sm-5">

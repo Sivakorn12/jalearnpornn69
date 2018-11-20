@@ -73,9 +73,23 @@ class func extends Model
 
     public static function GetSection () {
         $dataSection = DB::table('section')
-                            ->get();
+                            ->get()->toArray();
         return $dataSection;
     }
+
+    public static function GetDepartment () {
+        $data = DB::table('department')
+                        ->get()->toArray();
+        return $data;
+    }
+
+    public static function GetFaculty () {
+        $data = DB::table('faculty')
+                            ->get()->toArray();
+        return $data;
+    }
+
+    
 
     public static function GET_EQUIPMENT () {
         $dataEquipment = DB::table('equipment')
@@ -227,6 +241,8 @@ class func extends Model
                             ->insertGetId([
                                 'status_ID' => $status,
                                 'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'department_ID' => $req->department_id ?? null,
+                                'faculty_ID' => $req->faculty_id ?? null,
                                 'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                                 'user_ID' => $req->user_id,
                                 'booking_name' => $req->user_name,

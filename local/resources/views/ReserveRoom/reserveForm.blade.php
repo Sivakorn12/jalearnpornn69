@@ -3,7 +3,6 @@
 
   $user_id = Auth::user()->id;
   $user_name = Auth::user()->user_name;
-  $sections = func::GetSection();
   $dataEquipment = func::GET_EQUIPMENT();
 ?>
 
@@ -71,15 +70,38 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">สาขา</label>
-            <div class="col-sm-5">
-              <select class="sectionlist form-control" name="section_id">
-                @foreach($sections as $section)
-                  <option value="{{$section->section_ID}}">{{$section->section_name}}</option>
-                @endforeach
-              </select>
+              <label class="col-sm-2 control-label">คณะ</label>
+              <div class="col-sm-5">
+                <select class="sectionlist form-control" name="faculty_id" id="faculty_id" required>
+                  <option value="">-- เลือกคณะ --</option>
+                  @foreach($faculty as $fac)
+                    <option value="{{$fac->faculty_ID}}">{{$fac->faculty_name}}</option>
+                  @endforeach
+                </select>
+              </div>
             </div>
-          </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">ภาควิชา</label>
+              <div class="col-sm-5">
+                <select class="sectionlist form-control" name="department_id" id="department_id" disabled="true">
+                  <option value="">-- เลือกภาควิชา --</option>
+                  @foreach($dept as $department)
+                    <option value="{{$department->department_ID}}">{{$department->department_name}}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">สาขา</label>
+              <div class="col-sm-5">
+                <select class="sectionlist form-control" name="section_id" id="section_id" disabled="true">
+                  <option value="">-- เลือกสาขา --</option>
+                  @foreach($sections as $section)
+                    <option value="{{$section->section_ID}}">{{$section->section_name}}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">อุปกรณ์ที่ยืมเพิ่ม</label>
             <div class="col-sm-5">
@@ -129,6 +151,9 @@
   var equip = []
   var data_equip = <?php echo $dataEquipment ?>;
   var remainEquip = <?php echo json_encode($dataEquipment) ?>;
+  var fac = <?php echo json_encode($faculty); ?>;
+  var sec = <?php echo json_encode($sections); ?>;
+  var dep = <?php echo json_encode($dept); ?>;
 
   $(document).ready(function() {
     for (let index = 0; index < remainEquip.length; index++) {

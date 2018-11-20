@@ -92,7 +92,7 @@ function setListNoti(data){
             var dt = moment(data[d]["booking_date"]+ "+07:00", "YYYY-MM-DD HH:mm:ssZ")
             html += '<li>'+
                         '<p class="text-noti"><b>'+data[d]["booking_name"] + '</b> ได้จองห้อง ' + data[d]["meeting_name"]+'</p>'+
-                        '<i style="font-size:12px;color:#b3b3b3;padding-left:15px;">'+dt.fromNow()+'</i></li>'
+                        '<p style="padding-top:8px"><i style="font-size:12px;color:#b3b3b3;padding-left:15px;">'+dt.fromNow()+'</i></p></li>'
         }
     }
     else{
@@ -104,5 +104,38 @@ function setListNoti(data){
 function setDateEndCalendar(dt){
     return moment(dt, "YYYY-MM-DD").add(1, 'days');
 }
+$(document).ready(function(){
+    $("#faculty_id").change(function(){
+        var fac_id = $("#faculty_id").val()
+        if(fac_id == '') $("#department_id").prop('disabled', true);
+        else $("#department_id").prop('disabled', false);
+        var select_dep = dep.filter(function (a) {
+            return a.faculty_ID == fac_id;
+        });
+        var option = '<option value="">-- เลือกภาควิชา --</option>'
+        for(index in select_dep){
+            option += '<option value="'+select_dep[index].department_ID+'">'+select_dep[index].department_name+'</option>'
+        }
+        $("#department_id").html(option)
+    })
+
+    $("#department_id").change(function(){
+        var dep_id = $("#department_id").val()
+        if(dep_id == '') $("#section_id").prop('disabled', true);
+        else $("#section_id").prop('disabled', false);
+        //console.log(dep)
+        var select_sec = sec.filter(function (a) {
+            return a.department_ID == dep_id;
+        });
+        var option = '<option value="">-- เลือกภาคสาขา --</option>'
+        for(index in select_sec){
+            option += '<option value="'+select_sec[index].section_ID+'">'+select_sec[index].section_name+'</option>'
+        }
+        $("#section_id").html(option)
+    })
+})
+
+
+
 
 

@@ -77,7 +77,10 @@ class ReserveController extends Controller
             'reserve_time' => $req->timeSelect,
             'date_reserve' => $date_now,
             'timeTH_select' => $req->dateSelect,
-            'data_equipment' => $dataequipment
+            'data_equipment' => $dataequipment,
+            'sections' => func::GetSection(),
+            'dept' => func::GetDepartment(),
+            'faculty' => func::GetFaculty()
         );
         
         return view('ReserveRoom/reserveForm', $data);
@@ -234,6 +237,12 @@ class ReserveController extends Controller
             'reserve_end' => $tmp_timeEnd,
             'dataReserve' => $dataReserve,
             'dataBorrow' => $dataBorrow,
+            'section_id' =>$dataReserve->section_ID,
+            'dep_id' =>$dataReserve->department_ID,
+            'fac_id' =>$dataReserve->faculty_ID,
+            'sections' => func::GetSection(),
+            'dept' => func::GetDepartment(),
+            'faculty' => func::GetFaculty()
         );
 
         return view('ReserveRoom/reserveFormEdit', $data);

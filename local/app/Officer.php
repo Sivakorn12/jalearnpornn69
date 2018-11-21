@@ -136,8 +136,8 @@ class Officer extends Model
                 ->get();
         
         $html = '<p>
-                    รายการยืมอุปกรณ์ หมายเลข :'.$id .'<a style="float:right" id="add_borrow" class="btn btn-xs btn-success" ><i class="fa fa-plus" aria-hidden="true"></i> ยืมเพิ่ม</a>
-                </p>
+                    รายการยืมอุปกรณ์ หมายเลข :'.$id .(($type=='borrow') ?'<a style="float:right" id="add_borrow" class="btn btn-xs btn-success" ><i class="fa fa-plus" aria-hidden="true"></i> ยืมเพิ่ม</a>':'').
+                '</p>
                 <table class="table table-bordered" >
                 <tr>
                     <th width="25px">ลำดับ</th>

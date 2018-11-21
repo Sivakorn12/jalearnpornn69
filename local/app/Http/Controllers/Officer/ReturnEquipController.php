@@ -111,4 +111,29 @@ class ReturnEquipController extends Controller
                     ->with('errorMesaage',$e);
         } 
     }
+
+    public function borrow(Request $req){
+        //dd($req->all());
+        for($index = 0 ; $index < count($req->hdnEq); $index++){
+            $temp = explode(",",$req->hdnEq[$index]);
+            $data_em = DB::table('equipment')
+                        ->where('em_name', $temp[0])
+                        ->first();
+            if(isset($data_em)){
+                DB::table('detail_borrow')
+                ->insert([
+                    'borrow_ID' => $req->id,
+                    'equiment_ID' => $data_em->em_ID,
+                    'borrow_count' => $temp[1]
+                ]);
+                $eq = DB::table('equipment')->where('em_ID', $data_em->em_ID)->first();
+                DB::table('equipment')->where('em_ID', $data_em->em_ID)
+                ->update([
+                    'em_count' => ($eq->em_count-$temp[1])
+                ]);
+            }
+        }
+        return redirect('control/return-eq/')
+                ->with('successMessage','ยืมอุปกรณ์เรียบร้อย');
+    }
 }

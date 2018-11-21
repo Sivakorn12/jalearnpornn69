@@ -89,6 +89,7 @@ Route::prefix('/control')->group(function () {
   Route::get('/equipment/delete/{id}','Officer\EquipmentController@delete');
 
   Route::get('/return-eq','Officer\ReturnEquipController@index');
+  Route::post('/return-eq/borrow','Officer\ReturnEquipController@borrow');
   Route::get('/return-eq/confirm/{id}','Officer\ReturnEquipController@confirm');
   Route::get('/return-eq/confirm-return/{id}','Officer\ReturnEquipController@confirmReturn');
   Route::get('/return-eq/cancel/{id}','Officer\ReturnEquipController@cancel');

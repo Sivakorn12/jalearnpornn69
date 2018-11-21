@@ -32,6 +32,7 @@ elseif($type == 'confirmed'){
         if($selected_status == '1'){ $selectRow = ($booking->status_ID == 1) ;}
         if($selected_status == '3'){ $selectRow = (date('Y-m-d')<$booking->checkin and $booking->status_ID==3 and $booking->detail_timestart>date('Y-m-d H:i:s')) ;}
         $eq_list = explode(",", $booking->eqiupment_list);
+
       ?>
       @if($selectRow) 
           <tr>

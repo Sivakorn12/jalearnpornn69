@@ -42,6 +42,7 @@ class CheckBookingController extends Controller
                    ->get();
         //dd($booking);
         $booking = $this->map_equipment($booking);
+        //dd($booking);
         $data = array(
             'bookings' => $booking
         );
@@ -125,25 +126,32 @@ class CheckBookingController extends Controller
     }
 
     public function map_equipment($booking){
-        $eqm = DB::table('borrow_booking')
-                    ->select(
-                        'borrow_booking.booking_ID',
-                        DB::raw("GROUP_CONCAT(
-                            DISTINCT CONCAT(eq.em_name,' x ',dbw.borrow_count) 
-                            ) as eq_list")
-                    )
-                    ->join('detail_borrow as dbw','borrow_booking.borrow_ID','=','dbw.borrow_ID')
-                    ->join('equipment as eq','dbw.equiment_ID','=','eq.em_ID')
-                    ->groupBy('borrow_booking.booking_ID')
-                    ->get();
         foreach( $booking as $key => &$bk){
+            $brw = DB::table('borrow_booking')->where('booking_ID',$bk->booking_ID)->first();
             $bk->eqiupment_list = '';
-            foreach($eqm as $eq){
-                if($bk->booking_ID == $eq->booking_ID){
-                    $bk->eqiupment_list = $eq->eq_list;
+            if(isset($brw)){
+                $eqm = DB::table('detail_borrow')
+                    ->select(
+                        'equipment.em_name',
+                        DB::raw('sum(detail_borrow.borrow_count) as borrow_count')
+                        )
+                    ->join('equipment','equipment.em_ID','=','detail_borrow.equiment_ID')
+                    ->where('detail_borrow.borrow_ID',$brw->borrow_ID)
+                    ->groupBy('equipment.em_name')
+                    ->get();
+                $t = '';
+                $tmp = '';
+                
+                foreach($eqm as $key => $eq){
+                    if($key != 0)$tmp.=',';
+                        $tmp.=$eq->em_name.' x '.$eq->borrow_count;
                 }
+                $bk->eqiupment_list = $tmp;
             }
+            
+            
         }
+        
         return $booking;
     }
 

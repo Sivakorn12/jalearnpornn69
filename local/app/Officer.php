@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Arcanedev\QrCode\QrCode;
+use App\func as func;
+use Session;
 class Officer extends Model
 {
     //* Booking
@@ -124,12 +126,17 @@ class Officer extends Model
     public static function modalViewDetailBorrow($id,$type='borrow'){
         $html = '';
         $datas = DB::table('detail_borrow')
+                ->select(
+                    'equipment.em_name',
+                    DB::raw('sum(detail_borrow.borrow_count) as borrow_count')
+                    )
                 ->join('equipment','equipment.em_ID','=','detail_borrow.equiment_ID')
                 ->where('detail_borrow.borrow_ID',$id)
+                ->groupBy('equipment.em_name')
                 ->get();
         
         $html = '<p>
-                    รายการยืมอุปกรณ์ หมายเลข :'.$id .'
+                    รายการยืมอุปกรณ์ หมายเลข :'.$id .'<a style="float:right" id="add_borrow" class="btn btn-xs btn-success" ><i class="fa fa-plus" aria-hidden="true"></i> ยืมเพิ่ม</a>
                 </p>
                 <table class="table table-bordered" >
                 <tr>
@@ -157,10 +164,53 @@ class Officer extends Model
                 $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณต้องการอนุมัติการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/confirm/'.$data->borrow_ID).'" role="button">ยืนยัน</a>
                               <a class="btn btn-danger"onclick="return confirm(`คุณต้องการยกเลิกการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/cancel/'.$data->borrow_ID).'" role="button">ยกเลิก</a>';
             }
+            $dataEquipment = func::GET_EQUIPMENT();
+            $action = url('').'/control/return-eq/borrow';
+            $html =$html.'<div id = "form_borrow" style="display:none"><hr>
+                            <form action="'.$action.'" method="post"  class="form-horizontal" > 
+                            <input type="hidden" name="id" value="'.$id.'">
+                            <div class="form-group">
+                            <label class="col-sm-2 control-label">อุปกรณ์</label>
+                            <div class="col-sm-5">
+                            <select class="sectionlist form-control" id="input-equip-name">';
+            foreach($dataEquipment as $equipment){
+                $html = $html.'<option value="'.$equipment->em_name.'">'.$equipment->em_name.' : (เหลือจำนวน '.$equipment->em_count.')</option>';
+            }   
+            $html = $html.'</select>
+                            </div>
+                            <label class="col-sm-1 control-label">จำนวน</label>
+                            <div class="col-sm-2">
+                                    <input type="number" class="form-control" min="1" id="input-equip-amount">
+                            </div>
+                            <div class="col-sm-1 control-label" >
+                                <button style="padding-top: 0px" type="button" class="btn btn-default btn-circle" onclick="addEquioment()">
+                                    <i style="margin-top:8px"class="fa fa-lg fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            </div>
+                            <div class="form-group form-room" id="div-show-equip" style="display:none">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7">
+                                <ul style="-webkit-padding-start: 15px;" id="list-equip">
+                                </ul>
+                            </div>
+                            </div>
+                            <div class="form-group form-room">
+                            <div class="col-sm-7" style="text-align:center">
+                            <div id="hideEquip"></div>
+                            <input type="hidden" name="_token" id="csrf-token" value="'.Session::token().'">
+                            <input type="submit" class="btn btn-primary" value="ตกลง">
+                            <input type="button" id="cancel_borrow" class="btn btn-default" value="ยกเลิก">
+                            </div>
+                            </div>
+                            </form>
+                        </div>';
+
+            
         }
         elseif($type=='returnBooking'){
             if(self::checkBtnConfirmReturn($id)){
-                $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณแน่ใจว่าอุปกรณ์เหล่านี้ถูกคืนครบเเล้วหรือไม่`)"  href="'.url('control/return-eq/confirm-return/'.$data->borrow_ID).'" role="button">คืนอุปกรณ์</a>';
+                $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณแน่ใจว่าอุปกรณ์เหล่านี้ถูกคืนครบเเล้วหรือไม่`)"  href="'.url('control/return-eq/confirm-return/'.$id).'" role="button">คืนอุปกรณ์</a>';
             }
         }
         return $html;
@@ -257,11 +307,12 @@ class Officer extends Model
         $equips = DB::table('booking')
                         ->select(
                             'eq.em_name',
-                            'dbr.borrow_count'
+                            DB::raw('sum(dbr.borrow_count) as borrow_count')
                         )
                         ->join('borrow_booking as bbr','booking.booking_ID','=','bbr.booking_ID')
                         ->join('detail_borrow as dbr','bbr.borrow_ID','=','dbr.borrow_ID')
                         ->join('equipment as eq','dbr.equiment_ID','=','em_ID')
+                        ->groupBy('eq.em_name')
                         ->where('booking.booking_ID',$id)->get();
         //dd($equip);
 

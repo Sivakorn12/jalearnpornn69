@@ -34,7 +34,7 @@ use App\Officer as officer;
             @endif
             </td>
             <td>
-            @if ($check_date[0][$key] == 1 || $check_date[0][$key] == 3) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">QR Code</button> <a type="button" class="btn btn-info btn-xs" href="{{$reserves[$key]->estimate_link}}" target="_blank">ไปลิ้งประเมิน</a>
+            @if ($check_date[0][$key] == 1 || $check_date[0][$key] == 4) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">QR Code</button> <a type="button" class="btn btn-info btn-xs" href="{{$reserves[$key]->estimate_link}}" target="_blank">ไปลิ้งประเมิน</a>
             @endif
             </td>
           </tr>

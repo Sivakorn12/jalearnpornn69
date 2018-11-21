@@ -54,7 +54,7 @@ use App\Officer as officer;
                         <label class="col-sm-3 control-label">เวลา</label>
                         <div class="col-sm-3">
                             <select name="ex_start" onchange="setExEnd()" class="form-control"id="ex_start">
-                                @for($n = 8 ; $n<=19 ;$n++)
+                                @for($n = 8 ; $n<=21 ;$n++)
                                     <option value="{{$n}}">{{$n}}.00 น.</option>
                                 @endfor
                             </select>
@@ -62,7 +62,7 @@ use App\Officer as officer;
                         <label class="col-sm-1 control-label">ถึง</label>
                         <div class="col-sm-3">
                             <select name="ex_end" class="form-control"id="ex_end">
-                                @for($n = 9 ; $n<=20 ;$n++)
+                                @for($n = 9 ; $n<=22 ;$n++)
                                     <option value="{{$n}}">{{$n}}.00 น.</option>
                                 @endfor
                             </select>

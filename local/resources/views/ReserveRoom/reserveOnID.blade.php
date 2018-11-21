@@ -139,9 +139,9 @@ $(document).ready(function() {
     for (index = 0; index < times.length; index++) {
       let path = "{{url('reserve')}}"+"/{{$rooms->meeting_ID}}/"+time_reserve[index].substring(-8, 2)+"/"+date_select
       if (times[index] == 1 ) {
-        viewHTML += "<a type='button' id='btnTime"+(parseInt(time_reserve[index].substring(0,2)))+"' class='btn btn-danger' style='margin-right: 1rem;' disabled='disabled'>"+time_reserve[index]+"</a>"
+        viewHTML += "<a type='button' id='btnTime"+(parseInt(time_reserve[index].substring(0,2)))+"' class='btn btn-danger' style='margin-right: 1rem; margin-top: 1rem;' disabled='disabled'>"+time_reserve[index]+"</a>"
       } else {
-        viewHTML += "<a type='button' id='btnTime"+(parseInt(time_reserve[index].substring(0,2)))+"' class='btn btn-success' style='margin-right: 1rem;' onclick='addTime(`"+time_reserve[index]+"`)'>"+time_reserve[index]+"</a>"
+        viewHTML += "<a type='button' id='btnTime"+(parseInt(time_reserve[index].substring(0,2)))+"' class='btn btn-success' style='margin-right: 1rem; margin-top: 1rem;' onclick='addTime(`"+time_reserve[index]+"`)'>"+time_reserve[index]+"</a>"
       }
     }
     

@@ -465,6 +465,8 @@ class Officer extends Model
         }
     }
 
+
+
     public static function getBuilding(){
         return DB::table('building')->get();
     }

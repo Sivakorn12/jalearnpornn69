@@ -19,8 +19,8 @@ elseif($type == 'confirmed'){
             <th>วันที่</th>
             <th>เวลา</th>
             <th>อุปกรณ์</th>
-            <th>สถานะห้อง</th>
             <th>สถานะการจอง</th>
+            <th>จัดการ</th>
         </tr>
     </thead>
    <tbody>
@@ -48,6 +48,9 @@ elseif($type == 'confirmed'){
                 @endforeach
                 </ul>
               </td>
+              <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">
+                {!!($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)!!}
+              </td>
               <td>
               @if($chk)
                 <i style="color:#777" class=" fa fa-clock-o fa-lg" aria-hidden="true"></i>
@@ -62,9 +65,7 @@ elseif($type == 'confirmed'){
                 @endif
               @endif
               </td>
-              <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">
-                {!!($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)!!}
-              </td>
+              
           </tr>
 
       @endif

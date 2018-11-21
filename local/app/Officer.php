@@ -45,8 +45,8 @@ class Officer extends Model
                             <th>วันที่</th>
                             <th>เวลา</th>
                             <th>อุปกรณ์</th>
-                            <th>สถานะห้อง</th>
-                                <th>สถานะการจอง</th>
+                            <th>สถานะการจอง</th>
+                            <th>จัดการ</th>
                         </tr>
                     </thead>
                 <tbody>';
@@ -69,8 +69,9 @@ class Officer extends Model
                   if($eq != '') $html=$html.'<li>'.$eq.'</li>';
                 }
                 $html=$html.'</ul>
-                </td>
-                <td>';
+                </td>';
+                $html=$html.'<td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)).'</td>';
+                $html=$html.'<td>';
                     if($chk){
                         $html=$html.'<i style="color:#777" class=" fa fa-clock-o fa-lg" aria-hidden="true"></i>';
                     }else{
@@ -83,9 +84,7 @@ class Officer extends Model
                         $html=$html.'<i class="fa fa-check-circle fa-lg" aria-hidden="true" style="color: green"></i>';
                         }
                     }
-                $html=$html.'</td>';
-                $html=$html.'<td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)).'</td>
-                </tr>';
+                $html=$html.'</td></tr>';
                 }
             }   
             $html=$html.'</tbody>

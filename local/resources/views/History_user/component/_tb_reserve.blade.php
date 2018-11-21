@@ -23,18 +23,18 @@ use App\Officer as officer;
             <td>{{$checkin_date[0][$key]}}</td>
             <td>{{$time_start[$key]}} - {{$time_out[$key]}}</td>
             <td>
-            @if($check_date[0][$key] == 1) <span class="label label-warning">รออนุมัติ</span>
-            @elseif($check_date[0][$key] == 2) <span class="label label-success">อนุมัติ</span>
-            @elseif($check_date[0][$key] == 3) <span class="label label-info">เกินวันเข้าใช้งาน</span>
-            @else <span class="label label-danger">ไม่อนุมัติ</span>
+            @if($check_date[0][$key] == 1) <span class="label label-success">อนุมัติ</span>
+            @elseif($check_date[0][$key] == 2) <span class="label label-danger">ไม่อนุมัติ</span>
+            @elseif($check_date[0][$key] == 3) <span class="label label-warning">รออนุมัติ</span>
+            @elseif($check_date[0][$key] == 4) <span class="label label-info">เกินวันเข้าใช้งาน</span>
             @endif
             </td>
             <td>
-            @if($check_date[0][$key] == 1) <a type="button" href="{{ url('history/editdata/'.$reserve->booking_ID.'/'.$time_start[$key]) }}" class="btn btn-warning btn-xs">แก้ไขการจอง</a> <button type="button" onclick="checkDecided({{$reserve->booking_ID}})" class="btn btn-danger btn-xs">ยกเลิกการจอง</button>
+            @if($check_date[0][$key] == 3) <a type="button" href="{{ url('history/editdata/'.$reserve->booking_ID.'/'.$time_start[$key]) }}" class="btn btn-warning btn-xs">แก้ไขการจอง</a> <button type="button" onclick="checkDecided({{$reserve->booking_ID}})" class="btn btn-danger btn-xs">ยกเลิกการจอง</button>
             @endif
             </td>
             <td>
-            @if ($check_date[0][$key] == 2) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">QR Code</button> <a type="button" class="btn btn-info btn-xs" href="{{$reserves[$key]->estimate_link}}" target="_blank">ไปลิ้งประเมิน</a>
+            @if ($check_date[0][$key] == 1 || $check_date[0][$key] == 3) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">QR Code</button> <a type="button" class="btn btn-info btn-xs" href="{{$reserves[$key]->estimate_link}}" target="_blank">ไปลิ้งประเมิน</a>
             @endif
             </td>
           </tr>

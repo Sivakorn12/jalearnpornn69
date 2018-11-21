@@ -55,7 +55,6 @@ class ReserveController extends Controller
         $temp_date_now = explode('-', date('Y-m-d'));
         $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
 
-
         $dataRoom = DB::table('meeting_room')
             ->where('meeting_ID', $req->meetingId)
             ->first();
@@ -161,6 +160,13 @@ class ReserveController extends Controller
         $data_openExtra = DB::table('meeting_open_extra')
                                 ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
                                 ->first();
+        
+        $data_open_over_time = DB::table('meeting_over_time')
+                                    ->where([
+                                        [DB::Raw('SUBSTRING(start_date, 1, 10)'), '<=', $date_select],
+                                        [DB::Raw('SUBSTRING(end_date, 1, 10)'), '>=', $date_select]
+                                    ])
+                                    ->first();
 
         $time_start = 8;
         $time_end = 16;
@@ -169,6 +175,11 @@ class ReserveController extends Controller
         if (isset($data_openExtra)) {
             $time_start = substr($data_openExtra->extra_start, -8, 2);
             $time_end = substr($data_openExtra->extra_end, -8, 2);
+        }
+
+        if(isset($data_open_over_time)) {
+            $time_start = substr($data_open_over_time->start_date, -8, 2);
+            $time_end = substr($data_open_over_time->end_date, -8, 2);
         }
 
         for ($index = $time_start; $index < $time_end; $index++) {
@@ -187,7 +198,7 @@ class ReserveController extends Controller
                 array_push($time_reserve, $index.':00');
             }
         }
-
+        
         $dataHolidays = DB::table('holiday')
                             ->where('holiday_start', '<=', $date_select)
                             ->where('holiday_end', '>=', $date_select)

@@ -2,8 +2,10 @@
 use App\Officer as officer;
 ?>
 @extends('layouts.officer',['page'=>'extratime'])
-@section('page_heading','เวลาการใช้งานพิเศษห้องทั้งหมด')
+@section('page_heading','เวลาการใช้งานพิเศษเฉพาะห้อง')
 @section('content')
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <div class="row">
     <div class="col-md-12" id="tableroom"> 
         <div style="float:right;margin-bottom:10px">
@@ -12,21 +14,26 @@ use App\Officer as officer;
         <table class="table table-hover showroom" id="tb-room">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>วันที่</th>
+                    <th width="20">#</th>
+                    <th>วันที่เริ่มเปิดใช้</th>
+                    <th>วันที่สิ้นสุดการเปิดใช้</th>
                     <th>เวลา</th>
+                    <th>ห้อง</th>
                     <th width="60"></th>
                 </tr>
             </thead>
            <tbody>
-            @foreach($exs as $key => $ex )
+            @foreach($mot as $key => $ex )
             <tr>
                 <td>{{$key+1}}</td>
-                <td>{{officer::dateDBtoBE(substr($ex->extra_start,0,10))}}</td>
-                <td>{{substr($ex->extra_start,-8,5)}} - {{substr($ex->extra_end,-8,5)}}</td>
+                
+                <td>{{officer::dateDBtoBE(substr($ex->start_date,0,10))}}</td>
+                <td>{{officer::dateDBtoBE(substr($ex->end_date,0,10))}}</td>
+                <td>{{substr($ex->start_date,-8,5)}} - {{substr($ex->end_date,-8,5)}}</td>
+                <td>{{$ex->meeting_name}}</td>
                 <td>
-                    <a class="btn btn-warning btn-sm" data-toggle="tooltip" data-toggle="modal" onclick="changeEx('{{$ex->extra_ID}}','{{$ex->extra_start}}','{{$ex->extra_end}}')" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" onclick="confirmDeleteEx({{$ex->extra_ID}},'{{officer::dateDBtoBE(substr($ex->extra_start,0,10))}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
+                <a class="btn btn-warning btn-sm" data-toggle="tooltip" data-toggle="modal" onclick="changeEx('{{$ex->id}}','{{$ex->meeting_ID}}','{{$ex->start_date}}','{{$ex->end_date}}')" title="แก้ไข"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                    <a class="btn btn-danger btn-sm" data-toggle="tooltip" onclick="confirmDeleteEx({{$ex->id}},'{{officer::dateDBtoBE(substr($ex->start_date,0,10))}}');" title="ลบ"><i class="fa fa-times" aria-hidden="true"></i></i></a>
                 </td>
             </tr>
             @endforeach
@@ -40,21 +47,31 @@ use App\Officer as officer;
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">กำหนดเวลาการใช้งานห้องทั้งหมด</h4>
+          <h4 class="modal-title" id="myModalLabel">เวลาการใช้งานพิเศษเฉพาะห้อง</h4>
         </div>
         <div class="modal-body">
-            <form action="{{url('control/extratime/add')}}" class="form-horizontal" method="POST" >
+            <form action="{{url('control/room_open/save')}}" class="form-horizontal" method="POST" >
                 <div class="form-group form-room">
-                        <label class="col-sm-3 control-label">วันที่</label>
+                    <label class="col-sm-3 control-label">ห้อง</label>
+                    <div class="col-sm-7">
+                        <select name="room_id" id="room_id" class="form-control">
+                            @foreach($room as $r)
+                                <option value="{{$r->meeting_ID}}">{{$r->meeting_name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group form-room">
+                        <label class="col-sm-3 control-label">ช่วงเวลา</label>
                         <div class="col-sm-7">
-                            <input type="text" name="date_start" id="date_start" class="datepicker" data-provide="datepicker" data-date-language="th-th">
+                                <input type="text" name="daterange" class="form-control" />
                         </div>
                 </div>
                 <div class="form-group form-room">
                         <label class="col-sm-3 control-label">เวลา</label>
                         <div class="col-sm-3">
                             <select name="ex_start" onchange="setExEnd()" class="form-control"id="ex_start">
-                                @for($n = 8 ; $n<=19 ;$n++)
+                                @for($n = 8 ; $n<=21 ;$n++)
                                     <option value="{{$n}}">{{$n}}.00 น.</option>
                                 @endfor
                             </select>
@@ -62,7 +79,7 @@ use App\Officer as officer;
                         <label class="col-sm-1 control-label">ถึง</label>
                         <div class="col-sm-3">
                             <select name="ex_end" class="form-control"id="ex_end">
-                                @for($n = 9 ; $n<=20 ;$n++)
+                                @for($n = 9 ; $n<=22 ;$n++)
                                     <option value="{{$n}}">{{$n}}.00 น.</option>
                                 @endfor
                             </select>
@@ -121,7 +138,7 @@ function setExEnd(){
     var st = $('#ex_start').val()
     var html=''
     st = parseInt(st)+1
-    for(var i = st;i<=20;i++){
+    for(var i = st;i<=22;i++){
         html +="<option value='"+i+"'>"+i+".00 น.</option>"
     }
     $('#ex_end').html(html)
@@ -132,14 +149,15 @@ function addEx(){
     $('#idHide').html("")
     $('#extratime-form').modal('show')
 }
-function changeEx(id,st,end){
-    var dThai = dateThaiYearBC(st.substring(0,10))
+function changeEx(id,room_id,st,end){
+    var st_date = dateThaiYearBC(st.substring(0,10))
+    var end_date = dateThaiYearBC(end.substring(0,10))
+    $('#room_id').val(parseInt(room_id))
+    $('input[name="daterange"]').data('daterangepicker').setStartDate(st_date);
+    $('input[name="daterange"]').data('daterangepicker').setEndDate(end_date);
     $('#ex_start').val(parseInt(st.substring(11,13)))
     setExEnd()
     $('#ex_end').val(parseInt(end.substring(11,13)))
-    if(dThai != ''){
-      $('.datepicker').datepicker("setDate", dThai);
-    }
     $('#idHide').html("<input type='hidden' name='id' value='"+id+"'>")
     $('#extratime-form').modal('show')
 }
@@ -153,10 +171,26 @@ function confirmDeleteEx (id,name) {
         })
         .then((willDelete) => {
             if (willDelete) {
-                var path = "{{url('control/extratime/delete')}}/"+id
+                var path = "{{url('control/room_open/delete')}}/"+id
                 window.location.href = path
             }
         })
     }
-</script>   
+
+$('#extratime-form').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
+})
+</script>  
+<script>
+$(function() {
+    $('input[name="daterange"]').daterangepicker({
+    opens: 'left',
+    locale: {
+        format: 'DD/MM/YYYY'
+    }
+    }, function(start, end, label) {
+    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+    });
+});
+</script> 
 @endsection

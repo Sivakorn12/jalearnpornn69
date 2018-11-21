@@ -57,7 +57,7 @@ li.dropdown>a{
 table.showroom > tbody > tr > td,
 table.showroom > thead > tr > th {
   vertical-align: middle;
-  text-align: center;
+  text-align: left;
 }
 .form-room{
 

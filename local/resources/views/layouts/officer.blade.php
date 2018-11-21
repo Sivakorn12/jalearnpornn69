@@ -127,7 +127,11 @@ use App\Officer as officer;
                         </li>
                         
                         <li class={{ $page === "extratime" ? "active" : "" }}>
-                            <a href="{{ url ('control/extratime/') }}"<i class="fa fa-clock-o" aria-hidden="true"></i> เวลาการใช้งาน</a>
+                            <a data-toggle="collapse" href="#ext"><i class="fa fa-clock-o" aria-hidden="true"></i> กำหนดเวลาใช้งานพิเศษ<span class="fa arrow fa-lg"  data-toggle="collapse" href="#collapse1"></span></a>
+                            <ul id="ext" class="collapse nav nav-second-level">
+                                <li ><a href="{{ url ('control/extratime/') }}"<i class="fa fa-circle-o" aria-hidden="true"></i> กำหนดทั้งหมด</a></li >
+                                <li ><a href="{{ url ('control/room_open/') }}"<i class="fa fa-circle-o" aria-hidden="true"></i> กำหนดเฉพาะห้อง</a></li >
+                            </ul>
                         </li>
                         <li class={{ $page === "master_data" ? "active" : "" }}>
                             <a data-toggle="collapse" href="#master_data"><i class="fa fa-star" aria-hidden="true"></i> ข้อมูลพื้นฐาน<span class="fa arrow fa-lg"  data-toggle="collapse" href="#collapse1"></span></a>

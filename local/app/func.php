@@ -256,7 +256,7 @@ class func extends Model
             $id = DB::table('booking')
                             ->insertGetId([
                                 'status_ID' => $status,
-                                'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'section_ID' => $req->section_id ?? null,
                                 'department_ID' => $req->department_id ?? null,
                                 'faculty_ID' => $req->faculty_id ?? null,
                                 'institute_ID' => isset($req->institute_id)? $req->institute_id : null,

@@ -99,7 +99,9 @@ class func extends Model
 
     public static function GET_TIMEUSE ($date_select, $times, $checkTimeuse, $id) {
         $datatimes = DB::table('detail_booking')
+                            ->join('booking', 'detail_booking.booking_ID', '=', 'booking.booking_ID')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
+                            ->where('booking.status_ID', [1, 3])
                             ->where('meeting_ID', $id)
                             ->OrderBy('detail_timestart')
                             ->get();
@@ -127,6 +129,13 @@ class func extends Model
                                 ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
                                 ->first();
 
+        $data_open_over_time = DB::table('meeting_over_time')
+                                    ->where([
+                                        [DB::Raw('SUBSTRING(start_date, 1, 10)'), '<=', $date_select],
+                                        [DB::Raw('SUBSTRING(end_date, 1, 10)'), '>=', $date_select]
+                                    ])
+                                    ->first();
+
         $time_start = 8;
         $time_end = 16;
         $times = array();
@@ -136,6 +145,11 @@ class func extends Model
         if (isset($data_openExtra)) {
             $time_start = substr($data_openExtra->extra_start, -8, 2);
             $time_end = substr($data_openExtra->extra_end, -8, 2);
+        }
+
+        if(isset($data_open_over_time)) {
+            $time_start = substr($data_open_over_time->start_date, -8, 2);
+            $time_end = substr($data_open_over_time->end_date, -8, 2);
         }
 
         for ($index = $time_start; $index < $time_end; $index++) {
@@ -149,7 +163,9 @@ class func extends Model
         }
         
         $datatimes = DB::table('detail_booking')
+                            ->join('booking', 'detail_booking.booking_ID', '=', 'booking.booking_ID')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
+                            ->where('booking.status_ID', [1, 3])
                             ->where('meeting_ID', $id)
                             ->OrderBy('detail_timestart')
                             ->get();

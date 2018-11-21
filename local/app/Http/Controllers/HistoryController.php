@@ -39,15 +39,15 @@ class HistoryController extends Controller
             $checkin_date[0][$index] = $temp[2].'-'.$temp[1].'-'.($temp[0] + 543);
             
             if ($dataHistory[$index]->checkin >= $date_now) {
-                if ($dataHistory[$index]->status_ID == 3) {
+                if ($dataHistory[$index]->status_ID == 1) {
                     $check_dateCheckin[0][$index] = 1;
-                } else if ($dataHistory[$index]->status_ID == 1) {
+                } else if ($dataHistory[$index]->status_ID == 2) {
                     $check_dateCheckin[0][$index] = 2;
-                } else {
-                    $check_dateCheckin[0][$index] = 0;
+                } else if ($dataHistory[$index]->status_ID == 3) {
+                    $check_dateCheckin[0][$index] = 3;
                 }
             } else {
-                $check_dateCheckin[0][$index] = 3;
+                $check_dateCheckin[0][$index] = 4;
             }
         }
 
@@ -58,15 +58,15 @@ class HistoryController extends Controller
             $checkin_borrow[$index] = $temp_borrow_date[2].'-'.$temp_borrow_date[1].'-'.($temp_borrow_date[0] + 543);
             
             if ($dataBorrow[$index]->checkin >= $date_now) {
-                if ($dataBorrow[$index]->borrow_status == 3) {
+                if ($dataBorrow[$index]->borrow_status == 1) {
                     $check_dateCheckin[1][$index] = 1;
-                } else if ($dataBorrow[$index]->borrow_status == 1) {
+                } else if ($dataBorrow[$index]->borrow_status == 2) {
                     $check_dateCheckin[1][$index] = 2;
-                } else {
-                    $check_dateCheckin[1][$index] = 0;
+                } else if ($dataBorrow[$index]->borrow_status == 3) {
+                    $check_dateCheckin[1][$index] = 3;
                 }
             } else {
-                $check_dateCheckin[1][$index] = 3;
+                $check_dateCheckin[1][$index] = 4;
             }
         }
 

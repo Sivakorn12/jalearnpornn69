@@ -107,7 +107,7 @@
             <div class="col-sm-5">
               <select class="sectionlist form-control" id="input-equip-name">
                 @foreach($dataEquipment as $equipment)
-                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}}</option>
+                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}} : (เหลือจำนวน {{$equipment->em_count}})</option>
                 @endforeach
               </select>
             </div>

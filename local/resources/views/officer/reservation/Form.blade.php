@@ -193,7 +193,7 @@
     var html = ''
     for (let index = 0; index < data_equip.length; index++) {
       if (remainEquip[index].em_status != true) {
-        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
+        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน ' +remainEquip[index].em_count +')</option>'
       }
     }
     $('#input-equip-name').html(html)
@@ -242,7 +242,7 @@
 
     for (let index = 0; index < data_equip.length; index++) {
       if (remainEquip[index].em_status != true) {
-        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
+        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน ' +remainEquip[index].em_count +')</option>'
       }
     }
     equip.splice(index, 1);

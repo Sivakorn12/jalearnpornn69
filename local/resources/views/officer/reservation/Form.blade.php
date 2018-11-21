@@ -116,7 +116,7 @@
             <div class="col-sm-5">
               <select class="sectionlist form-control" id="input-equip-name">
                 @foreach($dataEquipment as $equipment)
-                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}}</option>
+                  <option value="{{$equipment->em_name}}">{{$equipment->em_name}} : (เหลือจำนวน {{$equipment->em_count}})</option>
                 @endforeach
               </select>
             </div>
@@ -193,7 +193,7 @@
     var html = ''
     for (let index = 0; index < data_equip.length; index++) {
       if (remainEquip[index].em_status != true) {
-        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
+        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน ' +remainEquip[index].em_count +')</option>'
       }
     }
     $('#input-equip-name').html(html)
@@ -242,7 +242,7 @@
 
     for (let index = 0; index < data_equip.length; index++) {
       if (remainEquip[index].em_status != true) {
-        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+'</option>'
+        html += '<option value="'+remainEquip[index].em_name+'">'+remainEquip[index].em_name+' : (เหลือจำนวน ' +remainEquip[index].em_count +')</option>'
       }
     }
     equip.splice(index, 1);

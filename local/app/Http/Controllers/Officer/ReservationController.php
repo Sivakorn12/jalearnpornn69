@@ -76,7 +76,7 @@ class ReservationController extends Controller
         if ($date_now > $date_select) {
             return response()->json(['error'=> 'ไม่สามารถจองห้องได้', 'constant_time' => $constant_cancel_timeuse]);
         } else {
-            if (isset($dataHolidays)) {
+            if (substr($check_weekend, 0, 3) == 'Sun' || isset($dataHolidays)) {
                 return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้', 'constant_time' => $constant_cancel_timeuse]);
             } else {
                 $time_use = func::GET_TIMEUSE ($date_select, $req->roomid);

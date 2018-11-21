@@ -54,7 +54,7 @@ class RoomTypeController extends Controller
         else{
             // new
             $mt = DB::table('meeting_type')->orderBy('meeting_type_ID','desc')->first();
-            $id = (sizeof($mt)>0) ? ($mt->meeting_type_ID + 1) : 10000;
+            $id = (isset($mt)) ? ($mt->meeting_type_ID + 1) : 10000;
             DB::table('meeting_type')
                 ->insert([
                     'meeting_type_ID' => $id,

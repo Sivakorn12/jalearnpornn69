@@ -105,6 +105,10 @@ Route::prefix('/control')->group(function () {
   Route::any('/extratime/add','Officer\ExtraTimeController@add');
   Route::any('/extratime/delete/{id}','Officer\ExtraTimeController@delete');
 
+  Route::get('/room_open','Officer\ExtraTimeController@indexRoomExOpen');
+  Route::post('/room_open/save','Officer\ExtraTimeController@saveRoomExOpen');
+  Route::any('/room_open/delete/{id}','Officer\ExtraTimeController@deleteRoomExOpen');
+
   Route::get('/checkdate', 'Officer\ReservationController@CHECK_DATE_RESERVE');
 
   Route::get('/resetStatus','Officer\CheckBookingController@resetStatus');

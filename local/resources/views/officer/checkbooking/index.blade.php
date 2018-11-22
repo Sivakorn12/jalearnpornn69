@@ -91,16 +91,27 @@ function confirmBooking(id) {
 }
 
 function cancelBooking(id) {
-  $.ajax({
-    url: window.location.pathname + "/" + id+"/cancel",
-    type: 'POST',
-    dataType: 'JSON',
-    data: { _token: "{{ csrf_token() }}",id:id },
-    success: function(data) {
-      $.notify("ยกเลิกการจองหมายเลข :"+data.id,"error");
-      fecthdataBooking()
+  swal({
+    title: "คุณต้องการยกเลิกการจองใช่หรือไม่ ?",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+    buttons: ["cancel", "ยกเลิก"]
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      $.ajax({
+        url: window.location.pathname + "/" + id+"/cancel",
+        type: 'POST',
+        dataType: 'JSON',
+        data: { _token: "{{ csrf_token() }}",id:id },
+        success: function(data) {
+          $.notify("ยกเลิกการจองหมายเลข :"+data.id,"error");
+          fecthdataBooking()
+        }
+      })
     }
-  });
+  })
 }
 
 </script>

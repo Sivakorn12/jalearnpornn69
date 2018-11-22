@@ -18,7 +18,8 @@
           "time_start"=>$time_start,
           "time_out"=>$time_out,
           "checkin_date"=>$checkin_date,
-          "check_date"=>$check_date
+          "check_date"=>$check_date,
+          "checking_est"=>$checking_est
         ])
         @endcomponent
       </div>

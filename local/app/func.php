@@ -101,7 +101,6 @@ class func extends Model
         $datatimes = DB::table('detail_booking')
                             ->join('booking', 'detail_booking.booking_ID', '=', 'booking.booking_ID')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
-                            ->where('booking.status_ID', [1, 3])
                             ->where('meeting_ID', $id)
                             ->OrderBy('detail_timestart')
                             ->get();
@@ -109,7 +108,7 @@ class func extends Model
         if (isset($datatimes)) {
             foreach ($datatimes as $reserves) {
                 for ($index = 0; $index < sizeof($times); $index++) {
-                    if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
+                    if (substr($reserves->detail_timestart, -8, 5) == $times[$index] && ($reserves->status_ID == 1 || $reserves->status_ID == 3)) {
                         $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
                         for ($inner = 0; $inner < $hour; $inner++) {
                             $checkTimeuse[$inner + $index] = 1;
@@ -165,7 +164,6 @@ class func extends Model
         $datatimes = DB::table('detail_booking')
                             ->join('booking', 'detail_booking.booking_ID', '=', 'booking.booking_ID')
                             ->where(DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), $date_select)
-                            ->where('booking.status_ID', [1, 3])
                             ->where('meeting_ID', $id)
                             ->OrderBy('detail_timestart')
                             ->get();
@@ -174,7 +172,7 @@ class func extends Model
             foreach ($datatimes as $reserves) {
                 if (substr($reserves->detail_timestart, 0, 10) == $date_select) {
                     for ($index = 0; $index < sizeof($times); $index++) {
-                        if (substr($reserves->detail_timestart, -8, 5) == $times[$index]) {
+                        if (substr($reserves->detail_timestart, -8, 5) == $times[$index] && ($reserves->status_ID == 1 || $reserves->status_ID == 3)) {
                             $hour = substr($reserves->detail_timeout, -8, 2) - substr($reserves->detail_timestart, -8, 2);
                             for ($inner = 0; $inner < $hour; $inner++) {
                                 $checkTimeuse[$inner + $index] = 1;

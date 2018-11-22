@@ -27,7 +27,7 @@ class HistoryController extends Controller
 
         $dataBorrow = $this->GET_HISTORY_BORROW();
         
-        $time_th = $time_start = $time_out = $check_dateCheckin = $checkin_date = $checkin_borrow = array();
+        $time_th = $time_start = $time_out = $check_dateCheckin = $checkin_date = $checkin_borrow = $checkingEstLink = array();
         for ($index = 0; $index < sizeof($dataHistory); $index++) {
             $time_th[0][$index] = str_replace(date('Y'), date('Y') + 543, substr($dataHistory[$index]->booking_date, 0, 16));
             $temp_date = explode(" ", $dataHistory[$index]->booking_date);
@@ -47,7 +47,22 @@ class HistoryController extends Controller
                     $check_dateCheckin[0][$index] = 3;
                 }
             } else {
-                $check_dateCheckin[0][$index] = 4;
+                if ($dataHistory[$index]->status_ID == 1) {
+                    $check_dateCheckin[0][$index] = 1;
+                } else {
+                    $check_dateCheckin[0][$index] = 4;
+                }
+            }
+
+            if ($dataHistory[$index]->checkin < $date_now) {
+                if ($dataHistory[$index]->status_ID == 3) {
+                    $checkingEstLink[$index] = 0;
+                } else {
+                    $checkingEstLink[$index] = 1;
+                }
+            } else {
+                if ($dataHistory[$index]->status_ID == 3) {}
+                $checkingEstLink[$index] = 0;
             }
         }
 
@@ -78,7 +93,8 @@ class HistoryController extends Controller
             'checkin_date' => $checkin_date,
             'check_date' => $check_dateCheckin,
             'history_borrow' => $dataBorrow,
-            'checkin_borrow' => $checkin_borrow
+            'checkin_borrow' => $checkin_borrow,
+            'checking_est' => $checkingEstLink
         );
         return view('History_user/index', $data);
     }

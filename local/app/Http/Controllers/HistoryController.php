@@ -54,7 +54,7 @@ class HistoryController extends Controller
                 }
             }
 
-            if ($dataHistory[$index]->checkin < $date_now) {
+            if ($dataHistory[$index]->checkin <= $date_now) {
                 if ($dataHistory[$index]->status_ID == 3) {
                     $checkingEstLink[$index] = 0;
                 } else {

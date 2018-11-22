@@ -61,7 +61,6 @@ class HistoryController extends Controller
                     $checkingEstLink[$index] = 1;
                 }
             } else {
-                if ($dataHistory[$index]->status_ID == 3) {}
                 $checkingEstLink[$index] = 0;
             }
         }

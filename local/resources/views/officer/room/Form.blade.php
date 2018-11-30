@@ -13,6 +13,10 @@ if(isset($room)){
 @extends('layouts.officer',['page'=>'room'])
 @section('page_heading','จัดการห้องประชุม')
 @section('content')
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
 <div class="row">
     <div class="col-xs-12" style="padding-bottom:10px">
         <div class="panel-group">
@@ -140,6 +144,31 @@ if(isset($room)){
                             </div>
                         </div>
                         <div class="form-group form-room" >
+                            <label class="col-sm-3 control-label">ตารางเปิด-ปิดห้อง</label>
+                            <div class="col-sm-7">
+                                <table class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr style="background-colr:#4c9adc26">
+                                            <th>วัน</th>
+                                            <th>เวลาเปิด</th>
+                                            <th>เวลาปิด</th>
+                                            <th>ใช้งาน</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody> 
+                                        @foreach($room_open_time as $index => $r)
+                                        <tr>
+                                            <td>{{$day[$r["day_id"]]}}</td>
+                                            <td><input type="text" class="form-control input-sm" name="room_open_{{$index+1}}" id="room_open_{{$index+1}}"></td>
+                                            <td><input type="text" class="form-control input-sm" name="room_close_{{$index+1}}" id="room_close_{{$index+1}}"></td>
+                                            <td><input type="checkbox" name="open_flag_{{$index+1}}" id="open_flag_{{$index+1}}" @if($r["open_flag"] ==1 ) checked @endif data-toggle="toggle" data-on="เปิด" data-off="ปิด" data-size="small"></td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group form-room" >
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-7">
                                 <input class="btn btn-success" type="submit" value="บันทึก">
@@ -165,12 +194,35 @@ if(isset($room)){
 </div>
 <script>      
     var equip =[]
+    var open_time_list = <?php echo json_encode($room_open_time); ?>;
     $(document).ready(function() {
       $('#tb-room').DataTable();
       $('[data-toggle="tooltip"]').tooltip();  
-      
+      setTimepickerAllDay(open_time_list)
+      //console.log(open_time_list)
+
     });
 
+    function setTimepickerAllDay(time_list){
+        for(index  in open_time_list){
+            console.log(time_list[index].day_id)
+            $('#room_open_'+time_list[index].day_id).timepicker({
+                    template: false,
+                    showInputs: false,
+                    minuteStep: 10,
+                    showMeridian:false,
+                    defaultTime:time_list[index].open_time 
+            });
+            $('#room_close_'+time_list[index].day_id).timepicker({
+                    template: false,
+                    showInputs: false,
+                    minuteStep: 10,
+                    showMeridian:false,
+                    defaultTime:time_list[index].close_time 
+            });
+        }
+        
+    }
     function handleFiles(files){
     $('#error-pic').hide()
     var isImg = true

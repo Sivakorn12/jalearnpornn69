@@ -40,10 +40,14 @@ class RoomController extends Controller
     }
 
     public function Form($id =''){
+        $room_open_time = officer::setDefaultRoomOpenTime();
+        $day = officer::getShortDayThai();
         if($id==''){
             return view('officer/room/Form',[
                 'form'=>'success',
-                'action' => 'add'
+                'action' => 'add',
+                'room_open_time' => $room_open_time,
+                'day' => $day
             ]);
         }
         else{
@@ -51,16 +55,27 @@ class RoomController extends Controller
                         ->where('meeting_ID',$id)
                         ->first();
             
+            $room_open = DB::table('room_open_time')
+                            ->where('meeting_ID',$id)
+                            ->orderBy('day_id')
+                            ->get();
+            foreach($room_open as $open){
+                $room_open_time[($open->day_id-1)]["open_time"] = $open->open_time;
+                $room_open_time[($open->day_id-1)]["close_time"] = $open->close_time;
+                $room_open_time[($open->day_id-1)]["open_flag"] = $open->open_flag;
+            }
+            
             return view('officer/room/Form',[
                 'room' => $meeting_room ,
                 'form'=>'warning',
                 'action' => 'update',
+                'room_open_time' => $room_open_time,
+                'day' => $day
             ]);
         }
     }
 
     public function add(Request $request){
-        //dd($request);
         $msg = [
             'room_name.required' => "กรุณาระบุชื่อห้องประชุม",
             "type.required" => "กรุณาระบุประเภทห้องประชุม",
@@ -123,6 +138,8 @@ class RoomController extends Controller
                     }
                 }
 
+                officer::setRoomOpenAllDay($request,$id);
+
                 return redirect('control/room/')
                         ->with('successMessage','เพิ่มห้องสำเร็จ');
               }catch (Exception $e) {
@@ -139,7 +156,7 @@ class RoomController extends Controller
     }
 
     public function update(Request $request){
-        //dd($request);
+        //dd($request->all());
         $msg = [
             'room_name.required' => "กรุณาระบุชื่อห้องประชุม",
             "type.required" => "กรุณาระบุประเภทห้องประชุม",
@@ -216,8 +233,8 @@ class RoomController extends Controller
                         }
                     }
                 }
-            
-                
+                officer::setRoomOpenAllDay($request,$request->id);
+               
                 return redirect('control/room/')
                         ->with('successMessage','แก้ไขห้องสำเร็จ');
               }catch (Exception $e) {

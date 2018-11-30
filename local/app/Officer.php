@@ -548,68 +548,6 @@ class Officer extends Model
     }
 
     public static function setRoomOpenAllDay($req,$meeting_ID){
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 1,
-            //     'open_time' => $req->room_open_1 ?? '08:00',
-            //     'close_time' => $req->room_close_1 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_1)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 2,
-            //     'open_time' => $req->room_open_2 ?? '08:00',
-            //     'close_time' => $req->room_close_2 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_2)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 3,
-            //     'open_time' => $req->room_open_3 ?? '08:00',
-            //     'close_time' => $req->room_close_3 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_3)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 4,
-            //     'open_time' => $req->room_open_4 ?? '08:00',
-            //     'close_time' => $req->room_close_4 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_4)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 5,
-            //     'open_time' => $req->room_open_5 ?? '08:00',
-            //     'close_time' => $req->room_close_5 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_5)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 6,
-            //     'open_time' => $req->room_open_6 ?? '08:00',
-            //     'close_time' => $req->room_close_6 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_6)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 7,
-            //     'open_time' => $req->room_open_7 ?? '08:00',
-            //     'close_time' => $req->room_close_7 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_7)) ? 1:,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
 
             Md_RoomOpenTime::updateOrCreate([
                 'day_id' => 1,

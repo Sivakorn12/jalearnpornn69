@@ -25,13 +25,13 @@ if(isset($room)){
                   ข้อมูลห้องประชุม
                 </div>
                 <div class="panel-body" >
-                <form action="{{url('control/room/'.$action)}}" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                <form action="{{url('control/room/'.$action)}}" class="form-horizontal" id="form_room"  method="POST" onsubmit="return confirm('WARNING : การเปลี่ยนแปลงเวลาเปิด-ปิดห้องจะทำให้การจองห้อง '+$('#room_name').val()+' หลังจากวันนี้ที่ไม่อยู่ในช่วงเวลาที่เปลี่ยนแปลงถูกยกเลิก\n\nคุณต้องการบันทึกการเปลี่ยนแปลงหรือไม่?')" enctype="multipart/form-data">
                     <div class="col-md-1"></div>
                     <div class="col-md-10">
                         <div class="form-group form-room">
                             <label class="col-sm-3 control-label">ชื่อห้องประชุม</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" name="room_name" value="{{(isset($room->meeting_name))?$room->meeting_name:old('room_name')}}" >
+                                <input type="text" class="form-control" id="room_name" name="room_name" value="{{(isset($room->meeting_name))?$room->meeting_name:old('room_name')}}" >
                                 <p  style="color:red">@if($errors->has('room_name')) {{$errors->first('room_name')}}@endif</p>
                             </div>
                         </div>
@@ -171,7 +171,7 @@ if(isset($room)){
                         <div class="form-group form-room" >
                             <label class="col-sm-3 control-label"></label>
                             <div class="col-sm-7">
-                                <input class="btn btn-success" type="submit" value="บันทึก">
+                                <input class="btn btn-success" id="submit-btn" type="submit" value="บันทึก">
                                 <input class="btn btn-danger" type="reset" value="ยกเลิก">
                             </div>
                         </div>
@@ -200,12 +200,19 @@ if(isset($room)){
       $('[data-toggle="tooltip"]').tooltip();  
       setTimepickerAllDay(open_time_list)
       //console.log(open_time_list)
+    //   $('#submit-btn').click(function(event){
+    //     //$('#form_room').submit(false)
+    //     event.preventDefault();
+    //     if(confirm('การเปลี่ยนแปลงเวลาเปิด-ปิดห้องจะทำให้การจองห้อง '+$('#room_name').val()+' หลังจากวันนี้ที่ไม่อยู่ในช่วงเวลาที่เปลี่ยนแปลงถูกยกเลิก\n\nคุณต้องการบันทึกการเปลี่ยนแปลงหรือไม่?')){
+    //         console.log('flfl')
+    //         $('#form_room').submit(true)
+    //     }
+    //   })
 
     });
 
     function setTimepickerAllDay(time_list){
         for(index  in open_time_list){
-            console.log(time_list[index].day_id)
             $('#room_open_'+time_list[index].day_id).timepicker({
                     template: false,
                     showInputs: false,

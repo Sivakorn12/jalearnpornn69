@@ -27,6 +27,9 @@ class Officer extends Model
             elseif($status->status_ID==3){
                 return '<span class="label label-status label-warning">'.$status->status_name.'<span>';
             }
+            elseif($status->status_ID==4){
+                return '<span class="label label-status label-default">'.$status->status_name.'<span>';
+            }
         }
     }
 
@@ -129,11 +132,12 @@ class Officer extends Model
         $datas = DB::table('detail_borrow')
                 ->select(
                     'equipment.em_name',
+                    'equipment.em_count',
                     DB::raw('sum(detail_borrow.borrow_count) as borrow_count')
                     )
                 ->join('equipment','equipment.em_ID','=','detail_borrow.equiment_ID')
                 ->where('detail_borrow.borrow_ID',$id)
-                ->groupBy('equipment.em_name')
+                ->groupBy('equipment.em_name','equipment.em_count')
                 ->get();
         
         $html = '<p>
@@ -153,7 +157,9 @@ class Officer extends Model
                             <td>".$data->borrow_count."</td>
                             <td>";
             if(self::getStatusBorrow($id)=='1')
-                $html =$html.'<span  style="color:green" class="glyphicon glyphicon-ok " aria-hidden="true" title="เพียงพอ"></span>';
+                $html =$html.'<span  style="color:green" class="glyphicon glyphicon-ok-sign" aria-hidden="true" title="เพียงพอ"></span>';
+            elseif(self::getStatusBorrow($id)=='4')
+                $html =$html.'<span  style="color:orange" class="glyphicon glyphicon-remove-sign" aria-hidden="true" title="ยกเลิก"></span>';
             else $html =$html.self::statusEquip($data->borrow_count,$data->em_count);
             $html = $html.'</td></tr>';
         }
@@ -224,9 +230,9 @@ class Officer extends Model
 
     public static function statusEquip($value,$total){
         if($value <= $total){
-            return '<span  style="color:green" class="glyphicon glyphicon-ok " aria-hidden="true" title="เพียงพอ"></span>';
+            return '<span  style="color:green" class="glyphicon glyphicon-ok-sign " aria-hidden="true" title="เพียงพอ"></span>';
         }
-        else return '<span style="color:red" class="glyphicon glyphicon-remove" aria-hidden="true" title="ไม่เพียงพอ"></span>';
+        else return '<span style="color:red" class="glyphicon glyphicon-remove-sign" aria-hidden="true" title="ไม่เพียงพอ"></span>';
     }
 
     public static function checkBtnConfirmBorrow($id){
@@ -548,68 +554,6 @@ class Officer extends Model
     }
 
     public static function setRoomOpenAllDay($req,$meeting_ID){
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 1,
-            //     'open_time' => $req->room_open_1 ?? '08:00',
-            //     'close_time' => $req->room_close_1 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_1)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 2,
-            //     'open_time' => $req->room_open_2 ?? '08:00',
-            //     'close_time' => $req->room_close_2 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_2)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 3,
-            //     'open_time' => $req->room_open_3 ?? '08:00',
-            //     'close_time' => $req->room_close_3 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_3)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 4,
-            //     'open_time' => $req->room_open_4 ?? '08:00',
-            //     'close_time' => $req->room_close_4 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_4)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 5,
-            //     'open_time' => $req->room_open_5 ?? '08:00',
-            //     'close_time' => $req->room_close_5 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_5)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 6,
-            //     'open_time' => $req->room_open_6 ?? '08:00',
-            //     'close_time' => $req->room_close_6 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_6)) ? 1:0,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
-
-            // DB::table("room_open_time")
-            // ->insert([
-            //     'day_id' => 7,
-            //     'open_time' => $req->room_open_7 ?? '08:00',
-            //     'close_time' => $req->room_close_7 ?? '16:00',
-            //     'open_flag' => (isset($req->open_flag_7)) ? 1:,
-            //     'meeting_ID' => $meeting_ID
-            // ]);
 
             Md_RoomOpenTime::updateOrCreate([
                 'day_id' => 1,
@@ -673,5 +617,58 @@ class Officer extends Model
                 'close_time' => $req->room_close_7 ?? '16:00',
                 'open_flag' => (isset($req->open_flag_7)) ? 1:0
             ]);
+    }
+
+    public static function cancelBorrowEquipment($booking_ID){
+        
+        $data_borrow = DB::table('borrow_booking')
+                            ->join('detail_borrow as dbr','borrow_booking.borrow_ID','=','dbr.borrow_ID')
+                            ->where('borrow_booking.booking_ID',$booking_ID)
+                            ->get();
+        if(isset($data_borrow)){
+            //set status borrow = 4
+            DB::table('borrow_booking')
+                ->where('booking_ID',$booking_ID)
+                ->update([
+                    'borrow_status' => 4
+                ]);
+            //for loop to plus equipment 
+            foreach($data_borrow as $dbr){
+                DB::table('equipment')->where('em_ID', $dbr->equiment_ID)->increment('em_count',$dbr->borrow_count);
+            }
+        }   
+    }
+
+    public static function checkreserv($room_id){
+        $date = date('Y-m-d');
+
+        //dd($date);
+        $data_reserv = DB::table('booking')
+                            ->join('detail_booking as dtb','booking.booking_ID','=','dtb.booking_ID')
+                            ->where('booking.checkin','>=',$date)
+                            ->where('dtb.meeting_ID',$room_id)
+                            ->get();
+        $data_room_open = Md_RoomOpenTime::where('meeting_ID',$room_id)->get()->toArray();
+        foreach($data_reserv as $key => $drs){
+            $day_id = (date("N", strtotime($drs->checkin." 00:00:00"))+1);
+            $time_start = date("H:i:s", strtotime($drs->detail_timestart));
+            $time_end = date("H:i:s", strtotime($drs->detail_timeout));
+
+            echo "check in at :".$drs->checkin." day: ".(date("N", strtotime($drs->checkin." 00:00:00"))+1)." time st:".$time_start."<br>";
+            if($data_room_open[$day_id-1]["open_flag"]==0 or $data_room_open[$day_id-1]["open_time"] > $time_start or $data_room_open[$day_id-1]["close_time"] < $time_end ){
+                $old_status = DB::table('booking')->select('status_ID')->where('booking_ID',$drs->booking_ID)->first();
+                if(isset($old_status) and $old_status->status_ID ==1 ){
+                    officer::cancelBorrowEquipment($drs->booking_ID);
+                }
+
+                DB::table('booking')
+                ->where('booking_ID',$drs->booking_ID)
+                ->update([
+                    'status_ID' => 4
+                ]);
+                echo "canceled reserve.<br>";
+            }
+        }
+        //dd($data_reserv);
     }
 }

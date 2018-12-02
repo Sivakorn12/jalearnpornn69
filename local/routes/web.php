@@ -60,6 +60,7 @@ Route::prefix('/control')->group(function () {
   Route::get('/room/edit/{id}','Officer\RoomController@Form');
   Route::post('/room/update','Officer\RoomController@update');
   Route::get('/room/delete/{id}','Officer\RoomController@delete');
+  Route::get('/room/test','Officer\RoomController@checkreserv');
 
   Route::get('/roomtype','Officer\RoomTypeController@index');
   Route::post('/roomtype/save','Officer\RoomTypeController@save');

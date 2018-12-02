@@ -11,6 +11,7 @@ use \Input as Input;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Officer as officer;
+use App\Models\Md_RoomOpenTime;
 
 class RoomController extends Controller
 {
@@ -185,6 +186,7 @@ class RoomController extends Controller
     
           if ($validator->passes()) {
             try{
+                DB::beginTransaction();
                 $pic = array();
                 $files = $request->file('room_image');
                 if(!empty($request->file('room_image'))){
@@ -234,10 +236,13 @@ class RoomController extends Controller
                     }
                 }
                 officer::setRoomOpenAllDay($request,$request->id);
-               
+                officer::checkreserv($request->id);
+                DB::commit();
+
                 return redirect('control/room/')
                         ->with('successMessage','แก้ไขห้องสำเร็จ');
               }catch (Exception $e) {
+                DB::rollBack();
                 return redirect('control/room/')
                         ->with('errorMesaage',$e);
               }
@@ -263,5 +268,39 @@ class RoomController extends Controller
 
         DB::table('meeting_room')->where('meeting_ID',$id)->delete();
         return redirect('control/room/');
+    }
+
+    public function checkreserv(){
+        $date = date('Y-m-d');
+        $room_id = 6;
+
+        //dd($date);
+        $data_reserv = DB::table('booking')
+                            ->join('detail_booking as dtb','booking.booking_ID','=','dtb.booking_ID')
+                            ->where('booking.checkin','>=',$date)
+                            ->where('dtb.meeting_ID',$room_id)
+                            ->get();
+        $data_room_open = Md_RoomOpenTime::where('meeting_ID',$room_id)->get()->toArray();
+        foreach($data_reserv as $key => $drs){
+            $day_id = (date("N", strtotime($drs->checkin." 00:00:00"))+1);
+            $time_start = date("H:i:s", strtotime($drs->detail_timestart));
+            $time_end = date("H:i:s", strtotime($drs->detail_timeout));
+
+            echo "check in at :".$drs->checkin." day: ".(date("N", strtotime($drs->checkin." 00:00:00"))+1)." time st:".$time_start."<br>";
+            if($data_room_open[$day_id-1]["open_time"] > $time_start ){
+                $old_status = DB::table('booking')->select('status_ID')->where('booking_ID',$drs->booking_ID)->first();
+                if(isset($old_status) and $old_status->status_ID ==1 ){
+                    officer::cancelBorrowEquipment($drs->booking_ID);
+                }
+
+                DB::table('booking')
+                ->where('booking_ID',$drs->booking_ID)
+                ->update([
+                    'status_ID' => 4
+                ]);
+                echo "canceled reserve.<br>";
+            }
+        }
+        //dd($data_reserv);
     }
 }

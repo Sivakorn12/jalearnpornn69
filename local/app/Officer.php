@@ -671,4 +671,23 @@ class Officer extends Model
         }
         //dd($data_reserv);
     }
+
+    public static function getRoomOpen($meeting_ID){
+        return Md_RoomOpenTime::select(
+                    'room_open_time.*',
+                    DB::raw('
+                    CASE
+                        WHEN day_id = 1 THEN "อา."
+                        WHEN day_id = 2 THEN "จ."
+                        WHEN day_id = 3 THEN "อ."
+                        WHEN day_id = 4 THEN "พ."
+                        WHEN day_id = 5 THEN "พฤ."
+                        WHEN day_id = 6 THEN "ศ."
+                        WHEN day_id = 7 THEN "ส."
+                    END as day
+                    ')
+                )
+                ->where('meeting_ID',$meeting_ID)->where('open_flag',1)
+                ->get();
+    }
 }

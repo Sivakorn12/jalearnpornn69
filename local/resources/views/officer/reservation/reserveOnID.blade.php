@@ -147,7 +147,7 @@
       }
     }
     
-    viewHTML += "<div><form action='{{ url('control/reservation/form/reserve') }}' method='get' enctype='multipart/form-data'>"
+    viewHTML += "<div><form action='{{ url('control/reservation/form/reserve') }}' method='post' enctype='multipart/form-data'>"
     viewHTML += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
     viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
     viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"

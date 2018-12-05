@@ -671,4 +671,16 @@ class Officer extends Model
         }
         //dd($data_reserv);
     }
+
+    public static function isHasReserveRoom($meeting_id,$date_point){
+        $result = DB::table('booking')
+                    ->join('detail_booking as dbk','booking.booking_ID','=','dbk.booking_ID')
+                    ->where('dbk.meeting_ID',$meeting_id)
+                    ->where('booking.checkin',$date_point)
+                    ->get(); 
+        if(isset($result[0])){
+            return true;
+        }
+        return false;
+    }
 }

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Officer as officer;
 use App\func as func;
+use App\Models\Md_RoomOpenTime;
 
 class ReservationController extends Controller
 {
@@ -200,4 +201,70 @@ class ReservationController extends Controller
             return redirect()->back()->withInput($req->input())->withErrors($validator);
           }
     }
+
+    public function choose_adayinweek($id =''){
+        $resultData = func::selectReserve($id);
+        $imgs_room = array();
+        $imgs_room = explode(',', $resultData->meeting_pic);
+
+        $data = array(
+            'rooms' => $resultData,
+            'imgs' => $imgs_room
+        );
+        return view('officer/reservation/reserveADayinWeekOnID', $data);
+    }
+
+    public function checkDayReserve(Request $req){
+        //dd($req->all());
+        $day_reserve_arr = array();
+
+        
+        $day_id = date("N", strtotime($req->date_st));
+        //dd($day_id);
+        $room_open = Md_RoomOpenTime::where('meeting_ID',$req->meeting_id)
+                                    ->where('day_id',$day_id+1)
+                                    ->first()->toArray();
+        //dd($room_open);
+        if($room_open['open_flag'] != 1 ){
+            return response()->json([
+                'success' => 0,
+                'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องไม่ได้เปิดใช้งาน'
+            ]);
+        }
+        else{
+            $date_point = date("Y-m-d", strtotime($req->date_st));
+            $date_end = date("Y-m-d", strtotime($req->date_end));
+            $cnt = 0;
+            while($date_point <= $date_end){
+                
+                //echo $date_point."<br>";
+                array_push($day_reserve_arr,$date_point);
+                $tmp = date('Y-m-d',strtotime("+7 day", strtotime($date_point)));
+                $date_point = $tmp;
+                
+                if(officer::isHasReserveRoom($req->meeting_id,$date_point)){
+                    return response()->json([
+                        'success' => 0,
+                        'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องถูกจองเเล้ว'
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => 1,
+                'message' => '',
+                'date_reserve' =>$day_reserve_arr,
+                'time_start' => $room_open['open_time'],
+                'time_end' => $room_open['close_time']
+            ]);
+
+
+        }      
+        //if($room_open[])
+    }
+
+    public function Form_adayinweek(Request $req){
+        dd($req->all());
+    }
+    
 }

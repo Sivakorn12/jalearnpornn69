@@ -1,5 +1,5 @@
 @extends('layouts.officer',['page'=>'equipment'])
-@section('page_heading','การคืนอุปกรณ์')
+@section('page_heading','การยืม - คืนอุปกรณ์')
 @section('content')
 <div class="row">
     <div class="col-xs-12">

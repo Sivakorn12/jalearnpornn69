@@ -672,6 +672,51 @@ class Officer extends Model
         //dd($data_reserv);
     }
 
+    public static function isHasReserveRoom($meeting_id,$date_point){
+        $result = DB::table('booking')
+                    ->join('detail_booking as dbk','booking.booking_ID','=','dbk.booking_ID')
+                    ->where('dbk.meeting_ID',$meeting_id)
+                    ->where('booking.checkin',$date_point)
+                    ->get(); 
+        if(isset($result[0])){
+            return true;
+        }
+        return false;
+    }
+
+    public static function isHoliday($date_point){
+        $result = DB::table('holiday')
+                    ->where('holiday_start','<=',$date_point)
+                    ->where('holiday_end','>=',$date_point)
+                    ->get(); 
+        if(isset($result[0])){
+            return true;
+        }
+        return false;
+    }
+
+    public static function isRoomOpenExtra($meeting_id,$open_time,$close_time){
+        $result = DB::table('meeting_open_extra')
+                    ->WhereBetween('extra_start', [$open_time, $close_time])
+                    ->orWhereBetween('extra_end', [$open_time, $close_time])
+                    ->get(); 
+        if(isset($result[0])){   
+            return $result[0];
+        }
+        else{
+            $result2 = DB::table('meeting_over_time')
+                    ->WhereBetween('start_date', [$open_time, $close_time])
+                    ->orWhereBetween('end_date', [$open_time, $close_time])
+                    ->get(); 
+            if(isset($result2[0])){   
+                return $result2[0];
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+    
     public static function getRoomOpen($meeting_ID){
         return Md_RoomOpenTime::select(
                     'room_open_time.*',
@@ -689,5 +734,14 @@ class Officer extends Model
                 )
                 ->where('meeting_ID',$meeting_ID)->where('open_flag',1)
                 ->get();
+    }
+
+    public static function getEstimateLink($meeting_id){
+        $data_meetingroom = DB::table('meeting_room')
+        ->where('meeting_ID', $meeting_id)
+        ->first();
+
+        $estimate_link = $data_meetingroom->estimate_link.'#responses';
+        return $estimate_link;
     }
 }

@@ -42,6 +42,8 @@ Route::any('/getNoti', 'HomeController@getNoti');
 Route::prefix('/control')->group(function () {
   Route::get('qr-code','Officer\DashboardController@qr' );
   Route::get('backupdb','Officer\DashboardController@backup2' );
+  Route::any('checkdayreserve','Officer\ReservationController@checkDayReserve' );
+  
   Route::get('/' ,'Officer\DashboardController@index');
   Route::get('/checkbooking','Officer\CheckBookingController@indexReservation');
   Route::get('/checkbooking/fetchTbBooking','Officer\CheckBookingController@fetchTbBooking');
@@ -52,7 +54,13 @@ Route::prefix('/control')->group(function () {
   Route::get('/reservation','Officer\ReservationController@index');
   Route::post('/reservation/confirm','Officer\ReservationController@confirm');
   Route::get('/reservation/{id}','Officer\ReservationController@Form');
-  Route::get('/reservation/form/reserve', 'Officer\ReservationController@reserveForm');
+  Route::post('/reservation/form/reserve', 'Officer\ReservationController@reserveForm');
+
+  Route::post('/reserve_adayinweek/confirm','Officer\ReservationController@reserve_adayinweek');
+  Route::any('/reserve_adayinweek/form','Officer\ReservationController@Form_adayinweek');
+ 
+  Route::get('/reservation/adayinweek/{id}','Officer\ReservationController@choose_adayinweek');
+  
 
   Route::get('/room','Officer\RoomController@index');
   Route::get('/room/form','Officer\RoomController@Form');

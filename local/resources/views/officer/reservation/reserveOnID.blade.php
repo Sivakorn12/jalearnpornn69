@@ -14,6 +14,10 @@
   ?>
       <div class="col-md-1"></div>
       <div class="col-md-10">
+        <ul class="nav nav-tabs tabs_reserve_type">
+            <li role="presentation" class="active" ><a href="{{url('control/reservation')}}/{{$rooms->meeting_ID}}">จองวันเดียว</a></li>
+            <li role="presentation" ><a href="{{url('control/reservation/adayinweek')}}/{{$rooms->meeting_ID}}">จองทุก 1วัน/สัปดาห์</a></li>
+          </ul>
         <div class="panel panel-default">
           <div class="panel-heading"><h4>{{$rooms->meeting_name}}</h4></div>
           <div class="panel-body">
@@ -147,7 +151,7 @@
       }
     }
     
-    viewHTML += "<div><form action='{{ url('control/reservation/form/reserve') }}' method='get' enctype='multipart/form-data'>"
+    viewHTML += "<div><form action='{{ url('control/reservation/form/reserve') }}' method='post' enctype='multipart/form-data'>"
     viewHTML += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
     viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
     viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"

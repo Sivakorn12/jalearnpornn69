@@ -259,7 +259,7 @@ class func extends Model
                                 'faculty_ID' => $req->faculty_id ?? null,
                                 'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                                 'user_ID' => $req->user_id,
-                                'booking_name' => $req->user_name,
+                                'booking_name' => $req->contract_name ?? $req->user_name,
                                 'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
                                 'booking_date' => date('Y-m-d H:i:s'),
                                 'checkin' => $req->time_select

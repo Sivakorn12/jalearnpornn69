@@ -683,4 +683,54 @@ class Officer extends Model
         }
         return false;
     }
+
+    public static function isHoliday($date_point){
+        $result = DB::table('holiday')
+                    ->where('holiday_start','<=',$date_point)
+                    ->where('holiday_end','>=',$date_point)
+                    ->get(); 
+        if(isset($result[0])){
+            return true;
+        }
+        return false;
+    }
+
+    public static function isRoomOpenExtra($meeting_id,$open_time,$close_time){
+        $result = DB::table('meeting_open_extra')
+                    ->WhereBetween('extra_start', [$open_time, $close_time])
+                    ->orWhereBetween('extra_end', [$open_time, $close_time])
+                    ->get(); 
+        if(isset($result[0])){   
+            return $result[0];
+        }
+        return false;
+    }
+    
+    public static function getRoomOpen($meeting_ID){
+        return Md_RoomOpenTime::select(
+                    'room_open_time.*',
+                    DB::raw('
+                    CASE
+                        WHEN day_id = 1 THEN "อา."
+                        WHEN day_id = 2 THEN "จ."
+                        WHEN day_id = 3 THEN "อ."
+                        WHEN day_id = 4 THEN "พ."
+                        WHEN day_id = 5 THEN "พฤ."
+                        WHEN day_id = 6 THEN "ศ."
+                        WHEN day_id = 7 THEN "ส."
+                    END as day
+                    ')
+                )
+                ->where('meeting_ID',$meeting_ID)->where('open_flag',1)
+                ->get();
+    }
+
+    public static function getEstimateLink($meeting_id){
+        $data_meetingroom = DB::table('meeting_room')
+        ->where('meeting_ID', $meeting_id)
+        ->first();
+
+        $estimate_link = $data_meetingroom->estimate_link.'#responses';
+        return $estimate_link;
+    }
 }

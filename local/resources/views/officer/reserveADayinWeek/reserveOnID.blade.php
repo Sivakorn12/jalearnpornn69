@@ -100,7 +100,7 @@
                   <p style="font-size: 24px;">Tips!</p>
                 </div>
             </div>
-            <div  class="row" style="margin-top:15px">
+            <div  class="row" style="margin-top:15px" id="div_date_list">
               <div class="col-md-7" >
                   <div class="form-group form-room">
                       <label class="col-sm-3 control-label" id="list_reserve_title"></label>
@@ -114,10 +114,10 @@
                   <div class="form-group form-room">
                       <label class="col-sm-3 control-label"></label>
                       <div class="col-sm-7">
-                        <form action="{{ url('control/reservation/adayinweek/form') }}" method="post">
-                            <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
+                        <form action="{{ url('control/reserve_adayinweek/form') }}" method="get">
                             <input type="hidden" name="meeting_ID" id="meeting_ID" value="{{$rooms->meeting_ID}}">
                             <input type="hidden" name="data_reserve" id="data_reserve" value="">
+                            <input type="hidden" name="time_reserve" id="time_reserve" value="">
                             <button class="btn btn-primary" id="confirm_reserve_date" style="display:none">ถัดไป</button>
                         </form>  
                       </div>
@@ -152,6 +152,7 @@
           alert('กรุณาเลือกวันให้ตรงกัน')
           
           $('#confirm_reserve_date').hide()
+          $('#div_date_list').hide()
           //console.log(date_now)
           $('input[name="daterange"]').data('daterangepicker').setStartDate(date_now);
           $('input[name="daterange"]').data('daterangepicker').setEndDate(date_now);
@@ -173,12 +174,13 @@
                   alert(data.message)
                   $('input[name="daterange"]').data('daterangepicker').setStartDate(date_now);
                   $('input[name="daterange"]').data('daterangepicker').setEndDate(date_now);
+                  $('#div_date_list').hide()
                   $('#confirm_reserve_date').hide()
                 }
                 else{
-                  console.log(data)
                   showDataReserve(data)
                   $('#data_reserve').val(JSON.stringify(data.date_reserve))
+                  $('#time_reserve').val(JSON.stringify(data.time_reserve))
                   $('#confirm_reserve_date').show()
                 }
               }
@@ -191,9 +193,10 @@
     var html = ''
     html += '<table class="table table-bordered">'
     for(index in data.date_reserve){
-      html+= '<tr><td>'+data.date_reserve[index]+'</td><td>'+data.time_start.substring(0, 5)+' - '+data.time_end.substring(0, 5)+'</td></tr>'
+      html+= '<tr><td>'+data.date_reserve[index]+'</td><td>'+data.time_reserve[index][0].substring(0,5)+' - '+data.time_reserve[index][1].substring(0,5)+'</td></tr>'
     }
     html += '</table>'
+    $('#div_date_list').show()
     $('#list_reserve_title').html('รายการวันที่จอง')
     $('#list_reserve').html(html)
   }

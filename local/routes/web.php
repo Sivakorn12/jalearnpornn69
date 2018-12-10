@@ -56,8 +56,11 @@ Route::prefix('/control')->group(function () {
   Route::get('/reservation/{id}','Officer\ReservationController@Form');
   Route::post('/reservation/form/reserve', 'Officer\ReservationController@reserveForm');
 
-  Route::post('/reservation/adayinweek/form','Officer\ReservationController@Form_adayinweek');
+  Route::post('/reserve_adayinweek/confirm','Officer\ReservationController@reserve_adayinweek');
+  Route::any('/reserve_adayinweek/form','Officer\ReservationController@Form_adayinweek');
+ 
   Route::get('/reservation/adayinweek/{id}','Officer\ReservationController@choose_adayinweek');
+  
 
   Route::get('/room','Officer\RoomController@index');
   Route::get('/room/form','Officer\RoomController@Form');

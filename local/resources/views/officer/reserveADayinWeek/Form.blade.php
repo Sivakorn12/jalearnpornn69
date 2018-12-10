@@ -158,7 +158,6 @@
     for (let index = 0; index < remainEquip.length; index++) {
       remainEquip[index].em_status = false
     }
-    console.log(time_reserve)
     setDateReserveList(data_reserve)
     
   })

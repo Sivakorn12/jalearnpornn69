@@ -703,6 +703,17 @@ class Officer extends Model
         if(isset($result[0])){   
             return $result[0];
         }
+        else{
+            $result2 = DB::table('meeting_over_time')
+                    ->WhereBetween('start_date', [$open_time, $close_time])
+                    ->orWhereBetween('end_date', [$open_time, $close_time])
+                    ->get(); 
+            if(isset($result2[0])){   
+                return $result2[0];
+            }else{
+                return false;
+            }
+        }
         return false;
     }
     

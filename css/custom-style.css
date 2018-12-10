@@ -134,3 +134,10 @@ p.text-noti {
   word-wrap: break-word;
   color: #000000;
 }
+
+.tabs_reserve_type > li.active > a{
+  background-color: #337ab7;
+  color: #fff;
+  border-color: #337ab7;
+}
+

@@ -55,6 +55,11 @@ return [
             'visibility' => 'public',
         ],
 
+        'document' => [
+			'driver' => 'local',
+			'root'   => storage_path().'/document',
+		],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_KEY'),

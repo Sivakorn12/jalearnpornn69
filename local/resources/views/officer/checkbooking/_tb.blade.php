@@ -19,6 +19,7 @@ elseif($type == 'confirmed'){
             <th>วันที่</th>
             <th>เวลา</th>
             <th>อุปกรณ์</th>
+            <th>เอกสาร</th>
             <th>สถานะการจอง</th>
             <th>จัดการ</th>
         </tr>
@@ -48,6 +49,11 @@ elseif($type == 'confirmed'){
                   @if($eq != '') <li>{{$eq}}</li> @endif
                 @endforeach
                 </ul>
+              </td>
+              <td>
+                @foreach(officer::getDocumentByBooking($booking->booking_ID) as $doc)
+                  <p><span class="label label-status label-info" ><a href="{{url('download/file').'?filename='.$doc->document_file}}" title="ดาวน์โหลดไฟล์ {{$doc->document_file}}"><i class="fa fa-arrow-down" aria-hidden="true"></i> ดาวน์โหลดเอกสาร</a></span></p>
+                @endforeach
               </td>
               <td data-toggle="modal" data-target="#booking-detail" data-id="{{$booking->booking_ID}}">
                 {!!($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)!!}

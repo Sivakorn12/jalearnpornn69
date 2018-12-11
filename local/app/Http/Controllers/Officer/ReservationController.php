@@ -217,20 +217,19 @@ class ReservationController extends Controller
                         $data_em = DB::table('equipment')
                                     ->where('em_name', $temp[0])
                                     ->first();
-
+  
                         $data_id_equipment[$index] = $data_em->em_ID;
                         $data_count_equipment[$index] = $temp[1];
                     }
-
+  
                     $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
-                    $reduce_equipment_now = true;
-                    $accept_borrow = true;
-                    func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now,$accept_borrow, true);
-                } else {
+                    $reduce_equipment_now = false;
+                    $accept_borrow = false;
+                    func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow, true);
+                  } else {
                     $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
-                }
-
-                // check have file
+                  }
+                  // check have file
                 $files = $req->file('contract_file');
                 if(!empty($req->file('contract_file'))){
                     foreach($files as $key => $file){
@@ -248,10 +247,9 @@ class ReservationController extends Controller
                         }
                     }
                 }
-                return redirect('control/reservation/')
-                            ->with('successMessage','จองห้องเรียบร้อย');
+                return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
             }
-          }else{
+          } else {
             return redirect()->back()->withInput($req->input())->withErrors($validator);
           }
     }

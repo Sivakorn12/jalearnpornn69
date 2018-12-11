@@ -30,6 +30,7 @@ Route::get('/history/deletedata', 'HistoryController@DELETE_RESERVE');
 Route::get('/deleteborrow', 'HistoryController@DELETE_BORROW');
 Route::get('/getQr', 'HistoryController@GET_QRCODE');
 
+Route::get('/download/file','Officer\DocumentController@downloadFile');
 
 Route::get('/main', function(){
     echo bcrypt('1234');

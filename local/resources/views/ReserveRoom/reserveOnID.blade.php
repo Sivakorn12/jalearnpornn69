@@ -11,6 +11,10 @@
 <?php
   $equipments = func::Getequips($rooms->meeting_ID);
 ?>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <div class="col-md-1"></div>
     <div class="col-md-10">
       <div class="panel panel-default">
@@ -87,7 +91,8 @@
             <div class="form-group form-room">
                 <label class="col-sm-3 control-label">เลือกวันที่จอง</label>
                 <div class="col-sm-7">
-                  <input type="text" class="datepicker" data-provide="datepicker" data-date-language="th-th" placeholder="กดเพื่อเลือก">
+                <!-- <input type="text" class="datepicker" data-provide="datepicker" data-date-language="th-th" placeholder="กดเพื่อเลือก"> -->
+                  <input type="text" class="form-control" name="daterange"/>
                 </div>
             </div>
           </div>
@@ -106,34 +111,73 @@ var tmpString
 var times = [] 
 var time_reserve = []
 var date_select = ''
+var date_end_select = ''
 const meetingId = <?php echo $rooms->meeting_ID ?>;
-$(document).ready(function() {
-  $('.datepicker').datepicker({
-    format: 'dd-mm-yyyy',
-    thaiyear: true,
-    language: 'th',
-  }).on("change", function() {
-    var dataOnchange = $(this).val();
-    $('#time-reserve').hide()
+$(function() {
+  $('input[name="daterange"]').daterangepicker({
+    opens: 'left',
+    locale: {
+        format: 'DD-MM-YYYY'
+    }
+  }, function(start, end, label) {
+    if (start.format('YYYY-MM-DD') === end.format('YYYY-MM-DD')) {
+      const dateFormat = start.format('YYYY-MM-DD').split('-')
+      const newDate = `${dateFormat[2]}-${dateFormat[1]}-${parseInt(dateFormat[0]) + 543}`
+      $('#time-reserve').hide()
       $.ajax({
           url: "{{url('checkdate')}}",
           type: 'GET',
           dataType: 'JSON',
-          data: {  date: dataOnchange, roomid: "{{$rooms->meeting_ID}}" },
+          data: {  date: newDate, roomid: "{{$rooms->meeting_ID}}" },
           success: function(data) {
             if (data.time_empty) {
               times = data.time_empty
               time_reserve = data.time_reserve
-              date_select = dataOnchange
+              date_select = newDate
               render_button_time()
               $('#time-reserve').show()
             } else {
               swal('ไม่สำเร็จ', data.error, 'error')
             }
           }
-      });
+      })
+    } else {
+      const startDateFormat = start.format('YYYY-MM-DD').split('-')
+      const endDateFormat = end.format('YYYY-MM-DD').split('-')
+      const newStartDate = `${startDateFormat[2]}-${startDateFormat[1]}-${parseInt(startDateFormat[0]) + 543}`
+      const newEndDate = `${endDateFormat[2]}-${endDateFormat[1]}-${parseInt(endDateFormat[0]) + 543}`
+
+      $.ajax({
+          url: "{{url('checkdate')}}",
+          type: 'GET',
+          dataType: 'JSON',
+          data: {  date: newStartDate, endDate: newEndDate, roomid: "{{$rooms->meeting_ID}}" },
+          success: function(data) {
+            if (data.time_empty) {
+              date_select = newStartDate
+              date_end_select = newEndDate
+              render_button_submit()
+              $('#time-reserve').show()
+            } else {
+              swal('ไม่สำเร็จ', data.error, 'error')
+            }
+          }
+      })
+    }
   });
 });
+
+  function render_button_submit() {
+    var submitHtml = ""
+    submitHtml += "<div><form action='{{ url('reserve/form/reserve') }}' method='get' enctype='multipart/form-data'>"
+    submitHtml += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
+    submitHtml += "<input type='hidden' name='meetingId' value="+meetingId+">"
+    submitHtml += "<input type='hidden' name='dateSelect' value="+date_select+">"
+    submitHtml += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
+    submitHtml += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
+    $('#time-reserve').html(submitHtml)
+  }
+  
   function render_button_time(){
     var viewHTML = ""
     for (index = 0; index < times.length; index++) {
@@ -149,6 +193,7 @@ $(document).ready(function() {
     viewHTML += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
     viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
     viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"
+    // viewHTML += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
     viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value='"+(JSON.stringify(arrTime))+"'>"
     viewHTML += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
     $('#time-reserve').html(viewHTML)

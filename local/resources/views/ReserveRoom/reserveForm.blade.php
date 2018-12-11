@@ -36,11 +36,17 @@
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">เวลาที่จอง</label>
+            @if(is_array($time_start))
             <div class="col-sm-5">
                 @for($index = 0; $index < sizeof($time_start); $index++)
                   <p class="form-control-static">{{$time_start[$index]}} - {{$time_end[$index]}}</p>
                 @endfor
             </div>
+            @else
+            <div class="col-sm-5">
+                  <p class="form-control-static">{{$time_start}} ถึง {{$time_end}} (ใช้งานทั้งวัน)</p>
+            </div>
+            @endif
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label"><span style="color: red;">* </span>หัวข้อการประชุม</label>
@@ -134,6 +140,10 @@
           <input type="hidden" name="meeting_id" value="{{$room->meeting_ID}}">
           <input type="hidden" name="time_select" value="{{$time_select}}">
           <input type="hidden" name="reserve_time" value="{{$reserve_time}}">
+          @if(!is_array($time_start) && !is_array($time_end))
+          <input type="hidden" name="start_range" value="{{$time_start}}">
+          <input type="hidden" name="end_range" value="{{$time_end}}">
+          @endif
           <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}">
           <div class="form-group">
             <div class="col-sm-2"></div>

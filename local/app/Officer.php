@@ -51,6 +51,7 @@ class Officer extends Model
                             <th>วันที่</th>
                             <th>เวลา</th>
                             <th>อุปกรณ์</th>
+                            <th>เอกสาร</th>
                             <th>สถานะการจอง</th>
                             <th>จัดการ</th>
                         </tr>
@@ -76,6 +77,11 @@ class Officer extends Model
                 }
                 $html=$html.'</ul>
                 </td>';
+                $html=$html.'<td>';
+                foreach(officer::getDocumentByBooking($booking->booking_ID) as $doc){
+                    $html=$html.'<p><span class="label label-status label-info" ><a href="'.url('download/file').'?filename='.$doc->document_file.'" title="ดาวน์โหลดไฟล์ '.$doc->document_file.'"><i class="fa fa-arrow-down" aria-hidden="true"></i> ดาวน์โหลดเอกสาร</a></span></p>';
+                }
+                $html=$html.'</td>';
                 $html=$html.'<td data-toggle="modal" data-target="#booking-detail" data-id="'.$booking->booking_ID.'">'.(($chk )? '<span class="label label-status label-default">เกินระยะเวลา(ยกเลิก)</span>' :officer::getStatusBooking($booking->status_ID,1)).'</td>';
                 $html=$html.'<td>';
                     if($chk){
@@ -96,6 +102,13 @@ class Officer extends Model
             $html=$html.'</tbody>
             </table>';
         return $html; 
+    }
+
+    public static function cutStr($str,$len,$tail){
+        if(strlen($str) > $len){
+            return substr($str,0,$len).$tail;
+        }
+        else return $str;
     }
 
     public static function getBookingIDbyBorrow($id){
@@ -743,5 +756,10 @@ class Officer extends Model
 
         $estimate_link = $data_meetingroom->estimate_link.'#responses';
         return $estimate_link;
+    }
+
+    public static function getDocumentByBooking($booking_id){
+        $res = DB::table('document')->where('booking_id',$booking_id)->get();
+        return $res;
     }
 }

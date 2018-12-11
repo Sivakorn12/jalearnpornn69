@@ -184,7 +184,7 @@ class ReservationController extends Controller
                     $fileType = explode('.',$file->getClientOriginalName());
                     $fileType = $fileType[count($fileType)-1];
                     $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                    $file->move('asset/documents',$fileFullName);
+                    Storage::disk('document')->put($fileFullName, file_get_contents($file));
                     for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                         DB::table('document')->insert([
                             'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
@@ -386,7 +386,7 @@ class ReservationController extends Controller
                     $fileType = explode('.',$file->getClientOriginalName());
                     $fileType = $fileType[count($fileType)-1];
                     $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                    $file->move('asset/documents',$fileFullName);
+                    Storage::disk('document')->put($fileFullName, file_get_contents($file));
                     for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                         DB::table('document')->insert([
                             'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,

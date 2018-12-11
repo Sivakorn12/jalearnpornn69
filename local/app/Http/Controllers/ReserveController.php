@@ -11,311 +11,365 @@ use Illuminate\Support\Facades\Validator;
 class ReserveController extends Controller
 {
 
-    public function __construct() {
-        $this->middleware('auth');
-        date_default_timezone_set("Asia/Bangkok");
-    }
+  public function __construct() {
+      $this->middleware('auth');
+      date_default_timezone_set("Asia/Bangkok");
+  }
 
-    public function index() {
-        $dataRoom = DB::table('meeting_room')
-                            ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
-                            ->join('building as b','meeting_room.meeting_buiding','=','b.building_id')
-                            ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name','b.building_name')
+  public function index() {
+      $dataRoom = DB::table('meeting_room')
+                          ->join('meeting_type', 'meeting_room.meeting_type_ID', '=', 'meeting_type.meeting_type_ID')
+                          ->join('building as b','meeting_room.meeting_buiding','=','b.building_id')
+                          ->select('meeting_ID', 'meeting_name', 'meeting_size', 'meeting_pic', 'meeting_buiding', 'meeting_status', 'meeting_type_name','b.building_name')
+                          ->get();
+
+      $imgs_room = array();
+      for($index = 0; $index < sizeof($dataRoom); $index++) {
+          $imgs_room[$index] = explode(',', $dataRoom[$index]->meeting_pic);
+      }
+
+      $data = array(
+          'rooms' => $dataRoom,
+          'imgs' => $imgs_room
+      );
+      return view('ReserveRoom/index', $data);
+  }
+
+  public function ReservrRoom($id) {
+      $resultData = func::selectReserve($id);
+      $imgs_room = array();
+      $imgs_room = explode(',', $resultData->meeting_pic);
+
+      $data = array(
+          'rooms' => $resultData,
+          'imgs' => $imgs_room
+      );
+
+      return view('ReserveRoom/reserveOnID', $data);
+  }
+
+  public function reserveForm(Request $req) {
+    $temp_date = explode('-', $req->dateSelect);
+    $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+    $temp_date_now = explode('-', date('Y-m-d'));
+    $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
+    
+    $dataRoom = DB::table('meeting_room')
+        ->where('meeting_ID', $req->meetingId)
+        ->first();
+    
+    $dataequipment = DB::table('equipment')
                             ->get();
+                            
+    if (!is_null($req->timeSelect)) {
+      $timeSelect = json_decode($req->timeSelect);
+      $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
 
-        $imgs_room = array();
-        for($index = 0; $index < sizeof($dataRoom); $index++) {
-            $imgs_room[$index] = explode(',', $dataRoom[$index]->meeting_pic);
-        }
+      $data = array(
+        'room' => $dataRoom,
+        'time_start' => $time_remain[0],
+        'time_end' => $time_remain[1],
+        'time_select' => $date_select,
+        'reserve_time' => $req->timeSelect,
+        'date_reserve' => $date_now,
+        'timeTH_select' => $req->dateSelect,
+        'data_equipment' => $dataequipment,
+        'sections' => func::GetSection(),
+        'dept' => func::GetDepartment(),
+        'faculty' => func::GetFaculty()
+      );
+    } else {
+      $data = array(
+        'room' => $dataRoom,
+        'time_start' => $req->dateSelect,
+        'time_end' => $req->endDateSelect,
+        'time_select' => $date_select,
+        'reserve_time' => '',
+        'date_reserve' => $date_now,
+        'timeTH_select' => $req->dateSelect,
+        'data_equipment' => $dataequipment,
+        'sections' => func::GetSection(),
+        'dept' => func::GetDepartment(),
+        'faculty' => func::GetFaculty()
+      );
+    }
+      
+      return view('ReserveRoom/reserveForm', $data);
+  }
 
-        $data = array(
-            'rooms' => $dataRoom,
-            'imgs' => $imgs_room
-        );
-        return view('ReserveRoom/index', $data);
+  public function submitReserve(Request $req) {
+      $msg = [
+      'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
+      'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+      'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
+      ];
+  
+      $rule = [
+      'detail_topic' => 'required|string',
+      'detail_count' => 'required|numeric',
+      'user_tel' => 'required|numeric'
+      ];
+
+      $validator = Validator::make($req->all(),$rule,$msg);
+
+      if ($validator->passes()) {
+          if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
+
+            if (!is_null($req->reserve_time)) {
+              $timeSelect = json_decode($req->reserve_time);
+              $temp_date = explode('-', $req->time_select);
+              $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
+  
+              $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
+              $booking_startTime = array();
+              $booking_endTime = array();
+  
+              for ($index = 0; $index < sizeof($time_remain[0]); $index++) {
+                  array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
+                  array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
+              }
+
+              if(isset($req)) {
+                  if (isset($req->hdnEq)) {
+                      for($index = 0 ; $index < count($req->hdnEq); $index++){
+                          $temp = explode(",",$req->hdnEq[$index]);
+                          $data_em = DB::table('equipment')
+                                      ->where('em_name', $temp[0])
+                                      ->first();
+
+                          $data_id_equipment[$index] = $data_em->em_ID;
+                          $data_count_equipment[$index] = $temp[1];
+                      }
+
+                      $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
+                      func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select);
+                  } else {
+                      func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
+                  }
+                  return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
+              }
+            } else {
+              if(isset($req)) {
+                if (isset($req->hdnEq)) {
+                  for($index = 0 ; $index < count($req->hdnEq); $index++){
+                      $temp = explode(",",$req->hdnEq[$index]);
+                      $data_em = DB::table('equipment')
+                                  ->where('em_name', $temp[0])
+                                  ->first();
+
+                      $data_id_equipment[$index] = $data_em->em_ID;
+                      $data_count_equipment[$index] = $temp[1];
+                  }
+
+                  $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
+                  $reduce_equipment_now = false;
+                  $accept_borrow = false;
+                  func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow, true);
+                } else {
+                  func::SET_DATA_BOOKING($req, '', '', 3, true);
+                }
+                return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
+              }
+            }
+          } else {
+              return redirect()
+                  ->back()
+                  ->withErrors($validator)
+                  ->withInput($req->input());
+          }
+      } else {
+          return redirect()
+                  ->back()
+                  ->withErrors($validator)
+                  ->withInput($req->input());
+      }
+  }
+
+  public function CHECK_DATE_RESERVE (Request $req) {
+    $temp_date = explode('-', $req->date);
+    $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+    $end_date_select = '';
+    if (isset($req->endDate)) {
+        $temp_date = explode('-', $req->endDate);
+        $end_date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
     }
 
-    public function ReservrRoom($id) {
-        $resultData = func::selectReserve($id);
-        $imgs_room = array();
-        $imgs_room = explode(',', $resultData->meeting_pic);
-
-        $data = array(
-            'rooms' => $resultData,
-            'imgs' => $imgs_room
-        );
-
-        return view('ReserveRoom/reserveOnID', $data);
-    }
-
-    public function reserveForm(Request $req) {
-        $timeSelect = json_decode($req->timeSelect);
-        $temp_date = explode('-', $req->dateSelect);
-        $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-        $temp_date_now = explode('-', date('Y-m-d'));
-        $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
-
-        $dataRoom = DB::table('meeting_room')
-            ->where('meeting_ID', $req->meetingId)
-            ->first();
-
-        $dataequipment = DB::table('equipment')
-                                ->get();
-        $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
-        
-        $reserveEnd = false;
-        if (sizeof($timeSelect) > 1) {
-            $reserveEnd = true;
-        }
-
-        $data = array(
-            'room' => $dataRoom,
-            'time_start' => $time_remain[0],
-            'time_end' => $time_remain[1],
-            'time_select' => $date_select,
-            'reserve_time' => $req->timeSelect,
-            'date_reserve' => $date_now,
-            'timeTH_select' => $req->dateSelect,
-            'data_equipment' => $dataequipment,
-            'sections' => func::GetSection(),
-            'dept' => func::GetDepartment(),
-            'faculty' => func::GetFaculty()
-        );
-        
-        return view('ReserveRoom/reserveForm', $data);
-    }
-
-    public function submitReserve(Request $req) {
-        $msg = [
-        'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
-        'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
-        'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
-        ];
+    $isToday = func::CHECK_TODAY($date_select);
+    $isHoliday = func::CHECK_HOLIDAY($date_select);
     
-        $rule = [
-        'detail_topic' => 'required|string',
-        'detail_count' => 'required|numeric',
-        'user_tel' => 'required|numeric'
-        ];
+    if ($isToday) {
+      return response()->json(['error'=> 'ไม่สามารถจองห้องย้อนหลังได้']);
+    } else {
+      $isRoomOpen = func::CHECK_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
+      $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($date_select, $end_date_select);
 
-        $validator = Validator::make($req->all(),$rule,$msg);
-
-        if ($validator->passes()) {
-            if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
-
-                $timeSelect = json_decode($req->reserve_time);
-                $temp_date = explode('-', $req->time_select);
-                $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
-
-                $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
-                $booking_startTime = array();
-                $booking_endTime = array();
-
-                for ($index = 0; $index < sizeof($time_remain[0]); $index++) {
-                    array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
-                    array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
-                }
-
-                if(isset($req)) {
-                    if (isset($req->hdnEq)) {
-                        for($index = 0 ; $index < count($req->hdnEq); $index++){
-                            $temp = explode(",",$req->hdnEq[$index]);
-                            $data_em = DB::table('equipment')
-                                        ->where('em_name', $temp[0])
-                                        ->first();
-
-                            $data_id_equipment[$index] = $data_em->em_ID;
-                            $data_count_equipment[$index] = $temp[1];
-                        }
-
-                        $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime);
-                        func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select);
-                    } else {
-                        func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime);
-                    }
-                    return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
-                }
-            } else {
-                return redirect()
-                    ->back()
-                    ->withErrors($validator)
-                    ->withInput($req->input());
-            }
+      if ($isHoliday) {
+        return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);
+      }
+      if ($isReserveRoom) {
+        return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากมีคนจองก่อนหน้าแล้ว']);
+      }
+      if ($isRoomOpen) {
+        if (strlen($end_date_select) == 0) {
+          $date_now = date('Y-m-d');
+          $timenow = date('H');
+      
+          $empty_timeuse = array();
+          $data_openExtra = DB::table('meeting_open_extra')
+                                  ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
+                                  ->first();
+          
+          $data_open_over_time = DB::table('meeting_over_time')
+                                      ->where([
+                                          [DB::Raw('SUBSTRING(start_date, 1, 10)'), '<=', $date_select],
+                                          [DB::Raw('SUBSTRING(end_date, 1, 10)'), '>=', $date_select]
+                                      ])
+                                      ->first();
+      
+          $time_reserve_total = func::CHECK_TIME_OPEN_ROOM($req->roomid, $date_select);
+          $time_start = (int)$time_reserve_total->open_time;
+          $time_end = (int)$time_reserve_total->close_time;
+          $time_reserve = array();
+      
+          if (isset($data_openExtra)) {
+              $time_start = substr($data_openExtra->extra_start, -8, 2);
+              $time_end = substr($data_openExtra->extra_end, -8, 2);
+          }
+      
+          if(isset($data_open_over_time)) {
+              $time_start = substr($data_open_over_time->start_date, -8, 2);
+              $time_end = substr($data_open_over_time->end_date, -8, 2);
+          }
+      
+          for ($index = $time_start; $index < $time_end; $index++) {
+              if ($date_select > $date_now) {
+                  array_push($empty_timeuse, 0);
+              } else {
+                  if ($timenow >= $index) {
+                      array_push($empty_timeuse, 1);
+                  } else if ($timenow <= $index) {
+                      array_push($empty_timeuse, 0);
+                  }
+              }
+              if (strlen($index) < 2) {
+                  array_push($time_reserve, '0'.$index.':00');
+              } else {
+                  array_push($time_reserve, $index.':00');
+              }
+          }
+  
+          $time_empty = func::GET_TIMEUSE ($date_select, $time_reserve, $empty_timeuse, $req->roomid);
+          return response()->json(['time_empty'=> $time_empty, 'time_reserve' => $time_reserve]);
         } else {
-            return redirect()
-                    ->back()
-                    ->withErrors($validator)
-                    ->withInput($req->input());
+          return response()->json(['time_empty'=> true]);
         }
+      } else {
+        $dayCloseRoom = func::CHECK_ROOM_CLOSE($req->roomid, $date_select, $end_date_select);
+        return response()->json(['error'=> $dayCloseRoom]);
+      }
     }
+  }
 
-    public function CHECK_DATE_RESERVE (Request $req) {
-        $temp_date = explode('-', $req->date);
-        $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-        $check_weekend = date_create($date_select);
-        $check_weekend = date_format($check_weekend, 'r');
-        $date_now = date('Y-m-d');
-        $timenow = date('H');
-        $empty_timeuse = array();
-        $data_openExtra = DB::table('meeting_open_extra')
-                                ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
-                                ->first();
-        
-        $data_open_over_time = DB::table('meeting_over_time')
-                                    ->where([
-                                        [DB::Raw('SUBSTRING(start_date, 1, 10)'), '<=', $date_select],
-                                        [DB::Raw('SUBSTRING(end_date, 1, 10)'), '>=', $date_select]
-                                    ])
-                                    ->first();
+  public function EDIT_DATA_RESERVE ($reserveId, $timeSelect) {
+      $dataReserve = DB::table('booking')
+          ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
+          ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
+          ->where('booking.booking_ID', $reserveId)
+          ->first();
 
-        $time_start = 8;
-        $time_end = 16;
-        $time_reserve = array();
+      $dataBorrow = DB::table('borrow_booking')
+          ->join('detail_borrow', 'borrow_booking.borrow_ID', '=', 'detail_borrow.borrow_ID')
+          ->where('borrow_booking.booking_ID', $reserveId)
+          ->where('detail_borrow.borrow_count', '!=', '0')
+          ->get();
 
-        if (isset($data_openExtra)) {
-            $time_start = substr($data_openExtra->extra_start, -8, 2);
-            $time_end = substr($data_openExtra->extra_end, -8, 2);
-        }
+      $tmp_timeStart = substr($dataReserve->detail_timestart, -8, -3);
+      $tmp_timeEnd = ((int)substr($dataReserve->detail_timeout, -8, -3) - 1).':00';
+      $arrTimeReserve = array($tmp_timeStart, $tmp_timeEnd);
 
-        if(isset($data_open_over_time)) {
-            $time_start = substr($data_open_over_time->start_date, -8, 2);
-            $time_end = substr($data_open_over_time->end_date, -8, 2);
-        }
+      $time_remain = func::CHECK_TIME_REMAIN ($dataReserve->meeting_ID, $arrTimeReserve, $dataReserve->checkin);
+      $tmpDate = explode("-", $dataReserve->checkin);
+      $timeTH = $tmpDate[2].'-'.$tmpDate[1].'-'.($tmpDate[0] + 543);
 
-        for ($index = $time_start; $index < $time_end; $index++) {
-            if ($date_select > $date_now) {
-                array_push($empty_timeuse, 0);
-            } else {
-                if ($timenow >= $index) {
-                    array_push($empty_timeuse, 1);
-                } else if ($timenow <= $index) {
-                    array_push($empty_timeuse, 0);
-                }
-            }
-            if (strlen($index) < 2) {
-                array_push($time_reserve, '0'.$index.':00');
-            } else {
-                array_push($time_reserve, $index.':00');
-            }
-        }
-        
-        $dataHolidays = DB::table('holiday')
-                            ->where('holiday_start', '<=', $date_select)
-                            ->where('holiday_end', '>=', $date_select)
-                            ->first();
+      $data = array(
+          'room_id' => $dataReserve->meeting_ID,
+          'room_name' => $dataReserve->meeting_name,
+          'time_start' => $time_remain[0],
+          'time_end' => $time_remain[1],
+          'time_select' => $dataReserve->checkin,
+          'timeTH_select' => $timeTH,
+          'reserve_start' => $tmp_timeStart,
+          'reserve_end' => $tmp_timeEnd,
+          'dataReserve' => $dataReserve,
+          'dataBorrow' => $dataBorrow,
+          'section_id' =>$dataReserve->section_ID,
+          'dep_id' =>$dataReserve->department_ID,
+          'fac_id' =>$dataReserve->faculty_ID,
+          'sections' => func::GetSection(),
+          'dept' => func::GetDepartment(),
+          'faculty' => func::GetFaculty()
+      );
 
-        if ($date_now > $date_select) {
-            return response()->json(['error'=> 'ไม่สามารถจองห้องได้ย้อนหลังได้']);
-        } else {
-            if (substr($check_weekend, 0, 3) == 'Sun' || isset($dataHolidays)) {
-                return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);
-            } else {
-                $time_empty = func::GET_TIMEUSE ($date_select, $time_reserve, $empty_timeuse, $req->roomid);
-                return response()->json(['time_empty'=> $time_empty, 'time_reserve' => $time_reserve]);
-            }
-        }
-    }
+      return view('ReserveRoom/reserveFormEdit', $data);
+  }
 
-    public function EDIT_DATA_RESERVE ($reserveId, $timeSelect) {
-        $dataReserve = DB::table('booking')
-            ->join('detail_booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
-            ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
-            ->where('booking.booking_ID', $reserveId)
-            ->first();
+  public function SET_EDIT_DATA_RESERVE (Request $req) {
+      $msg = [
+      'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
+      'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+      'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
+      ];
+  
+      $rule = [
+      'detail_topic' => 'required|string',
+      'detail_count' => 'required|numeric',
+      'user_tel' => 'required|numeric'
+      ];
 
-        $dataBorrow = DB::table('borrow_booking')
-            ->join('detail_borrow', 'borrow_booking.borrow_ID', '=', 'detail_borrow.borrow_ID')
-            ->where('borrow_booking.booking_ID', $reserveId)
-            ->where('detail_borrow.borrow_count', '!=', '0')
-            ->get();
+      $dataBorrow = json_decode($req->borrow);
 
-        $tmp_timeStart = substr($dataReserve->detail_timestart, -8, -3);
-        $tmp_timeEnd = ((int)substr($dataReserve->detail_timeout, -8, -3) - 1).':00';
-        $arrTimeReserve = array($tmp_timeStart, $tmp_timeEnd);
+      $validator = Validator::make($req->all(),$rule,$msg);
 
-        $time_remain = func::CHECK_TIME_REMAIN ($dataReserve->meeting_ID, $arrTimeReserve, $dataReserve->checkin);
-        $tmpDate = explode("-", $dataReserve->checkin);
-        $timeTH = $tmpDate[2].'-'.$tmpDate[1].'-'.($tmpDate[0] + 543);
+      if ($validator->passes()) {
+          if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
+              $time_start = $req->time_select.' '.$req->reserve_start;
+              $time_out = $req->time_select.' '.$req->reserve_end;
 
-        $data = array(
-            'room_id' => $dataReserve->meeting_ID,
-            'room_name' => $dataReserve->meeting_name,
-            'time_start' => $time_remain[0],
-            'time_end' => $time_remain[1],
-            'time_select' => $dataReserve->checkin,
-            'timeTH_select' => $timeTH,
-            'reserve_start' => $tmp_timeStart,
-            'reserve_end' => $tmp_timeEnd,
-            'dataReserve' => $dataReserve,
-            'dataBorrow' => $dataBorrow,
-            'section_id' =>$dataReserve->section_ID,
-            'dep_id' =>$dataReserve->department_ID,
-            'fac_id' =>$dataReserve->faculty_ID,
-            'sections' => func::GetSection(),
-            'dept' => func::GetDepartment(),
-            'faculty' => func::GetFaculty()
-        );
+              if(isset($req)) {
+                  if (isset($req->hdnEq)) {
+                      for($index = 0 ; $index < count($req->hdnEq); $index++){
+                          $temp = explode(",",$req->hdnEq[$index]);
+                          $data_em = DB::table('equipment')
+                                      ->where('em_name', $temp[0])
+                                      ->first();
 
-        return view('ReserveRoom/reserveFormEdit', $data);
-    }
+                          $data_id_equipment[$index] = $data_em->em_ID;
+                          $data_count_equipment[$index] = $temp[1];
+                      }
 
-    public function SET_EDIT_DATA_RESERVE (Request $req) {
-        $msg = [
-        'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
-        'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
-        'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
-        ];
-    
-        $rule = [
-        'detail_topic' => 'required|string',
-        'detail_count' => 'required|numeric',
-        'user_tel' => 'required|numeric'
-        ];
+                      func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
 
-        $dataBorrow = json_decode($req->borrow);
-
-        $validator = Validator::make($req->all(),$rule,$msg);
-
-        if ($validator->passes()) {
-            if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
-                $time_start = $req->time_select.' '.$req->reserve_start;
-                $time_out = $req->time_select.' '.$req->reserve_end;
-
-                if(isset($req)) {
-                    if (isset($req->hdnEq)) {
-                        for($index = 0 ; $index < count($req->hdnEq); $index++){
-                            $temp = explode(",",$req->hdnEq[$index]);
-                            $data_em = DB::table('equipment')
-                                        ->where('em_name', $temp[0])
-                                        ->first();
-
-                            $data_id_equipment[$index] = $data_em->em_ID;
-                            $data_count_equipment[$index] = $temp[1];
-                        }
-
-                        func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
-
-                        if (empty($dataBorrow[0]->borrow_ID)) {
-                            func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, null);
-                        } else {
-                            func::UPDATE_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, $dataBorrow[0]->borrow_ID);
-                        }
-                    } else {
-                        func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
-                    }
-                    return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
-                }
-            } else {
-                return redirect()
-                    ->back()
-                    ->withErrors($validator)
-                    ->withInput($req->input());
-            }
-        } else {
-            return redirect()
-                    ->back()
-                    ->withErrors($validator)
-                    ->withInput($req->input());
-        }
-    }
+                      if (empty($dataBorrow[0]->borrow_ID)) {
+                          func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, null);
+                      } else {
+                          func::UPDATE_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, $dataBorrow[0]->borrow_ID);
+                      }
+                  } else {
+                      func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
+                  }
+                  return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
+              }
+          } else {
+              return redirect()
+                  ->back()
+                  ->withErrors($validator)
+                  ->withInput($req->input());
+          }
+      } else {
+          return redirect()
+                  ->back()
+                  ->withErrors($validator)
+                  ->withInput($req->input());
+      }
+  }
 }

@@ -243,14 +243,19 @@ class func extends Model
         return $data_openExtra;
     }
 
-    public static function SET_DATA_BOOKING ($req, $time_start, $time_out,$status=3) {
+    public static function SET_DATA_BOOKING ($req, $time_start, $time_out, $status=3, $flag_date_range = false) {
         $data_meetingroom = DB::table('meeting_room')
                                 ->where('meeting_ID', $req->meeting_id)
                                 ->first();
 
         $estimate_link = $data_meetingroom->estimate_link.'#responses';
         $id_insert = array();
-        for ($index = 0; $index < sizeof($time_start); $index++) {
+        
+        if ($flag_date_range) {
+          $time_range = func::GET_TIME_OPEN_ROOM_RANGE($req->meeting_id, $req->start_range, $req->end_range);
+          $checkInDate = func::GET_CHECKIN_DATE_RANGE($req->start_range, $req->end_range);
+
+          for ($index = 0; $index < sizeof($time_range); $index++) {
             $id = DB::table('booking')
                             ->insertGetId([
                                 'status_ID' => $status,
@@ -262,19 +267,47 @@ class func extends Model
                                 'booking_name' => $req->contract_name ?? $req->user_name,
                                 'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
                                 'booking_date' => date('Y-m-d H:i:s'),
-                                'checkin' => $req->time_select
+                                'checkin' => $checkInDate[$index]
                             ]);
             DB::table('detail_booking')
                     ->insert([
                         'booking_ID' => $id,
                         'meeting_ID' => $req->meeting_id,
                         'detail_topic' => $req->detail_topic,
-                        'detail_timestart' => $time_start[$index],
-                        'detail_timeout' => $time_out[$index],
+                        'detail_timestart' => $checkInDate[$index].' '.$time_range[$index][0],
+                        'detail_timeout' => $checkInDate[$index].' '.$time_range[$index][1],
                         'detail_count' => $req->detail_count,
                         'link' => $estimate_link
                     ]);
             array_push($id_insert, $id);
+        }
+        } else {
+          for ($index = 0; $index < sizeof($time_start); $index++) {
+              $id = DB::table('booking')
+                              ->insertGetId([
+                                  'status_ID' => $status,
+                                  'section_ID' => $req->section_id ?? null,
+                                  'department_ID' => $req->department_id ?? null,
+                                  'faculty_ID' => $req->faculty_id ?? null,
+                                  'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
+                                  'user_ID' => $req->user_id,
+                                  'booking_name' => $req->contract_name ?? $req->user_name,
+                                  'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                                  'booking_date' => date('Y-m-d H:i:s'),
+                                  'checkin' => $req->time_select
+                              ]);
+              DB::table('detail_booking')
+                      ->insert([
+                          'booking_ID' => $id,
+                          'meeting_ID' => $req->meeting_id,
+                          'detail_topic' => $req->detail_topic,
+                          'detail_timestart' => $time_start[$index],
+                          'detail_timeout' => $time_out[$index],
+                          'detail_count' => $req->detail_count,
+                          'link' => $estimate_link
+                      ]);
+              array_push($id_insert, $id);
+          }
         }
         return $id_insert;
     }
@@ -300,53 +333,104 @@ class func extends Model
         return $id_insert;
     }
 
-    public static function SET_DATA_BORROW ($id_equipment, $count_equipment, $id_insert_booking, $time_select,$reduce_equipment_now = false,$accept_borrow= false) {
+    public static function SET_DATA_BORROW ($id_equipment, $count_equipment, $id_insert_booking, $req, $reduce_equipment_now = false, $accept_borrow= false, $flag_date_range = false) {
         $id_borrow_booking = array();
         $borrow_status = ($accept_borrow)?1:3;
-        if (is_array($id_insert_booking)) {
-            for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
-                $id = DB::table('borrow_booking')
-                                        ->insertGetId([
-                                            'booking_ID' => $id_insert_booking[$index],
-                                            'borrow_date' => $time_select,
-                                            'borrow_status' => $borrow_status
-                                        ]);
-                array_push($id_borrow_booking, $id);
-            }
-    
-            for($index = 0; $index < sizeof($id_borrow_booking); $index++) {
-                for($inner = 0 ; $inner < sizeof($count_equipment); $inner++){
-                    DB::table('detail_borrow')
-                        ->insert([
-                            'borrow_ID' => $id_borrow_booking[$index],
-                            'equiment_ID' => $id_equipment[$inner],
-                            'borrow_count' => $count_equipment[$inner]
-                        ]);
-                    if($reduce_equipment_now){
-                        $eq = DB::table('equipment')->where('em_ID', $id_equipment[$inner])->first();
-                        DB::table('equipment')->where('em_ID', $id_equipment[$inner])
-                        ->update([
-                            'em_count' => ($eq->em_count-$count_equipment[$inner])
-                        ]);
-                    }
-                }
-            }
-        } else {
-            /*$id = DB::table('borrow_booking')
-                                        ->insertGetId([
-                                            'booking_ID' => $id_insert_booking[$index],
-                                            'borrow_date' => $time_select,
-                                            'borrow_status' => 3
-                                        ]);
 
-            for($inner = 0 ; $inner < sizeof($count_equipment); $inner++){
-                DB::table('detail_borrow')
-                    ->insert([
-                        'borrow_ID' => $id,
-                        'equiment_ID' => $id_equipment[$inner],
-                        'borrow_count' => $count_equipment[$inner]
-                    ]);
-            }*/
+        if ($flag_date_range) {
+          $checkInDate = func::GET_CHECKIN_DATE_RANGE($req->start_range, $req->end_range);
+
+          if (is_array($id_insert_booking)) {
+              for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                  $id = DB::table('borrow_booking')
+                                          ->insertGetId([
+                                              'booking_ID' => $id_insert_booking[$index],
+                                              'borrow_date' => $checkInDate[$index],
+                                              'borrow_status' => $borrow_status
+                                          ]);
+                  array_push($id_borrow_booking, $id);
+              }
+      
+              for($index = 0; $index < sizeof($id_borrow_booking); $index++) {
+                  for($inner = 0 ; $inner < sizeof($count_equipment); $inner++){
+                      DB::table('detail_borrow')
+                          ->insert([
+                              'borrow_ID' => $id_borrow_booking[$index],
+                              'equiment_ID' => $id_equipment[$inner],
+                              'borrow_count' => $count_equipment[$inner]
+                          ]);
+                      if($reduce_equipment_now){
+                          $eq = DB::table('equipment')->where('em_ID', $id_equipment[$inner])->first();
+                          DB::table('equipment')->where('em_ID', $id_equipment[$inner])
+                          ->update([
+                              'em_count' => ($eq->em_count-$count_equipment[$inner])
+                          ]);
+                      }
+                  }
+              }
+          } else {
+              /*$id = DB::table('borrow_booking')
+                                          ->insertGetId([
+                                              'booking_ID' => $id_insert_booking[$index],
+                                              'borrow_date' => $time_select,
+                                              'borrow_status' => 3
+                                          ]);
+  
+              for($inner = 0 ; $inner < sizeof($count_equipment); $inner++){
+                  DB::table('detail_borrow')
+                      ->insert([
+                          'borrow_ID' => $id,
+                          'equiment_ID' => $id_equipment[$inner],
+                          'borrow_count' => $count_equipment[$inner]
+                      ]);
+              }*/
+          }
+        } else {
+            if (is_array($id_insert_booking)) {
+              for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                  $id = DB::table('borrow_booking')
+                                          ->insertGetId([
+                                              'booking_ID' => $id_insert_booking[$index],
+                                              'borrow_date' => $req->time_select,
+                                              'borrow_status' => $borrow_status
+                                          ]);
+                  array_push($id_borrow_booking, $id);
+              }
+      
+              for($index = 0; $index < sizeof($id_borrow_booking); $index++) {
+                  for($inner = 0 ; $inner < sizeof($count_equipment); $inner++){
+                      DB::table('detail_borrow')
+                          ->insert([
+                              'borrow_ID' => $id_borrow_booking[$index],
+                              'equiment_ID' => $id_equipment[$inner],
+                              'borrow_count' => $count_equipment[$inner]
+                          ]);
+                      if($reduce_equipment_now){
+                          $eq = DB::table('equipment')->where('em_ID', $id_equipment[$inner])->first();
+                          DB::table('equipment')->where('em_ID', $id_equipment[$inner])
+                          ->update([
+                              'em_count' => ($eq->em_count-$count_equipment[$inner])
+                          ]);
+                      }
+                  }
+              }
+          } else {
+              /*$id = DB::table('borrow_booking')
+                                          ->insertGetId([
+                                              'booking_ID' => $id_insert_booking[$index],
+                                              'borrow_date' => $time_select,
+                                              'borrow_status' => 3
+                                          ]);
+
+              for($inner = 0 ; $inner < sizeof($count_equipment); $inner++){
+                  DB::table('detail_borrow')
+                      ->insert([
+                          'borrow_ID' => $id,
+                          'equiment_ID' => $id_equipment[$inner],
+                          'borrow_count' => $count_equipment[$inner]
+                      ]);
+              }*/
+          }
         }
     }
 
@@ -406,4 +490,188 @@ class func extends Model
 
         }
     }
+
+  public static function CHECK_TODAY($dateSelect) {
+    $dateNow = date('Y-m-d');
+    if ($dateNow > $dateSelect) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static function CHECK_ROOM_OPEN($roomId, $start_date, $end_date = '') {
+    $formatter_day_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    $formatter_day_th = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+
+    if (strlen($end_date) == 0) {
+      $temp_day_start = date_create($start_date);
+      $temp_day_start = date_format($temp_day_start, 'r');
+      $day_start = substr($temp_day_start, 0, 3);
+      $index_of_day = array_search($day_start, $formatter_day_en);
+
+      $data_room_open_time = DB::table('room_open_time')
+                              ->where('meeting_ID', $roomId)
+                              ->where('day_id', $index_of_day + 1)
+                              ->first();
+
+      if ($data_room_open_time->open_flag == 0) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      $temp_day = date_create($start_date);
+      $temp_day = date_format($temp_day, 'r');
+      $day_start = substr($temp_day, 0, 3);
+      $index_day_start = array_search($day_start, $formatter_day_en);
+
+      $temp_end_day = date_create($end_date);
+      $temp_end_day = date_format($temp_end_day, 'r');
+      $day_end = substr($temp_end_day, 0, 3);
+      $index_day_end = array_search($day_end, $formatter_day_en);
+
+      $room_open_time = DB::table('room_open_time')
+                              ->where('meeting_ID', $roomId)
+                              ->where([
+                                  ['day_id', '>=', $index_day_start + 1],
+                                  ['day_id', '<=', $index_day_end + 1]
+                              ])
+                              ->where('open_flag', 0)
+                              ->get();
+      
+      if (sizeof($room_open_time) == 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  
+  public static function CHECK_ROOM_CLOSE($roomId, $start_date, $end_date = '') {
+    $formatter_day_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    $formatter_day_th = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+
+    if (strlen($end_date) == 0) {
+      $temp_day_start = date_create($start_date);
+      $temp_day_start = date_format($temp_day_start, 'r');
+      $day_start = substr($temp_day_start, 0, 3);
+      $index_of_day = array_search($day_start, $formatter_day_en);
+      $viewHTML = 'ไม่สามารถจองห้องได้ เนื่องจากห้องถูกปิดในวัน'.$formatter_day_th[$index_of_day];
+
+      return $viewHTML;
+    } else {
+      $temp_day = date_create($start_date);
+      $temp_day = date_format($temp_day, 'r');
+      $day_start = substr($temp_day, 0, 3);
+      $index_day_start = array_search($day_start, $formatter_day_en);
+
+      $temp_end_day = date_create($end_date);
+      $temp_end_day = date_format($temp_end_day, 'r');
+      $day_end = substr($temp_end_day, 0, 3);
+      $index_day_end = array_search($day_end, $formatter_day_en);
+
+      $room_open_time = DB::table('room_open_time')
+                              ->where('meeting_ID', $roomId)
+                              ->where([
+                                  ['day_id', '>=', $index_day_start + 1],
+                                  ['day_id', '<=', $index_day_end + 1]
+                              ])
+                              ->where('open_flag', 0)
+                              ->get();
+
+      $viewHTML = 'ไม่สามารถจองห้องได้ เนื่องจากห้องถูกปิดใน';
+      for ($index = 0; $index < sizeof($room_open_time); $index++) {
+        $viewHTML .= 'วัน'.$formatter_day_th[$room_open_time[$index]->day_id - 1].' ';
+      }
+      return $viewHTML;
+    }
+  }
+
+  public static function CHECK_HOLIDAY($date_select) {
+    $dataHolidays = DB::table('holiday')
+                            ->where('holiday_start', '<=', $date_select)
+                            ->where('holiday_end', '>=', $date_select)
+                            ->first();
+
+    if (isset($dataHolidays)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static function CHECK_TIME_OPEN_ROOM($roomId, $dateSelect) {
+    $formatter_day_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    $temp_day = date_create($dateSelect);
+    $temp_day = date_format($temp_day, 'r');
+    $day = substr($temp_day, 0, 3);
+    $index_of_day = array_search($day, $formatter_day_en);
+
+    $data_room_open_time = DB::table('room_open_time')
+                            ->where('meeting_ID', $roomId)
+                            ->where('day_id', $index_of_day + 1)
+                            ->first();
+
+    return $data_room_open_time;
+  }
+
+  public static function GET_TIME_OPEN_ROOM_RANGE($roomId, $startDate, $endDate) {
+    $formatter_day_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    $tmp_start_date = explode('-', $startDate);
+    $tmp_end_date = explode('-', $endDate);
+    $time_range = array();
+
+    $count = 0;
+
+    for ($index = $tmp_start_date[0]; $index <= $tmp_end_date[0]; $index++) {
+      $convert_date = ($tmp_start_date[2] - 543).'-'.$tmp_start_date[1].'-'.$index;
+      $temp_day = date_create($convert_date);
+      $temp_day = date_format($temp_day, 'r');
+      $isDay = substr($temp_day, 0, 3);
+      $index_day = array_search($isDay, $formatter_day_en);
+
+      $room_open_time = DB::table('room_open_time')
+                            ->where('meeting_ID', $roomId)
+                            ->where('day_id', $index_day + 1)
+                            ->first();
+
+      $time_range[$count][0] = $room_open_time->open_time;
+      $time_range[$count][1] = $room_open_time->close_time;
+      $count++;
+    }
+
+    return $time_range;
+  }
+
+  public static function GET_CHECKIN_DATE_RANGE($startDate, $endDate) {
+    $tmp_start_date = explode('-', $startDate);
+    $tmp_end_date = explode('-', $endDate);
+
+    $date_checkin = array();
+
+    for ($index = $tmp_start_date[0]; $index <= $tmp_end_date[0]; $index++) {
+      $convert_date = ($tmp_start_date[2] - 543).'-'.$tmp_start_date[1].'-'.$index;
+      array_push($date_checkin, $convert_date);
+    }
+
+    return $date_checkin;
+  }
+
+  public static function CHECK_IS_RESERVE_ROOM($roomId, $startDate, $endDate) {
+    $isReseve = DB::table('detail_booking')
+                    ->where('meeting_ID', $roomId)
+                    ->where([
+                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '>=', $startDate],
+                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $endDate],
+                    ])
+                    ->get();
+                    
+    if(sizeof($isReseve) > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

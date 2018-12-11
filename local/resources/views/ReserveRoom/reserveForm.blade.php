@@ -108,6 +108,13 @@
                 </select>
               </div>
             </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label"><span style="color: red;">* </span>เอกสารการจอง</label>
+              <div class="col-sm-5">
+                <input type="file" class="form-control" name="contract_file[]" multiple>
+                <p  style="color:red">@if($errors->has('contract_file')) {{$errors->first('contract_file')}}@endif</p>
+              </div>
+            </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">อุปกรณ์ที่ยืมเพิ่ม</label>
             <div class="col-sm-5">

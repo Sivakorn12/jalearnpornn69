@@ -101,17 +101,21 @@ class ReserveController extends Controller
       $msg = [
       'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
       'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
-      'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
+      'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ',
+      'contract_file.required' => "กรุณาแนบเอกสารหลักฐานการติดต่อจองห้องประชุม"
       ];
   
       $rule = [
       'detail_topic' => 'required|string',
       'detail_count' => 'required|numeric',
-      'user_tel' => 'required|numeric'
+      'user_tel' => 'required|numeric',
+      'contract_file' => 'required'
       ];
 
       $validator = Validator::make($req->all(),$rule,$msg);
-
+      if(empty($req->file('contract_file'))){
+        $validator->getMessageBag()->add('contract_file', 'โปรดแนบเอกสารการจอง');
+      }
       if ($validator->passes()) {
           if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
 
@@ -130,7 +134,7 @@ class ReserveController extends Controller
               }
 
               if(isset($req)) {
-                  if (isset($req->hdnEq)) {
+                    if (isset($req->hdnEq)) {
                       for($index = 0 ; $index < count($req->hdnEq); $index++){
                           $temp = explode(",",$req->hdnEq[$index]);
                           $data_em = DB::table('equipment')
@@ -144,10 +148,29 @@ class ReserveController extends Controller
                       $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
                       func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select);
                   } else {
-                      func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
+                      $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
                   }
-                  return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
-              }
+
+                    // check have file
+                    $files = $req->file('contract_file');
+                    if(!empty($req->file('contract_file'))){
+                        foreach($files as $key => $file){
+                            $fileType = explode('.',$file->getClientOriginalName());
+                            $fileType = $fileType[count($fileType)-1];
+                            $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
+                            Storage::disk('document')->put($fileFullName, file_get_contents($file));
+                            for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                                DB::table('document')->insert([
+                                    'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                                    'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                    'document_file' => $fileFullName,
+                                    'booking_id' => $id_insert_booking[$index]
+                                ]);
+                            }
+                        }
+                    }
+                }
+                return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
             } else {
               if(isset($req)) {
                 if (isset($req->hdnEq)) {
@@ -166,10 +189,28 @@ class ReserveController extends Controller
                   $accept_borrow = false;
                   func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow, true);
                 } else {
-                  func::SET_DATA_BOOKING($req, '', '', 3, true);
+                  $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
                 }
-                return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
-              }
+                // check have file
+                $files = $req->file('contract_file');
+                if(!empty($req->file('contract_file'))){
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
+                        Storage::disk('document')->put($fileFullName, file_get_contents($file));
+                        for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                            DB::table('document')->insert([
+                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                                'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'document_file' => $fileFullName,
+                                'booking_id' => $id_insert_booking[$index]
+                            ]);
+                        }
+                    }
+                }
+            }
+            return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
             }
           } else {
               return redirect()
@@ -317,13 +358,13 @@ class ReserveController extends Controller
       $msg = [
       'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
       'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
-      'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ'
+      'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ',
       ];
   
       $rule = [
       'detail_topic' => 'required|string',
       'detail_count' => 'required|numeric',
-      'user_tel' => 'required|numeric'
+      'user_tel' => 'required|numeric',
       ];
 
       $dataBorrow = json_decode($req->borrow);
@@ -357,6 +398,26 @@ class ReserveController extends Controller
                   } else {
                       func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
                   }
+
+                  $files = $req->file('contract_file');
+                  if(!empty($req->file('contract_file'))) {
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
+                        Storage::disk('document')->put($fileFullName, file_get_contents($file));
+                        for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                            DB::table('document')
+                                ->where('booking_id', $req->booking_id)
+                                ->update([
+                                    'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                                    'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                    'document_file' => 'test.pdf'
+                                ]);
+                        }
+                    }
+                  }
+
                   return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
               }
           } else {

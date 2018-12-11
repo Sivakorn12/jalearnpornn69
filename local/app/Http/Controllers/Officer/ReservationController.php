@@ -222,68 +222,32 @@ class ReservationController extends Controller
                 } else {
                     $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
                 }
-    
+
                 // check have file
-                // $files = $req->file('contract_file');
-                // if(!empty($req->file('contract_file'))){
-                //     foreach($files as $key => $file){
-                //         $fileType = explode('.',$file->getClientOriginalName());
-                //         $fileType = $fileType[count($fileType)-1];
-                //         $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                //         $file->move('asset/documents',$fileFullName);
-                //         for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
-                //             DB::table('document')->insert([
-                //                 'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
-                //                 'section_ID' => isset($req->section_id)? $req->section_id : null,
-                //                 'document_file' => $fileFullName,
-                //                 'booking_id' => $id_insert_booking[$index]
-                //             ]);
-                //         }
-                //     }
-                // }
+                $files = $req->file('contract_file');
+                if(!empty($req->file('contract_file'))){
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
+                        Storage::disk('document')->put($fileFullName, file_get_contents($file));
+                        for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                            DB::table('document')->insert([
+                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                                'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'document_file' => $fileFullName,
+                                'booking_id' => $id_insert_booking[$index]
+                            ]);
+                        }
+                    }
+                }
+    
                 return redirect('control/reservation/')
                             ->with('successMessage','จองห้องเรียบร้อย');
             } else {
-                if (isset($req->hdnEq)) {
-                    for($index = 0 ; $index < count($req->hdnEq); $index++){
-                        $temp = explode(",",$req->hdnEq[$index]);
-                        $data_em = DB::table('equipment')
-                                    ->where('em_name', $temp[0])
-                                    ->first();
-
-                        $data_id_equipment[$index] = $data_em->em_ID;
-                        $data_count_equipment[$index] = $temp[1];
-                    }
-
-                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
-                    $reduce_equipment_now = true;
-                    $accept_borrow = true;
-                    func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now,$accept_borrow, true);
-                } else {
-                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
-                }
-
-                // check have file
-                // $files = $req->file('contract_file');
-                // if(!empty($req->file('contract_file'))){
-                //     foreach($files as $key => $file){
-                //         $fileType = explode('.',$file->getClientOriginalName());
-                //         $fileType = $fileType[count($fileType)-1];
-                //         $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                //         $file->move('asset/documents',$fileFullName);
-                //         for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
-                //             DB::table('document')->insert([
-                //                 'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
-                //                 'section_ID' => isset($req->section_id)? $req->section_id : null,
-                //                 'document_file' => $fileFullName,
-                //                 'booking_id' => $id_insert_booking[$index]
-                //             ]);
-                //         }
-                //     }
-                // }
-                return redirect('control/reservation/')
-                            ->with('successMessage','จองห้องเรียบร้อย');
+                $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime,1);
             }
+    
           }else{
             return redirect()->back()->withInput($req->input())->withErrors($validator);
           }
@@ -472,7 +436,7 @@ class ReservationController extends Controller
                     $fileType = explode('.',$file->getClientOriginalName());
                     $fileType = $fileType[count($fileType)-1];
                     $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                    $file->move('asset/documents',$fileFullName);
+                    Storage::disk('document')->put($fileFullName, file_get_contents($file));
                     for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                         DB::table('document')->insert([
                             'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,

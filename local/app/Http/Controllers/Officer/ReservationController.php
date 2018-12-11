@@ -86,39 +86,6 @@ class ReservationController extends Controller
     }
 
     public function reserveForm(Request $req){
-        // $timeSelect = json_decode($req->timeSelect);
-        // $temp_date = explode('-', $req->dateSelect);
-        // $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-        // $temp_date_now = explode('-', date('Y-m-d'));
-        // $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
-        
-        // $dataRoom = DB::table('meeting_room')
-        //     ->where('meeting_ID', $req->meetingId)
-        //     ->first();
-        
-        // $dataequipment = DB::table('equipment')
-        //                     ->get();
-        // $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
-        
-        // $reserveEnd = false;
-        // if (sizeof($timeSelect) > 1) {
-        //     $reserveEnd = true;
-        // }
-
-        // $data = array(
-        //     'room' => $dataRoom,
-        //     'time_start' => $time_remain[0],
-        //     'time_end' => $time_remain[1],
-        //     'time_select' => $date_select,
-        //     'date_reserve' => $date_now,
-        //     'reserve_start' => $timeSelect[0],
-        //     'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_remain[1][0],
-        //     'timeTH_select' => $req->dateSelect,
-        //     'data_equipment' => $dataequipment,
-        //     'sections' => func::GetSection(),
-        //     'dept' => func::GetDepartment(),
-        //     'faculty' => func::GetFaculty()
-        // );
         $temp_date = explode('-', $req->dateSelect);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
         $temp_date_now = explode('-', date('Y-m-d'));
@@ -173,7 +140,7 @@ class ReservationController extends Controller
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",
             'contract_name.required' => "กรุณาระบุชื่อผู้จองห้องประชุม",
             'user_tel.required' => "กรุณาระบุเบอร์โทรศัพท์ผู้จองห้องประชุม",
-            // 'contract_file.required' => "กรุณาแนบเอกสารหลักฐานการติดต่อจองห้องประชุม",
+            'contract_file.required' => "กรุณาแนบเอกสารหลักฐานการติดต่อจองห้องประชุม",
             'detail_count.numeric' => "จำนวนผู้เข้าร่วมประชุมต้องเป็นหมายเลข",
           ];
     
@@ -182,12 +149,12 @@ class ReservationController extends Controller
             'detail_count' => 'required|numeric',
             'contract_name' => 'required',
             'user_tel' => 'required',
-            // 'contract_file' => 'required',
+            'contract_file' => 'required',
           ];
           $validator = Validator::make($req->all(),$rule,$msg);
-        //   if(empty($req->file('contract_file'))){
-        //     $validator->getMessageBag()->add('contract_file', 'โปรดแนบเอกสารการจอง');
-        //   }
+          if(empty($req->file('contract_file'))){
+            $validator->getMessageBag()->add('contract_file', 'โปรดแนบเอกสารการจอง');
+          }
           if ($validator->passes()) {
 
             if (!is_null($req->reserve_time)) {
@@ -224,23 +191,23 @@ class ReservationController extends Controller
                 }
     
                 // check have file
-                // $files = $req->file('contract_file');
-                // if(!empty($req->file('contract_file'))){
-                //     foreach($files as $key => $file){
-                //         $fileType = explode('.',$file->getClientOriginalName());
-                //         $fileType = $fileType[count($fileType)-1];
-                //         $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                //         $file->move('asset/documents',$fileFullName);
-                //         for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
-                //             DB::table('document')->insert([
-                //                 'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
-                //                 'section_ID' => isset($req->section_id)? $req->section_id : null,
-                //                 'document_file' => $fileFullName,
-                //                 'booking_id' => $id_insert_booking[$index]
-                //             ]);
-                //         }
-                //     }
-                // }
+                $files = $req->file('contract_file');
+                if(!empty($req->file('contract_file'))){
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
+                        Storage::disk('document')->put($fileFullName, file_get_contents($file));
+                        for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                            DB::table('document')->insert([
+                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                                'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'document_file' => $fileFullName,
+                                'booking_id' => $id_insert_booking[$index]
+                            ]);
+                        }
+                    }
+                }
                 return redirect('control/reservation/')
                             ->with('successMessage','จองห้องเรียบร้อย');
             } else {
@@ -264,23 +231,23 @@ class ReservationController extends Controller
                 }
 
                 // check have file
-                // $files = $req->file('contract_file');
-                // if(!empty($req->file('contract_file'))){
-                //     foreach($files as $key => $file){
-                //         $fileType = explode('.',$file->getClientOriginalName());
-                //         $fileType = $fileType[count($fileType)-1];
-                //         $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                //         $file->move('asset/documents',$fileFullName);
-                //         for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
-                //             DB::table('document')->insert([
-                //                 'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
-                //                 'section_ID' => isset($req->section_id)? $req->section_id : null,
-                //                 'document_file' => $fileFullName,
-                //                 'booking_id' => $id_insert_booking[$index]
-                //             ]);
-                //         }
-                //     }
-                // }
+                $files = $req->file('contract_file');
+                if(!empty($req->file('contract_file'))){
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
+                        Storage::disk('document')->put($fileFullName, file_get_contents($file));
+                        for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                            DB::table('document')->insert([
+                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                                'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'document_file' => $fileFullName,
+                                'booking_id' => $id_insert_booking[$index]
+                            ]);
+                        }
+                    }
+                }
                 return redirect('control/reservation/')
                             ->with('successMessage','จองห้องเรียบร้อย');
             }
@@ -472,7 +439,7 @@ class ReservationController extends Controller
                     $fileType = explode('.',$file->getClientOriginalName());
                     $fileType = $fileType[count($fileType)-1];
                     $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
-                    $file->move('asset/documents',$fileFullName);
+                    Storage::disk('document')->put($fileFullName, file_get_contents($file));
                     for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                         DB::table('document')->insert([
                             'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,

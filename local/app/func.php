@@ -659,11 +659,12 @@ class func extends Model
     return $date_checkin;
   }
 
-  public static function CHECK_IS_RESERVE_ROOM($startDate, $endDate) {
-    $isReseve = DB::table('booking')
+  public static function CHECK_IS_RESERVE_ROOM($roomId, $startDate, $endDate) {
+    $isReseve = DB::table('detail_booking')
+                    ->where('meeting_ID', $roomId)
                     ->where([
-                      ['checkin', '>=', $startDate],
-                      ['checkin', '<=', $endDate]
+                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '>=', $startDate],
+                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $endDate],
                     ])
                     ->get();
                     

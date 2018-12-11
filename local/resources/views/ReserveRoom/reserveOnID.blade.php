@@ -166,6 +166,7 @@ $(function() {
     }
   });
 });
+
   function render_button_submit() {
     var submitHtml = ""
     submitHtml += "<div><form action='{{ url('reserve/form/reserve') }}' method='get' enctype='multipart/form-data'>"

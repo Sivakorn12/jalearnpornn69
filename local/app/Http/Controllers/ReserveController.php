@@ -201,7 +201,7 @@ class ReserveController extends Controller
       return response()->json(['error'=> 'ไม่สามารถจองห้องย้อนหลังได้']);
     } else {
       $isRoomOpen = func::CHECK_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
-      $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($date_select, $end_date_select);
+      $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->roomid, $date_select, $end_date_select);
 
       if ($isHoliday) {
         return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);

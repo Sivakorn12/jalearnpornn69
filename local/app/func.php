@@ -415,10 +415,10 @@ class func extends Model
                   }
               }
           } else {
-              /*$id = DB::table('borrow_booking')
+              $id = DB::table('borrow_booking')
                                           ->insertGetId([
-                                              'booking_ID' => $id_insert_booking[$index],
-                                              'borrow_date' => $time_select,
+                                              'booking_ID' => $id_insert_booking,
+                                              'borrow_date' => $req->time_select,
                                               'borrow_status' => 3
                                           ]);
 
@@ -429,7 +429,7 @@ class func extends Model
                           'equiment_ID' => $id_equipment[$inner],
                           'borrow_count' => $count_equipment[$inner]
                       ]);
-              }*/
+              }
           }
         }
     }

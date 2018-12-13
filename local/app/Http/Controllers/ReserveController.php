@@ -147,7 +147,9 @@ class ReserveController extends Controller
                       }
 
                       $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
-                      func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select);
+                      $reduce_equipment_now = false;
+                      $accept_borrow = false;
+                      func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow);
                   } else {
                       $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
                   }
@@ -392,9 +394,11 @@ class ReserveController extends Controller
                       func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);
 
                       if (empty($dataBorrow[0]->borrow_ID)) {
-                          func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, null);
+                        $reduce_equipment_now = false;
+                        $accept_borrow = false;
+                          func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req, $reduce_equipment_now, $accept_borrow);
                       } else {
-                          func::UPDATE_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req->time_select, $dataBorrow[0]->borrow_ID);
+                          func::UPDATE_DATA_BORROW($data_id_equipment, $data_count_equipment, $req->booking_id, $req, $dataBorrow[0]->borrow_ID);
                       }
                   } else {
                       func::UPDATE_DATA_BOOKING($req, $time_start, $time_out);

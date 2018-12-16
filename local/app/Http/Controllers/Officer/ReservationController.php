@@ -222,12 +222,12 @@ class ReservationController extends Controller
                         $data_count_equipment[$index] = $temp[1];
                     }
   
-                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
-                    $reduce_equipment_now = false;
-                    $accept_borrow = false;
+                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 1, true);
+                    $reduce_equipment_now = true;
+                    $accept_borrow = true;
                     func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow, true);
                   } else {
-                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 3, true);
+                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 1, true);
                   }
                   // check have file
                 $files = $req->file('contract_file');
@@ -247,7 +247,8 @@ class ReservationController extends Controller
                         }
                     }
                 }
-                return redirect('reserve')->with('message', 'จองห้องสำเร็จ');
+                return redirect('control/reservation/')
+                            ->with('successMessage','จองห้องเรียบร้อย');
             }
           } else {
             return redirect()->back()->withInput($req->input())->withErrors($validator);

@@ -666,6 +666,8 @@ class func extends Model
                       [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '>=', $startDate],
                       [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $endDate],
                     ])
+                    ->join('booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
+                    ->where('booking.status_ID', [1, 3])
                     ->get();
                     
     if(sizeof($isReseve) > 0) {

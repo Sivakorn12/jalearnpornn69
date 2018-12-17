@@ -423,9 +423,24 @@ class ReservationController extends Controller
                             'link' => $estimate_link
                         ]);
                 $reduce_equipment_now = true;
-                $accept_borrow = true;
+                $accept_borrow = false;
+                $flag_date_range = true;
                 if (isset($req->hdnEq)){
-                func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, [$id], $date_reserve[$i],$reduce_equipment_now,$accept_borrow);
+                    $borrow_booking_id = DB::table('borrow_booking')
+                                            ->insertGetId([
+                                                'booking_ID' => $id,
+                                                'borrow_date' => $date_reserve[$i],
+                                                'borrow_status' => 3
+                                            ]);
+                                                
+                    for($inner = 0 ; $inner < sizeof($data_count_equipment); $inner++){
+                        DB::table('detail_borrow')
+                            ->insert([
+                                'borrow_ID' => $borrow_booking_id,
+                                'equiment_ID' => $data_id_equipment[$inner],
+                                'borrow_count' => $data_count_equipment[$inner]
+                            ]);
+                    }
                 }
                 //dd('insert borrow success');
 

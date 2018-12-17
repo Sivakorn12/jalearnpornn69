@@ -152,7 +152,6 @@ class Officer extends Model
                 ->where('detail_borrow.borrow_ID',$id)
                 ->groupBy('equipment.em_name','equipment.em_count')
                 ->get();
-        
         $html = '<p>
                     รายการยืมอุปกรณ์ หมายเลข :'.$id .(($type=='borrow') ?'<a style="float:right" id="add_borrow" class="btn btn-xs btn-success" ><i class="fa fa-plus" aria-hidden="true"></i> ยืมเพิ่ม</a>':'').
                 '</p>
@@ -181,8 +180,8 @@ class Officer extends Model
 
         if($type=='borrow'){
             if(self::checkBtnConfirmBorrow($id)){
-                $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณต้องการอนุมัติการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/confirm/'.$data->borrow_ID).'" role="button">ยืนยัน</a>
-                              <a class="btn btn-danger"onclick="return confirm(`คุณต้องการยกเลิกการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/cancel/'.$data->borrow_ID).'" role="button">ยกเลิก</a>';
+                $html = $html.'<a class="btn btn-primary" onclick="return confirm(`คุณต้องการอนุมัติการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/confirm/'.$id).'" role="button">ยืนยัน</a>
+                              <a class="btn btn-danger"onclick="return confirm(`คุณต้องการยกเลิกการยืมอุปกรณ์นี้หรือไม่`)"  href="'.url('control/return-eq/cancel/'.$id).'" role="button">ยกเลิก</a>';
             }
             $dataEquipment = func::GET_EQUIPMENT();
             $action = url('').'/control/return-eq/borrow';

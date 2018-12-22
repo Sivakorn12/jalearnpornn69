@@ -261,7 +261,7 @@ $("#department_id").html(option)
 function setDateReserveList(data_reserve){
   var content = ''
   for(index in data_reserve){
-    content += '<p>'+dateDBtoBC(data_reserve[index])+'  เวลา '+time_reserve[index][0].substring(0,5)+' - '+time_reserve[index][1].substring(0,5)+'</p>';
+    content += '<p>'+dateDBtoBC(data_reserve[index])+'  เวลา '+time_reserve[0]+' - '+time_reserve[1]+'</p>';
   }
   $('#date_list').html(content)
   $('#data_reserve').val(JSON.stringify(data_reserve))

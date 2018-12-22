@@ -86,39 +86,6 @@ class ReservationController extends Controller
     }
 
     public function reserveForm(Request $req){
-        // $timeSelect = json_decode($req->timeSelect);
-        // $temp_date = explode('-', $req->dateSelect);
-        // $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
-        // $temp_date_now = explode('-', date('Y-m-d'));
-        // $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
-        
-        // $dataRoom = DB::table('meeting_room')
-        //     ->where('meeting_ID', $req->meetingId)
-        //     ->first();
-        
-        // $dataequipment = DB::table('equipment')
-        //                     ->get();
-        // $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
-        
-        // $reserveEnd = false;
-        // if (sizeof($timeSelect) > 1) {
-        //     $reserveEnd = true;
-        // }
-
-        // $data = array(
-        //     'room' => $dataRoom,
-        //     'time_start' => $time_remain[0],
-        //     'time_end' => $time_remain[1],
-        //     'time_select' => $date_select,
-        //     'date_reserve' => $date_now,
-        //     'reserve_start' => $timeSelect[0],
-        //     'reserve_end' => $reserveEnd ? $timeSelect[1] : $time_remain[1][0],
-        //     'timeTH_select' => $req->dateSelect,
-        //     'data_equipment' => $dataequipment,
-        //     'sections' => func::GetSection(),
-        //     'dept' => func::GetDepartment(),
-        //     'faculty' => func::GetFaculty()
-        // );
         $temp_date = explode('-', $req->dateSelect);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
         $temp_date_now = explode('-', date('Y-m-d'));
@@ -173,7 +140,7 @@ class ReservationController extends Controller
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",
             'contract_name.required' => "กรุณาระบุชื่อผู้จองห้องประชุม",
             'user_tel.required' => "กรุณาระบุเบอร์โทรศัพท์ผู้จองห้องประชุม",
-            // 'contract_file.required' => "กรุณาแนบเอกสารหลักฐานการติดต่อจองห้องประชุม",
+            'contract_file.required' => "กรุณาแนบเอกสารหลักฐานการติดต่อจองห้องประชุม",
             'detail_count.numeric' => "จำนวนผู้เข้าร่วมประชุมต้องเป็นหมายเลข",
           ];
     
@@ -182,12 +149,12 @@ class ReservationController extends Controller
             'detail_count' => 'required|numeric',
             'contract_name' => 'required',
             'user_tel' => 'required',
-            // 'contract_file' => 'required',
+            'contract_file' => 'required',
           ];
           $validator = Validator::make($req->all(),$rule,$msg);
-        //   if(empty($req->file('contract_file'))){
-        //     $validator->getMessageBag()->add('contract_file', 'โปรดแนบเอกสารการจอง');
-        //   }
+          if(empty($req->file('contract_file'))){
+            $validator->getMessageBag()->add('contract_file', 'โปรดแนบเอกสารการจอง');
+          }
           if ($validator->passes()) {
 
             if (!is_null($req->reserve_time)) {
@@ -218,11 +185,11 @@ class ReservationController extends Controller
                     $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
                     $reduce_equipment_now = true;
                     $accept_borrow = true;
-                    func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req->time_select,$reduce_equipment_now,$accept_borrow);
+                    func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now,$accept_borrow);
                 } else {
                     $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
                 }
-
+    
                 // check have file
                 $files = $req->file('contract_file');
                 if(!empty($req->file('contract_file'))){
@@ -241,14 +208,49 @@ class ReservationController extends Controller
                         }
                     }
                 }
-    
                 return redirect('control/reservation/')
                             ->with('successMessage','จองห้องเรียบร้อย');
             } else {
-                $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime,1);
+                if (isset($req->hdnEq)) {
+                    for($index = 0 ; $index < count($req->hdnEq); $index++){
+                        $temp = explode(",",$req->hdnEq[$index]);
+                        $data_em = DB::table('equipment')
+                                    ->where('em_name', $temp[0])
+                                    ->first();
+  
+                        $data_id_equipment[$index] = $data_em->em_ID;
+                        $data_count_equipment[$index] = $temp[1];
+                    }
+  
+                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 1, true);
+                    $reduce_equipment_now = true;
+                    $accept_borrow = true;
+                    func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow, true);
+                  } else {
+                    $id_insert_booking = func::SET_DATA_BOOKING($req, '', '', 1, true);
+                  }
+                  // check have file
+                $files = $req->file('contract_file');
+                if(!empty($req->file('contract_file'))){
+                    foreach($files as $key => $file){
+                        $fileType = explode('.',$file->getClientOriginalName());
+                        $fileType = $fileType[count($fileType)-1];
+                        $fileFullName = date('U').'-doc'.($key+1).".".$fileType;
+                        Storage::disk('document')->put($fileFullName, file_get_contents($file));
+                        for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
+                            DB::table('document')->insert([
+                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
+                                'section_ID' => isset($req->section_id)? $req->section_id : null,
+                                'document_file' => $fileFullName,
+                                'booking_id' => $id_insert_booking[$index]
+                            ]);
+                        }
+                    }
+                }
+                return redirect('control/reservation/')
+                            ->with('successMessage','จองห้องเรียบร้อย');
             }
-    
-          }else{
+          } else {
             return redirect()->back()->withInput($req->input())->withErrors($validator);
           }
     }
@@ -273,10 +275,10 @@ class ReservationController extends Controller
         
         $day_id = date("N", strtotime($req->date_st));
         //dd($day_id);
+        $day_id = ($day_id+1)%7;
         $room_open = Md_RoomOpenTime::where('meeting_ID',$req->meeting_id)
-                                    ->where('day_id',$day_id+1)
+                                    ->where('day_id',$day_id)
                                     ->first()->toArray();
-        //dd($room_open);
         if($room_open['open_flag'] != 1 ){
             return response()->json([
                 'success' => 0,
@@ -284,6 +286,16 @@ class ReservationController extends Controller
             ]);
         }
         else{
+            $btn_start_time = substr($room_open['open_time'],0,2);
+            $btn_end_time = substr($room_open['close_time'],0,2);
+            $time_btn = array();
+            for($n = $btn_start_time ;$n <= $btn_end_time;$n++){
+                array_push($time_btn,[
+                    "index" => str_pad($n, 2, "0", STR_PAD_LEFT),
+                    "time" => str_pad($n.":00", 5, "0", STR_PAD_LEFT),
+                    "can_book" => 1
+                ]);
+            }
             $date_point = date("Y-m-d", strtotime($req->date_st));
             $date_end = date("Y-m-d", strtotime($req->date_end));
             $cnt = 0;
@@ -298,15 +310,21 @@ class ReservationController extends Controller
                 } 
                 if($chk_room_open != false){
                     array_push($time_reserve,[substr($chk_room_open->extra_start,-8),substr($chk_room_open->extra_end,-8)]);
-                    
+                    $ex_start = substr($chk_room_open->extra_start,-8,2);
+                    $ex_end = substr($chk_room_open->extra_end,-8,2);
+                    $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
                 }
-                
-                
-                if(officer::isHasReserveRoom($req->meeting_id,$date_point)){
-                    return response()->json([
-                        'success' => 0,
-                        'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องถูกจองเเล้ว'
-                    ]);
+                $reserve_info = officer::isHasReserveRoom($req->meeting_id,$date_point);
+                if($reserve_info != false){
+                    foreach($reserve_info  as $key => $res_inf){
+                        $ex_start = substr($res_inf->detail_timestart,-8,2);
+                        $ex_end = substr($res_inf->detail_timeout,-8,2);
+                        $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
+                    }
+                    // return response()->json([
+                    //     'success' => 0,
+                    //     'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องถูกจองเเล้ว'
+                    // ]);
                 }
                 if(officer::isHoliday($date_point)){
                     return response()->json([
@@ -323,6 +341,7 @@ class ReservationController extends Controller
                 'message' => '',
                 'date_reserve' =>$day_reserve_arr,
                 'time_reserve' => $time_reserve,
+                'time_btn' => $time_btn,
                 'time_start' => $room_open['open_time'],
                 'time_end' => $room_open['close_time']
             ]);
@@ -339,10 +358,15 @@ class ReservationController extends Controller
         $room_open = Md_RoomOpenTime::where('meeting_ID',$req->meeting_ID)
                                     ->where('day_id',$day_id)
                                     ->first();
+        $time_reserve = json_decode($req->time_reserve);
+        if(sizeof($time_reserve)==1){
+            $time_reserve[1]= str_pad($time_reserve[0]+1, 5, "0", STR_PAD_LEFT);
+        }
+        $time_reserve_arr = [$time_reserve[0].':00',$time_reserve[1].':00'];
         $data = array(
             'room' => $room,
             'date_reserve' => json_decode($req->data_reserve),
-            'time_reserve' => json_decode($req->time_reserve),
+            'time_reserve' => $time_reserve_arr,
             'sections' => func::GetSection(),
             'dept' => func::GetDepartment(),
             'faculty' => func::GetFaculty()
@@ -415,15 +439,30 @@ class ReservationController extends Controller
                             'booking_ID' => $id,
                             'meeting_ID' => $req->meeting_id,
                             'detail_topic' => $req->detail_topic,
-                            'detail_timestart' => date('Y-m-d H:i:s',strtotime($date_reserve[$i].' '.$time_reserve[$i][0])),
-                            'detail_timeout' => date('Y-m-d H:i:s' ,strtotime($date_reserve[$i].' '.$time_reserve[$i][1])),
+                            'detail_timestart' => date('Y-m-d H:i:s',strtotime($date_reserve[$i].' '.$time_reserve[0])),
+                            'detail_timeout' => date('Y-m-d H:i:s' ,strtotime($date_reserve[$i].' '.$time_reserve[1])),
                             'detail_count' => $req->detail_count,
                             'link' => $estimate_link
                         ]);
                 $reduce_equipment_now = true;
-                $accept_borrow = true;
+                $accept_borrow = false;
+                $flag_date_range = true;
                 if (isset($req->hdnEq)){
-                func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, [$id], $date_reserve[$i],$reduce_equipment_now,$accept_borrow);
+                    $borrow_booking_id = DB::table('borrow_booking')
+                                            ->insertGetId([
+                                                'booking_ID' => $id,
+                                                'borrow_date' => $date_reserve[$i],
+                                                'borrow_status' => 3
+                                            ]);
+                                                
+                    for($inner = 0 ; $inner < sizeof($data_count_equipment); $inner++){
+                        DB::table('detail_borrow')
+                            ->insert([
+                                'borrow_ID' => $borrow_booking_id,
+                                'equiment_ID' => $data_id_equipment[$inner],
+                                'borrow_count' => $data_count_equipment[$inner]
+                            ]);
+                    }
                 }
                 //dd('insert borrow success');
 

@@ -415,10 +415,10 @@ class func extends Model
                   }
               }
           } else {
-              /*$id = DB::table('borrow_booking')
+              $id = DB::table('borrow_booking')
                                           ->insertGetId([
-                                              'booking_ID' => $id_insert_booking[$index],
-                                              'borrow_date' => $time_select,
+                                              'booking_ID' => $id_insert_booking,
+                                              'borrow_date' => $req->time_select,
                                               'borrow_status' => 3
                                           ]);
 
@@ -429,7 +429,7 @@ class func extends Model
                           'equiment_ID' => $id_equipment[$inner],
                           'borrow_count' => $count_equipment[$inner]
                       ]);
-              }*/
+              }
           }
         }
     }
@@ -666,6 +666,8 @@ class func extends Model
                       [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '>=', $startDate],
                       [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $endDate],
                     ])
+                    ->join('booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
+                    ->where('booking.status_ID', [1, 3])
                     ->get();
                     
     if(sizeof($isReseve) > 0) {

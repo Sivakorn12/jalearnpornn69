@@ -275,10 +275,10 @@ class ReservationController extends Controller
         
         $day_id = date("N", strtotime($req->date_st));
         //dd($day_id);
+        $day_id = ($day_id+1)%7;
         $room_open = Md_RoomOpenTime::where('meeting_ID',$req->meeting_id)
-                                    ->where('day_id',$day_id+1)
+                                    ->where('day_id',$day_id)
                                     ->first()->toArray();
-        //dd($room_open);
         if($room_open['open_flag'] != 1 ){
             return response()->json([
                 'success' => 0,
@@ -300,7 +300,6 @@ class ReservationController extends Controller
                 } 
                 if($chk_room_open != false){
                     array_push($time_reserve,[substr($chk_room_open->extra_start,-8),substr($chk_room_open->extra_end,-8)]);
-                    
                 }
                 
                 

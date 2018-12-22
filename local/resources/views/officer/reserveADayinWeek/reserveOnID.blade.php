@@ -173,6 +173,7 @@
                 meeting_id:meetingId
               },
               success: function(data) {
+                //console.log(data)
                 if(data.success == 0){
                  
                   alert(data.message)

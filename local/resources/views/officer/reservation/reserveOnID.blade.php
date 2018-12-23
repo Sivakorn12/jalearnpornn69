@@ -114,6 +114,7 @@
   var times = [] 
   var time_reserve = []
   var date_select = ''
+  var date_end_select = ''
   const meetingId = <?php echo $rooms->meeting_ID ?>;
   $(function() {
   $('input[name="daterange"]').daterangepicker({
@@ -139,6 +140,7 @@
               render_button_time()
               $('#time-reserve').show()
             } else {
+              $('#time-reserve').hide()
               swal('ไม่สำเร็จ', data.error, 'error')
             }
           }
@@ -158,9 +160,13 @@
             if (data.time_empty) {
               date_select = newStartDate
               date_end_select = newEndDate
-              render_button_submit()
+              times = data.time_empty
+              time_reserve = data.time_reserve
+              render_button_time()
+              // render_button_submit()
               $('#time-reserve').show()
             } else {
+              $('#time-reserve').hide()
               swal('ไม่สำเร็จ', data.error, 'error')
             }
           }
@@ -169,16 +175,16 @@
   });
 });
 
-  function render_button_submit() {
-    var submitHtml = ""
-    submitHtml += "<div><form action='{{ url('control/reservation/form/reserve') }}' method='post' enctype='multipart/form-data'>"
-    submitHtml += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
-    submitHtml += "<input type='hidden' name='meetingId' value="+meetingId+">"
-    submitHtml += "<input type='hidden' name='dateSelect' value="+date_select+">"
-    submitHtml += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
-    submitHtml += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
-    $('#time-reserve').html(submitHtml)
-  }
+  // function render_button_submit() {
+  //   var submitHtml = ""
+  //   submitHtml += "<div><form action='{{ url('control/reservation/form/reserve') }}' method='post' enctype='multipart/form-data'>"
+  //   submitHtml += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
+  //   submitHtml += "<input type='hidden' name='meetingId' value="+meetingId+">"
+  //   submitHtml += "<input type='hidden' name='dateSelect' value="+date_select+">"
+  //   submitHtml += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
+  //   submitHtml += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
+  //   $('#time-reserve').html(submitHtml)
+  // }
   
   function render_button_time(){
     var viewHTML = ""
@@ -190,13 +196,13 @@
         viewHTML += "<a type='button' id='btnTime"+(parseInt(time_reserve[index].substring(0,2)))+"' class='btn btn-success' style='margin-right: 1rem; margin-top: 1rem;' onclick='addTime(`"+time_reserve[index]+"`)'>"+time_reserve[index]+"</a>"
       }
     }
-    
     viewHTML += "<div><form action='{{ url('control/reservation/form/reserve') }}' method='post' enctype='multipart/form-data'>"
     viewHTML += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
     viewHTML += "<input type='hidden' name='meetingId' value="+meetingId+">"
     viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"
-    // viewHTML += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
+    viewHTML += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
     viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value='"+(JSON.stringify(arrTime))+"'>"
+    // viewHTML += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
     viewHTML += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
     $('#time-reserve').html(viewHTML)
     setColorBtn()

@@ -50,7 +50,7 @@ class ReserveController extends Controller
   }
 
   public function reserveForm(Request $req) {
-		$temp_date = explode('-', $req->dateSelect);
+    $temp_date = explode('-', $req->dateSelect);
     $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
     $temp_date_now = explode('-', date('Y-m-d'));
     $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
@@ -74,8 +74,8 @@ class ReserveController extends Controller
         'time_select' => $date_select,
         'reserve_time' => $req->timeSelect,
         'date_reserve' => $date_now,
-				'timeTH_select' => $req->dateSelect,
-				'timeTH_select_end' => $req->endDateSelect,
+        'timeTH_select' => $req->dateSelect,
+        'timeTH_select_end' => $req->endDateSelect,
         'data_equipment' => $dataequipment,
         'sections' => func::GetSection(),
         'dept' => func::GetDepartment(),

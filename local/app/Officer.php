@@ -762,10 +762,17 @@ class Officer extends Model
         return $res;
     }
 
-    public static function setDataBtnReserve($time_btn,$time_start,$time_end){
+    public static function setDataBtnReserve($time_btn,$time_start,$time_end,$checkBy){
         for($p = 0 ;$p<sizeof($time_btn);$p++){
-            if($time_btn[$p]["index"] < $time_start or $time_btn[$p]["index"] > $time_end){
-                $time_btn[$p]["can_book"] = 0;
+            if($checkBy == 'intersect'){
+                if($time_btn[$p]["index"] < $time_start or $time_btn[$p]["index"] > $time_end){
+                    $time_btn[$p]["can_book"] = 0;
+                }
+            }
+            elseif($checkBy == 'except'){
+                if($time_btn[$p]["index"] >= $time_start and $time_btn[$p]["index"] <= $time_end){
+                    $time_btn[$p]["can_book"] = 0;
+                }
             }
         }
         return $time_btn;

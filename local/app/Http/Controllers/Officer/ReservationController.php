@@ -312,20 +312,23 @@ class ReservationController extends Controller
                     array_push($time_reserve,[substr($chk_room_open->extra_start,-8),substr($chk_room_open->extra_end,-8)]);
                     $ex_start = substr($chk_room_open->extra_start,-8,2);
                     $ex_end = substr($chk_room_open->extra_end,-8,2);
-                    $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
+                    $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end,'intersect');
                 }
+
                 $reserve_info = officer::isHasReserveRoom($req->meeting_id,$date_point);
                 if($reserve_info != false){
                     foreach($reserve_info  as $key => $res_inf){
                         $ex_start = substr($res_inf->detail_timestart,-8,2);
                         $ex_end = substr($res_inf->detail_timeout,-8,2);
-                        $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
+                        $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end,'except');
+                        
                     }
                     // return response()->json([
                     //     'success' => 0,
                     //     'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องถูกจองเเล้ว'
                     // ]);
                 }
+                //dd($time_btn);
                 if(officer::isHoliday($date_point)){
                     return response()->json([
                         'success' => 0,

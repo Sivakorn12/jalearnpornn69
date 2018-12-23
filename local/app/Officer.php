@@ -691,7 +691,7 @@ class Officer extends Model
                     ->where('booking.checkin',$date_point)
                     ->get(); 
         if(isset($result[0])){
-            return true;
+            return $result;
         }
         return false;
     }
@@ -760,5 +760,14 @@ class Officer extends Model
     public static function getDocumentByBooking($booking_id){
         $res = DB::table('document')->where('booking_id',$booking_id)->get();
         return $res;
+    }
+
+    public static function setDataBtnReserve($time_btn,$time_start,$time_end){
+        for($p = 0 ;$p<sizeof($time_btn);$p++){
+            if($time_btn[$p]["index"] < $time_start or $time_btn[$p]["index"] > $time_end){
+                $time_btn[$p]["can_book"] = 0;
+            }
+        }
+        return $time_btn;
     }
 }

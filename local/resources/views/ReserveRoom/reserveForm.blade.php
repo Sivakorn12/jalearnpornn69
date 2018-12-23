@@ -39,7 +39,7 @@
             @if(is_array($time_start))
             <div class="col-sm-5">
                 @for($index = 0; $index < sizeof($time_start); $index++)
-                  <p class="form-control-static">{{$time_start[$index]}} - {{$time_end[$index]}}</p>
+                  <p class="form-control-static">{{$timeTH_select}} ถึง {{$timeTH_select_end}} (ใช้งานเวลา : {{$time_start[$index]}} - {{$time_end[$index]}})</p>
                 @endfor
             </div>
             @else
@@ -147,6 +147,7 @@
           <input type="hidden" name="meeting_id" value="{{$room->meeting_ID}}">
           <input type="hidden" name="time_select" value="{{$time_select}}">
           <input type="hidden" name="reserve_time" value="{{$reserve_time}}">
+          <input type="hidden" name="reserve_date_end" value="{{$timeTH_select_end}}">
           @if(!is_array($time_start) && !is_array($time_end))
           <input type="hidden" name="start_range" value="{{$time_start}}">
           <input type="hidden" name="end_range" value="{{$time_end}}">

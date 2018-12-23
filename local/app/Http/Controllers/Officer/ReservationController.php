@@ -275,10 +275,10 @@ class ReservationController extends Controller
         
         $day_id = date("N", strtotime($req->date_st));
         //dd($day_id);
+        $day_id = ($day_id+1)%7;
         $room_open = Md_RoomOpenTime::where('meeting_ID',$req->meeting_id)
-                                    ->where('day_id',$day_id+1)
+                                    ->where('day_id',$day_id)
                                     ->first()->toArray();
-        //dd($room_open);
         if($room_open['open_flag'] != 1 ){
             return response()->json([
                 'success' => 0,
@@ -286,6 +286,16 @@ class ReservationController extends Controller
             ]);
         }
         else{
+            $btn_start_time = substr($room_open['open_time'],0,2);
+            $btn_end_time = substr($room_open['close_time'],0,2);
+            $time_btn = array();
+            for($n = $btn_start_time ;$n <= $btn_end_time;$n++){
+                array_push($time_btn,[
+                    "index" => str_pad($n, 2, "0", STR_PAD_LEFT),
+                    "time" => str_pad($n.":00", 5, "0", STR_PAD_LEFT),
+                    "can_book" => 1
+                ]);
+            }
             $date_point = date("Y-m-d", strtotime($req->date_st));
             $date_end = date("Y-m-d", strtotime($req->date_end));
             $cnt = 0;
@@ -300,15 +310,21 @@ class ReservationController extends Controller
                 } 
                 if($chk_room_open != false){
                     array_push($time_reserve,[substr($chk_room_open->extra_start,-8),substr($chk_room_open->extra_end,-8)]);
-                    
+                    $ex_start = substr($chk_room_open->extra_start,-8,2);
+                    $ex_end = substr($chk_room_open->extra_end,-8,2);
+                    $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
                 }
-                
-                
-                if(officer::isHasReserveRoom($req->meeting_id,$date_point)){
-                    return response()->json([
-                        'success' => 0,
-                        'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องถูกจองเเล้ว'
-                    ]);
+                $reserve_info = officer::isHasReserveRoom($req->meeting_id,$date_point);
+                if($reserve_info != false){
+                    foreach($reserve_info  as $key => $res_inf){
+                        $ex_start = substr($res_inf->detail_timestart,-8,2);
+                        $ex_end = substr($res_inf->detail_timeout,-8,2);
+                        $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
+                    }
+                    // return response()->json([
+                    //     'success' => 0,
+                    //     'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องถูกจองเเล้ว'
+                    // ]);
                 }
                 if(officer::isHoliday($date_point)){
                     return response()->json([
@@ -325,6 +341,7 @@ class ReservationController extends Controller
                 'message' => '',
                 'date_reserve' =>$day_reserve_arr,
                 'time_reserve' => $time_reserve,
+                'time_btn' => $time_btn,
                 'time_start' => $room_open['open_time'],
                 'time_end' => $room_open['close_time']
             ]);
@@ -341,10 +358,15 @@ class ReservationController extends Controller
         $room_open = Md_RoomOpenTime::where('meeting_ID',$req->meeting_ID)
                                     ->where('day_id',$day_id)
                                     ->first();
+        $time_reserve = json_decode($req->time_reserve);
+        if(sizeof($time_reserve)==1){
+            $time_reserve[1]= str_pad($time_reserve[0]+1, 5, "0", STR_PAD_LEFT);
+        }
+        $time_reserve_arr = [$time_reserve[0].':00',$time_reserve[1].':00'];
         $data = array(
             'room' => $room,
             'date_reserve' => json_decode($req->data_reserve),
-            'time_reserve' => json_decode($req->time_reserve),
+            'time_reserve' => $time_reserve_arr,
             'sections' => func::GetSection(),
             'dept' => func::GetDepartment(),
             'faculty' => func::GetFaculty()
@@ -417,8 +439,8 @@ class ReservationController extends Controller
                             'booking_ID' => $id,
                             'meeting_ID' => $req->meeting_id,
                             'detail_topic' => $req->detail_topic,
-                            'detail_timestart' => date('Y-m-d H:i:s',strtotime($date_reserve[$i].' '.$time_reserve[$i][0])),
-                            'detail_timeout' => date('Y-m-d H:i:s' ,strtotime($date_reserve[$i].' '.$time_reserve[$i][1])),
+                            'detail_timestart' => date('Y-m-d H:i:s',strtotime($date_reserve[$i].' '.$time_reserve[0])),
+                            'detail_timeout' => date('Y-m-d H:i:s' ,strtotime($date_reserve[$i].' '.$time_reserve[1])),
                             'detail_count' => $req->detail_count,
                             'link' => $estimate_link
                         ]);

@@ -113,12 +113,23 @@
                   </div>
               </div>
             </div>
-            <div class="row" style="margin-top:10px">
+            <div  class="row" style="margin-top:15px" id="div_btn_time" style="display:none">
+              <div class="col-md-10" >
+                  <div class="form-group form-room">
+                      <label class="col-sm-2 control-label"></label>
+                      <div class="col-sm-10" id="btn_time">
+                        {{-- <a type='button' id='btnTime09' class='btn btn-danger' style='margin-right: 1rem; margin-top: 1rem;' disabled='disabled'>09</a>
+                        <a type='button' id='btnTime09' class='btn btn-danger' style='margin-right: 1rem; margin-top: 1rem;' disabled='disabled'>09</a> --}}
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row" style="margin-top:20px">
               <div class="col-md-7">
                   <div class="form-group form-room">
                       <label class="col-sm-3 control-label"></label>
                       <div class="col-sm-7">
-                        <form action="{{ url('control/reserve_adayinweek/form') }}" method="get">
+                        <form action="{{ url('control/reserve_adayinweek/form') }}" method="get" id="select_date_form">
                             <input type="hidden" name="meeting_ID" id="meeting_ID" value="{{$rooms->meeting_ID}}">
                             <input type="hidden" name="data_reserve" id="data_reserve" value="">
                             <input type="hidden" name="time_reserve" id="time_reserve" value="">
@@ -140,6 +151,7 @@
   var times = [] 
   var time_reserve = []
   var date_select = ''
+  var time_btn= []
   const meetingId = <?php echo $rooms->meeting_ID ?>;
   var date_now = moment().format('DD/MM/YYYY');
   $(function() {
@@ -157,7 +169,6 @@
           
           $('#confirm_reserve_date').hide()
           $('#div_date_list').hide()
-          //console.log(date_now)
           $('input[name="daterange"]').data('daterangepicker').setStartDate(date_now);
           $('input[name="daterange"]').data('daterangepicker').setEndDate(date_now);
         }
@@ -179,12 +190,16 @@
                   $('input[name="daterange"]').data('daterangepicker').setStartDate(date_now);
                   $('input[name="daterange"]').data('daterangepicker').setEndDate(date_now);
                   $('#div_date_list').hide()
+                  $('#div_btn_time').hide()
                   $('#confirm_reserve_date').hide()
                 }
                 else{
                   showDataReserve(data)
                   $('#data_reserve').val(JSON.stringify(data.date_reserve))
-                  $('#time_reserve').val(JSON.stringify(data.time_reserve))
+                  //$('#time_reserve').val(JSON.stringify(data.time_reserve))
+                  $('#div_btn_time').show()
+                  time_btn = data.time_btn
+                  render_btn_time()
                   $('#confirm_reserve_date').show()
                 }
               }
@@ -197,13 +212,80 @@
     var html = ''
     html += '<table class="table table-bordered">'
     for(index in data.date_reserve){
-      html+= '<tr><td>'+data.date_reserve[index]+'</td><td>'+data.time_reserve[index][0].substring(0,5)+' - '+data.time_reserve[index][1].substring(0,5)+'</td></tr>'
+      html+= '<tr><td>'+data.date_reserve[index]+'</td><td>เปิด '+data.time_reserve[index][0].substring(0,5)+' - '+data.time_reserve[index][1].substring(0,5)+'</td></tr>'
     }
     html += '</table>'
     $('#div_date_list').show()
     $('#list_reserve_title').html('รายการวันที่จอง')
     $('#list_reserve').html(html)
   }
+
+  function render_btn_time(){
+    var viewHTML = ''
+    for(index in time_btn){
+      if (time_btn[index]["can_book"] == 0 ) {
+        viewHTML += "<a type='button' id='btnTime"+parseInt(time_btn[index]["index"])+"' class='btn btn-danger' style='margin-right: 1rem; margin-top: 1rem;' disabled='disabled'>"+time_btn[index]["time"]+"</a>"
+      } else {
+        viewHTML += "<a type='button' id='btnTime"+parseInt(time_btn[index]["index"])+"' class='btn btn-success' style='margin-right: 1rem; margin-top: 1rem;' onclick='addTime(`"+time_btn[index]["index"]+"`)'>"+time_btn[index]["time"]+"</a>"
+      }
+    }
+    $('#btn_time').html(viewHTML)
+    setColorBtn()
+  }
+
+  function addTime (value) {
+    
+    if(arrTime.length == 2){
+      arrTime = []
+      arrTime[0] = value
+    }
+    else{
+      var hrs_st = parseInt(value.substring(0,2))
+      const checkIndex = arrTime.findIndex( element => {
+        return element === value
+      })
+      const checkErrorBackTime = arrTime.findIndex( element => {
+        return parseInt(element.substring(0,2)) >= hrs_st
+      })
+      if (checkIndex === -1) {
+        arrTime.push(value)
+      }
+      if (checkErrorBackTime === 0) {
+        arrTime = []
+        arrTime[0] = value
+      }
+    }
+    render_btn_time()
+    $('#time_reserve').val(JSON.stringify(arrTime))
+  }
+
+  function setColorBtn(){
+    var st,end = 0
+    if(arrTime.length == 2){
+      st = parseInt(arrTime[0].substring(0,2))
+      end = parseInt(arrTime[1].substring(0,2))
+    }
+    else if(arrTime.length == 1){
+      st = parseInt(arrTime[0].substring(0,2))
+      end = parseInt(arrTime[0].substring(0,2))
+    }
+    for(var n = st;n<=end;n++){
+      $('#btnTime'+n).removeClass('btn-success')
+      $('#btnTime'+n).addClass('btn-warning')
+    }
+  }
+
+  $('#confirm_reserve_date').click(function(e){
+    
+    if(arrTime.length == 0){
+      e.preventDefault();
+      alert('กรุณาเลือกเวลาที่จะจองก่อน')
+      //$('#select_date_form').submit(false); 
+    }
+    else{
+            $('#select_date_form').submit();
+    }
+  })
 
   </script>
 @endsection

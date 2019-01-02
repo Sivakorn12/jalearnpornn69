@@ -92,7 +92,7 @@ function confirmBooking(id) {
 
 function cancelBooking(id) {
   swal({
-    title: "คุณต้องการยกเลิกการจองใช่หรือไม่ ?",
+    title: "คุณต้องการไม่อนุมัติการจองใช่หรือไม่ ?",
     icon: "warning",
     buttons: true,
     dangerMode: true,

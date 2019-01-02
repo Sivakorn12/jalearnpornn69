@@ -40,23 +40,27 @@ class ExtraTimeController extends Controller
 
     public function add(Request $request){
         //dd(officer::dateFormatDB($request->date_start)." ".$request->ex_start.":00:00");
+        $extra_end = officer::dateFormatDB($request->date_start)." ".$request->ex_end.":00:00";
+        if($request->ex_end == "24"){
+            $extra_end = date('Y-m-d H:i:s',strtotime(officer::dateFormatDB($request->date_start)." 00:00:00" . "+1 days"));
+        }
         if(!isset($request->id)){
             DB::table('meeting_open_extra')->insert([
                 "extra_start" =>officer::dateFormatDB($request->date_start)." ".$request->ex_start.":00:00",
-                "extra_end" =>officer::dateFormatDB($request->date_start)." ".$request->ex_end.":00:00",
+                "extra_end" =>$extra_end,
             ]);
             return redirect('control/extratime/')
-                    ->with('successMessage','เพิ่มอุปกรณ์สำเร็จ');
+                    ->with('successMessage','เพิ่มการใช้งานพิเศษห้องสำเร็จ');
         }
         else{
             DB::table('meeting_open_extra')
                     ->where('extra_ID',$request->id)
                     ->update([
                         "extra_start" =>officer::dateFormatDB($request->date_start)." ".$request->ex_start.":00:00",
-                        "extra_end" =>officer::dateFormatDB($request->date_start)." ".$request->ex_end.":00:00",
+                        "extra_end" =>$extra_end,
                 ]);
             return redirect('control/extratime/')
-                ->with('successMessage','เพิ่มอุปกรณ์สำเร็จ');
+                ->with('successMessage','แก้ไขการใช้งานพิเศษสำเร็จ');
         }
 
     }
@@ -85,11 +89,15 @@ class ExtraTimeController extends Controller
         $end_dt = str_replace('/', '-', $dt_arr[1]);
         $st_dt = date('Y-m-d', strtotime($st_dt ));
         $end_dt = date('Y-m-d', strtotime($end_dt ));
+        $extra_end = $end_dt.' '.$req->ex_end.":00:00";
+        if($req->ex_end == "24"){
+            $extra_end = date('Y-m-d H:i:s',strtotime($end_dt." 00:00:00" . "+1 days"));
+        }
         if(!isset($req->id)){
             DB::table('meeting_over_time')->insert([
                 "meeting_id" => $req->room_id,
                 "start_date" => $st_dt.' '.$req->ex_start.":00:00",
-                "end_date" => $end_dt.' '.$req->ex_end.":00:00"
+                "end_date" =>$extra_end
             ]);
             return redirect('control/room_open/')
                     ->with('successMessage','เพิ่มเวลาการใช้งานพิเศษสำเร็จ');
@@ -100,7 +108,7 @@ class ExtraTimeController extends Controller
                     ->update([
                         "meeting_id" => $req->room_id,
                         "start_date" => $st_dt.' '.$req->ex_start.":00:00",
-                        "end_date" => $end_dt.' '.$req->ex_end.":00:00"
+                        "end_date" => $extra_end
                 ]);
             return redirect('control/room_open/')
                 ->with('successMessage','แก้ไขเวลาการใช้งานพิเศษสำเร็จ');

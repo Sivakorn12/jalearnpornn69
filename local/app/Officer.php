@@ -524,14 +524,14 @@ class Officer extends Model
             $mm = $d[1];
             $yy = $d[0]+543;
             $time = substr($dt[1],0,5);
-            return $dd.'-'.$mm.'-'.$yy.' '.$time;
+            return $dd.'/'.$mm.'/'.$yy.' '.$time;
         }
         else{
             $d = explode("-", $dt[0]);
             $dd = $d[2];
             $mm = $d[1];
             $yy = $d[0]+543;
-            return $dd.'-'.$mm.'-'.$yy;
+            return $dd.'/'.$mm.'/'.$yy;
         }
     }
 

@@ -98,36 +98,38 @@ class ReservationController extends Controller
         $dataequipment = DB::table('equipment')
                                 ->get();
                                 
-        if (!is_null($req->timeSelect)) {
         $timeSelect = json_decode($req->timeSelect);
+        
+        if (!is_null($req->timeSelect)) {
         $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
 
         $data = array(
-            'room' => $dataRoom,
-            'time_start' => $time_remain[0],
-            'time_end' => $time_remain[1],
-            'time_select' => $date_select,
-            'reserve_time' => $req->timeSelect,
-            'date_reserve' => $date_now,
-            'timeTH_select' => $req->dateSelect,
-            'data_equipment' => $dataequipment,
-            'sections' => func::GetSection(),
-            'dept' => func::GetDepartment(),
-            'faculty' => func::GetFaculty()
+          'room' => $dataRoom,
+          'time_start' => $time_remain[0],
+          'time_end' => $time_remain[1],
+          'time_select' => $date_select,
+          'reserve_time' => $req->timeSelect,
+          'date_reserve' => $date_now,
+          'timeTH_select' => $req->dateSelect,
+          'timeTH_select_end' => $req->endDateSelect,
+          'data_equipment' => $dataequipment,
+          'sections' => func::GetSection(),
+          'dept' => func::GetDepartment(),
+          'faculty' => func::GetFaculty()
         );
         } else {
         $data = array(
-            'room' => $dataRoom,
-            'time_start' => $req->dateSelect,
-            'time_end' => $req->endDateSelect,
-            'time_select' => $date_select,
-            'reserve_time' => '',
-            'date_reserve' => $date_now,
-            'timeTH_select' => $req->dateSelect,
-            'data_equipment' => $dataequipment,
-            'sections' => func::GetSection(),
-            'dept' => func::GetDepartment(),
-            'faculty' => func::GetFaculty()
+          'room' => $dataRoom,
+          'time_start' => $req->dateSelect,
+          'time_end' => $req->endDateSelect,
+          'time_select' => $date_select,
+          'reserve_time' => '',
+          'date_reserve' => $date_now,
+          'timeTH_select' => $req->dateSelect,
+          'data_equipment' => $dataequipment,
+          'sections' => func::GetSection(),
+          'dept' => func::GetDepartment(),
+          'faculty' => func::GetFaculty()
         );
         }
 
@@ -182,12 +184,21 @@ class ReservationController extends Controller
                         $data_count_equipment[$index] = $temp[1];
                     }
 
-                    $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
+                    $id_insert_booking = array();
+                    if (!is_null($req->reserve_date_end)) {
+                      $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1, false, true);
+                    } else {
+                      $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
+                    }
                     $reduce_equipment_now = true;
                     $accept_borrow = true;
                     func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now,$accept_borrow);
                 } else {
+                  if (!is_null($req->reserve_date_end)) {
+                    $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1, false, true);
+                  } else {
                     $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
+                  }
                 }
     
                 // check have file

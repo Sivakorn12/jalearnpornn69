@@ -96,7 +96,7 @@ function cancelBooking(id) {
     icon: "warning",
     buttons: true,
     dangerMode: true,
-    buttons: ["cancel", "ยกเลิก"]
+    buttons: ["ยกเลิก", "ตกลง"]
   })
   .then((willDelete) => {
     if (willDelete) {

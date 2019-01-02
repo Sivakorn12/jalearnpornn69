@@ -33,6 +33,7 @@ class RoomController extends Controller
         $rooms = DB::table('meeting_room')
                  ->join('meeting_type','meeting_room.meeting_type_ID','=','meeting_type.meeting_type_ID')
                  ->join('building as b','meeting_room.meeting_buiding','=','b.building_id')
+                 ->orderBy('b.building_name')
                  ->get();
         $data = array(
             'rooms' => $rooms
@@ -97,7 +98,7 @@ class RoomController extends Controller
           $validator = Validator::make($request->all(),$rule,$msg);
 
           if(!$resultUrl) {
-            $validator->getMessageBag()->add('est_link', 'ลิ้งประเมินไม่ถูกต้อง');
+            $validator->getMessageBag()->add('est_link', 'ลิ้งค์ประเมินไม่ถูกต้อง');
             return redirect('control/room/form')
                         ->withErrors($validator)
                         ->withInput($request->input());

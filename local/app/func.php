@@ -89,8 +89,6 @@ class func extends Model
         return $data;
     }
 
-    
-
     public static function GET_EQUIPMENT () {
         $dataEquipment = DB::table('equipment')
                             ->get();
@@ -243,7 +241,7 @@ class func extends Model
         return $data_openExtra;
     }
 
-    public static function SET_DATA_BOOKING ($req, $time_start, $time_out, $status=3, $flag_date_range = false) {
+    public static function SET_DATA_BOOKING ($req, $time_start, $time_out, $status=3, $flag_date_range = false, $flag_date_range_with_time = false) {
         $data_meetingroom = DB::table('meeting_room')
                                 ->where('meeting_ID', $req->meeting_id)
                                 ->first();
@@ -254,7 +252,6 @@ class func extends Model
         if ($flag_date_range) {
           $time_range = func::GET_TIME_OPEN_ROOM_RANGE($req->meeting_id, $req->start_range, $req->end_range);
           $checkInDate = func::GET_CHECKIN_DATE_RANGE($req->start_range, $req->end_range);
-
           for ($index = 0; $index < sizeof($time_range); $index++) {
             $id = DB::table('booking')
                             ->insertGetId([
@@ -280,33 +277,84 @@ class func extends Model
                         'link' => $estimate_link
                     ]);
             array_push($id_insert, $id);
-        }
+          }
+
+
         } else {
-          for ($index = 0; $index < sizeof($time_start); $index++) {
-              $id = DB::table('booking')
-                              ->insertGetId([
-                                  'status_ID' => $status,
-                                  'section_ID' => $req->section_id ?? null,
-                                  'department_ID' => $req->department_id ?? null,
-                                  'faculty_ID' => $req->faculty_id ?? null,
-                                  'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
-                                  'user_ID' => $req->user_id,
-                                  'booking_name' => $req->contract_name ?? $req->user_name,
-                                  'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
-                                  'booking_date' => date('Y-m-d H:i:s'),
-                                  'checkin' => $req->time_select
-                              ]);
-              DB::table('detail_booking')
-                      ->insert([
-                          'booking_ID' => $id,
-                          'meeting_ID' => $req->meeting_id,
-                          'detail_topic' => $req->detail_topic,
-                          'detail_timestart' => $time_start[$index],
-                          'detail_timeout' => $time_out[$index],
-                          'detail_count' => $req->detail_count,
-                          'link' => $estimate_link
-                      ]);
-              array_push($id_insert, $id);
+          if ($flag_date_range_with_time) {
+            $timeSelect = json_decode($req->reserve_time);
+            $temp_date = explode('-', $req->time_select);
+            $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
+            $temp_end_date_select = explode('-', $req->reserve_date_end);
+
+            $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
+
+            $booking_startTime = array();
+            $booking_endTime = array();
+
+            $date_checkin = array();
+
+            for ($index = $temp_date[2]; $index <= $temp_end_date_select[0]; $index++) {
+              for ($inner = 0; $inner < sizeof($time_remain[0]); $inner++) {
+                array_push($booking_startTime, ($temp_date[0].'-'.$temp_date[1].'-'.$index.' '.$time_remain[0][$inner]));
+                array_push($booking_endTime, ($temp_date[0].'-'.$temp_date[1].'-'.$index.' '.$time_remain[1][$inner]));
+              }
+              array_push($date_checkin, ($temp_date[0].'-'.$temp_date[1].'-'.$index));
+            }
+
+            for ($index = 0; $index < sizeof($booking_startTime); $index++) {
+                $id = DB::table('booking')
+                                ->insertGetId([
+                                    'status_ID' => $status,
+                                    'section_ID' => $req->section_id ?? null,
+                                    'department_ID' => $req->department_id ?? null,
+                                    'faculty_ID' => $req->faculty_id ?? null,
+                                    'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
+                                    'user_ID' => $req->user_id,
+                                    'booking_name' => $req->contract_name ?? $req->user_name,
+                                    'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                                    'booking_date' => date('Y-m-d H:i:s'),
+                                    'checkin' => $date_checkin[$index]
+                                ]);
+                DB::table('detail_booking')
+                        ->insert([
+                            'booking_ID' => $id,
+                            'meeting_ID' => $req->meeting_id,
+                            'detail_topic' => $req->detail_topic,
+                            'detail_timestart' => $booking_startTime[$index],
+                            'detail_timeout' => $booking_endTime[$index],
+                            'detail_count' => $req->detail_count,
+                            'link' => $estimate_link
+                        ]);
+                array_push($id_insert, $id);
+            }
+          } else {
+            for ($index = 0; $index < sizeof($time_start); $index++) {
+                $id = DB::table('booking')
+                                ->insertGetId([
+                                    'status_ID' => $status,
+                                    'section_ID' => $req->section_id ?? null,
+                                    'department_ID' => $req->department_id ?? null,
+                                    'faculty_ID' => $req->faculty_id ?? null,
+                                    'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
+                                    'user_ID' => $req->user_id,
+                                    'booking_name' => $req->contract_name ?? $req->user_name,
+                                    'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                                    'booking_date' => date('Y-m-d H:i:s'),
+                                    'checkin' => $req->time_select
+                                ]);
+                DB::table('detail_booking')
+                        ->insert([
+                            'booking_ID' => $id,
+                            'meeting_ID' => $req->meeting_id,
+                            'detail_topic' => $req->detail_topic,
+                            'detail_timestart' => $time_start[$index],
+                            'detail_timeout' => $time_out[$index],
+                            'detail_count' => $req->detail_count,
+                            'link' => $estimate_link
+                        ]);
+                array_push($id_insert, $id);
+            }
           }
         }
         return $id_insert;
@@ -667,7 +715,7 @@ class func extends Model
                       [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $endDate],
                     ])
                     ->join('booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
-                    ->where('booking.status_ID', [1, 3])
+                    ->whereIn('booking.status_ID', [1, 3])
                     ->get();
                     
     if(sizeof($isReseve) > 0) {
@@ -675,5 +723,59 @@ class func extends Model
     } else {
       return false;
     }
+  }
+
+  public static function CHECK_IS_MATCH_ROOM_OPEN($roomId, $start_date, $end_date = '') {
+    $formatter_day_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    $formatter_day_th = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+
+    // if (strlen($end_date) == 0) {
+    //   dd(true);
+    //   $temp_day_start = date_create($start_date);
+    //   $temp_day_start = date_format($temp_day_start, 'r');
+    //   $day_start = substr($temp_day_start, 0, 3);
+    //   $index_of_day = array_search($day_start, $formatter_day_en);
+
+    //   $data_room_open_time = DB::table('room_open_time')
+    //                           ->where('meeting_ID', $roomId)
+    //                           ->where('day_id', $index_of_day + 1)
+    //                           ->first();
+
+    //   if ($data_room_open_time->open_flag == 1) {
+    //     return false;
+    //   } else {
+    //     return true;
+    //   }
+    // } else {
+      $temp_day = date_create($start_date);
+      $temp_day = date_format($temp_day, 'r');
+      $day_start = substr($temp_day, 0, 3);
+      $index_day_start = array_search($day_start, $formatter_day_en);
+
+      $temp_end_day = date_create($end_date);
+      $temp_end_day = date_format($temp_end_day, 'r');
+      $day_end = substr($temp_end_day, 0, 3);
+      $index_day_end = array_search($day_end, $formatter_day_en);
+
+      $room_open_time = DB::table('room_open_time')
+                              ->select('open_time', 'close_time')
+                              ->where('meeting_ID', $roomId)
+                              ->where([
+                                  ['day_id', '>=', $index_day_start + 1],
+                                  ['day_id', '<=', $index_day_end + 1]
+                              ])
+                              ->where('open_flag', 1)
+                              ->get();
+
+        for ($index = 0; $index < sizeof($room_open_time); $index++) {
+          $tmpTimeStart = $room_open_time[0]->open_time;
+          $tmpTimeEnd = $room_open_time[0]->close_time;
+
+          if ($tmpTimeStart != $room_open_time[$index]->open_time || $tmpTimeEnd != $room_open_time[$index]->close_time) {
+            return true;
+          }
+        }
+        return false;
+    // }
   }
 }

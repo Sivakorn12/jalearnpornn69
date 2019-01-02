@@ -52,7 +52,7 @@ class DashboardController extends Controller
                 $value->booking_ID,
                 [
                     'backgroundColor' =>$colors[$value->meeting_ID-1],
-                    'textColor' => '#fff',
+                    'textColor' => '#000',
                     'description' => "Event Description",
                     'className'=> 'moreBorder'
                 ]

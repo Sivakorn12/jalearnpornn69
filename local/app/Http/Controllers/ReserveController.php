@@ -102,8 +102,8 @@ class ReserveController extends Controller
 
   public function submitReserve(Request $req) {
       $msg = [
-      'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
-      'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+      'detail_topic.required' => 'กรุณาระบุหัวข้อการใช้งาน',
+      'detail_count.required' => 'กรุณาระบุจำนวนผู้ใช้งาน',
       'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ',
       'contract_file.required' => "กรุณาแนบเอกสารหลักฐานการติดต่อจองห้องประชุม"
       ];
@@ -256,15 +256,15 @@ class ReserveController extends Controller
       return response()->json(['error'=> 'ไม่สามารถจองห้องย้อนหลังได้']);
     } else {
       $isRoomOpen = func::CHECK_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
-			$isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->roomid, $date_select, $end_date_select);
+      $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->roomid, $date_select, $end_date_select);
       $isMatchTimeRoomOpen = func::CHECK_IS_MATCH_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
 
       if ($isHoliday) {
         return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);
       }
-      // if ($isReserveRoom) {
-      //   return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากมีคนจองก่อนหน้าแล้ว']);
-      // }
+      if ($isReserveRoom) {
+        return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากห้องนี้มีการจองอยู่']);
+      }
       if ($isMatchTimeRoomOpen) {
         return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากเวลาเปิดห้องไม่ตรงกัน']);
       }
@@ -370,8 +370,8 @@ class ReserveController extends Controller
 
   public function SET_EDIT_DATA_RESERVE (Request $req) {
       $msg = [
-      'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
-      'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+      'detail_topic.required' => 'กรุณาระบุหัวข้อการใช้งาน',
+      'detail_count.required' => 'กรุณาระบุจำนวนผู้ใช้งาน',
       'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ',
       ];
   

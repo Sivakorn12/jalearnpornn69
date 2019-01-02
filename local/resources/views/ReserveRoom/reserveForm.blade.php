@@ -29,13 +29,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">วันที่ใช้งาน</label>
-            <div class="col-sm-10">
-              <p class="form-control-static">{{$timeTH_select}}</p>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">เวลาที่จอง</label>
+            <label class="col-sm-2 control-label">วันเวลาที่ใช้งาน</label>
             @if(is_array($time_start))
             <div class="col-sm-5">
                 @for($index = 0; $index < sizeof($time_start); $index++)
@@ -49,14 +43,14 @@
             @endif
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><span style="color: red;">* </span>หัวข้อการประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>หัวข้อการใช้งาน</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_topic" maxlength="100">
               <p  style="color:red">@if($errors->has('detail_topic')) {{$errors->first('detail_topic')}}@endif</p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><span style="color: red;">* </span>จำนวนผู้เข้าประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>จำนวนผู้ใช้งาน</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="detail_count" maxlength="3">
               <p  style="color:red">@if($errors->has('detail_count')) {{$errors->first('detail_count')}}@endif</p>

@@ -138,7 +138,7 @@ class ReservationController extends Controller
 
     public function confirm(Request $req){
         $msg = [
-            'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
+            'detail_topic.required' => "กรุณาระบุหัวข้อการใช้งาน",
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",
             'contract_name.required' => "กรุณาระบุชื่อผู้จองห้องประชุม",
             'user_tel.required' => "กรุณาระบุเบอร์โทรศัพท์ผู้จองห้องประชุม",
@@ -393,7 +393,7 @@ class ReservationController extends Controller
     public function reserve_adayinweek(Request $req){
         //dd($req->all());
         $msg = [
-            'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
+            'detail_topic.required' => "กรุณาระบุหัวข้อการใช้งาน",
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",
             'contract_name.required' => "กรุณาระบุชื่อผู้จองห้องประชุม",
             'user_tel.required' => "กรุณาระบุเบอร์โทรศัพท์ผู้จองห้องประชุม",

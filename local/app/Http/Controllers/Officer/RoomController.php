@@ -179,7 +179,7 @@ class RoomController extends Controller
           $validator = Validator::make($request->all(),$rule,$msg);
           
           if(!$resultUrl) {
-            $validator->getMessageBag()->add('est_link', 'ลิ้งประเมินไม่ถูกต้อง');
+            $validator->getMessageBag()->add('est_link', 'ลิ้งค์ประเมินไม่ถูกต้อง');
             return redirect('control/room/form')
                         ->withErrors($validator)
                         ->withInput($request->input());

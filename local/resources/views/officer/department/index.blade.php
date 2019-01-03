@@ -109,7 +109,7 @@ use App\Officer as officer;
         })
         .then((willDelete) => {
             if (willDelete) {
-                var path = "{{url('control/section/delete')}}/"+id
+                var path = "{{url('control/department/delete')}}/"+id
                 window.location.href = path
             }
         })

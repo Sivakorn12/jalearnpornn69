@@ -98,36 +98,38 @@ class ReservationController extends Controller
         $dataequipment = DB::table('equipment')
                                 ->get();
                                 
-        if (!is_null($req->timeSelect)) {
         $timeSelect = json_decode($req->timeSelect);
+        
+        if (!is_null($req->timeSelect)) {
         $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
 
         $data = array(
-            'room' => $dataRoom,
-            'time_start' => $time_remain[0],
-            'time_end' => $time_remain[1],
-            'time_select' => $date_select,
-            'reserve_time' => $req->timeSelect,
-            'date_reserve' => $date_now,
-            'timeTH_select' => $req->dateSelect,
-            'data_equipment' => $dataequipment,
-            'sections' => func::GetSection(),
-            'dept' => func::GetDepartment(),
-            'faculty' => func::GetFaculty()
+          'room' => $dataRoom,
+          'time_start' => $time_remain[0],
+          'time_end' => $time_remain[1],
+          'time_select' => $date_select,
+          'reserve_time' => $req->timeSelect,
+          'date_reserve' => $date_now,
+          'timeTH_select' => $req->dateSelect,
+          'timeTH_select_end' => $req->endDateSelect,
+          'data_equipment' => $dataequipment,
+          'sections' => func::GetSection(),
+          'dept' => func::GetDepartment(),
+          'faculty' => func::GetFaculty()
         );
         } else {
         $data = array(
-            'room' => $dataRoom,
-            'time_start' => $req->dateSelect,
-            'time_end' => $req->endDateSelect,
-            'time_select' => $date_select,
-            'reserve_time' => '',
-            'date_reserve' => $date_now,
-            'timeTH_select' => $req->dateSelect,
-            'data_equipment' => $dataequipment,
-            'sections' => func::GetSection(),
-            'dept' => func::GetDepartment(),
-            'faculty' => func::GetFaculty()
+          'room' => $dataRoom,
+          'time_start' => $req->dateSelect,
+          'time_end' => $req->endDateSelect,
+          'time_select' => $date_select,
+          'reserve_time' => '',
+          'date_reserve' => $date_now,
+          'timeTH_select' => $req->dateSelect,
+          'data_equipment' => $dataequipment,
+          'sections' => func::GetSection(),
+          'dept' => func::GetDepartment(),
+          'faculty' => func::GetFaculty()
         );
         }
 
@@ -136,7 +138,7 @@ class ReservationController extends Controller
 
     public function confirm(Request $req){
         $msg = [
-            'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
+            'detail_topic.required' => "กรุณาระบุหัวข้อการใช้งาน",
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",
             'contract_name.required' => "กรุณาระบุชื่อผู้จองห้องประชุม",
             'user_tel.required' => "กรุณาระบุเบอร์โทรศัพท์ผู้จองห้องประชุม",
@@ -182,12 +184,21 @@ class ReservationController extends Controller
                         $data_count_equipment[$index] = $temp[1];
                     }
 
-                    $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
+                    $id_insert_booking = array();
+                    if (!is_null($req->reserve_date_end)) {
+                      $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1, false, true);
+                    } else {
+                      $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
+                    }
                     $reduce_equipment_now = true;
                     $accept_borrow = true;
                     func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now,$accept_borrow);
                 } else {
+                  if (!is_null($req->reserve_date_end)) {
+                    $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1, false, true);
+                  } else {
                     $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 1);
+                  }
                 }
     
                 // check have file
@@ -312,20 +323,23 @@ class ReservationController extends Controller
                     array_push($time_reserve,[substr($chk_room_open->extra_start,-8),substr($chk_room_open->extra_end,-8)]);
                     $ex_start = substr($chk_room_open->extra_start,-8,2);
                     $ex_end = substr($chk_room_open->extra_end,-8,2);
-                    $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
+                    $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end,'intersect');
                 }
+
                 $reserve_info = officer::isHasReserveRoom($req->meeting_id,$date_point);
                 if($reserve_info != false){
                     foreach($reserve_info  as $key => $res_inf){
                         $ex_start = substr($res_inf->detail_timestart,-8,2);
                         $ex_end = substr($res_inf->detail_timeout,-8,2);
-                        $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end);
+                        $time_btn = officer::setDataBtnReserve($time_btn,$ex_start,$ex_end,'except');
+                        
                     }
                     // return response()->json([
                     //     'success' => 0,
                     //     'message' => 'ไม่สามารถจองวันที่เลือกได้เนื่องจากห้องถูกจองเเล้ว'
                     // ]);
                 }
+                //dd($time_btn);
                 if(officer::isHoliday($date_point)){
                     return response()->json([
                         'success' => 0,
@@ -379,7 +393,7 @@ class ReservationController extends Controller
     public function reserve_adayinweek(Request $req){
         //dd($req->all());
         $msg = [
-            'detail_topic.required' => "กรุณาระบุหัวข้อการประชุม",
+            'detail_topic.required' => "กรุณาระบุหัวข้อการใช้งาน",
             'detail_count.required' => "กรุณาระบุจำนวนผู้เข้าร่วมประชุม",
             'contract_name.required' => "กรุณาระบุชื่อผู้จองห้องประชุม",
             'user_tel.required' => "กรุณาระบุเบอร์โทรศัพท์ผู้จองห้องประชุม",

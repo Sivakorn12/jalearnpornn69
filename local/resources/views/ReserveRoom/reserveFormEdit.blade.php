@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label">เวลาที่จอง</label>
+            <label class="col-sm-2 control-label">วันเวลาที่ใช้งาน</label>
             <div class="col-sm-5">
                 @for($index = 0; $index < sizeof($time_start); $index++)
                   <p class="form-control-static">{{$time_start[$index]}} - {{$time_end[$index]}}</p>
@@ -37,7 +37,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><span style="color: red;">* </span>หัวข้อการประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>หัวข้อการใช้งาน</label>
             <div class="col-sm-10">
             @if(isset($dataReserve->detail_topic)) <input type="text" class="form-control" name="detail_topic" value="{{$dataReserve->detail_topic}}" maxlength="100">
             @else <input type="text" class="form-control" name="detail_topic" maxlength="100">
@@ -46,7 +46,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><span style="color: red;">* </span>จำนวนผู้เข้าประชุม</label>
+            <label class="col-sm-2 control-label"><span style="color: red;">* </span>จำนวนผู้ใช้งาน</label>
             <div class="col-sm-10">
             @if(isset($dataReserve->detail_topic)) <input type="text" class="form-control" value="{{$dataReserve->detail_count}}" name="detail_count" maxlength="3">
             @else <input type="text" class="form-control" name="detail_count" maxlength="3">

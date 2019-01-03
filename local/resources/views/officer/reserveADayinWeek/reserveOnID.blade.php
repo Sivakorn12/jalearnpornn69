@@ -163,6 +163,7 @@
           format: 'DD/MM/YYYY'
       }
       }, function(start, end, label) {
+        arrTime = []
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         if(start.day() != end.day()){
           alert('กรุณาเลือกวันให้ตรงกัน')
@@ -184,6 +185,7 @@
                 meeting_id:meetingId
               },
               success: function(data) {
+                //console.log(data)
                 if(data.success == 0){
                  
                   alert(data.message)

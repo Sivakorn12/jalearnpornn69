@@ -56,15 +56,16 @@ class ReserveController extends Controller
     $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
     
     $dataRoom = DB::table('meeting_room')
-        ->where('meeting_ID', $req->meetingId)
-        ->first();
+		->where('meeting_ID', $req->meetingId)
+		->first();
     
     $dataequipment = DB::table('equipment')
-                            ->get();
-                            
-    if (!is_null($req->timeSelect)) {
-      $timeSelect = json_decode($req->timeSelect);
-      $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
+		->get();
+
+		$timeSelect = json_decode($req->timeSelect);
+
+		if (sizeof($timeSelect) != 0) {
+			$time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
 
       $data = array(
         'room' => $dataRoom,
@@ -74,6 +75,7 @@ class ReserveController extends Controller
         'reserve_time' => $req->timeSelect,
         'date_reserve' => $date_now,
         'timeTH_select' => $req->dateSelect,
+        'timeTH_select_end' => $req->endDateSelect,
         'data_equipment' => $dataequipment,
         'sections' => func::GetSection(),
         'dept' => func::GetDepartment(),
@@ -100,8 +102,8 @@ class ReserveController extends Controller
 
   public function submitReserve(Request $req) {
       $msg = [
-      'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
-      'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+      'detail_topic.required' => 'กรุณาระบุหัวข้อการใช้งาน',
+      'detail_count.required' => 'กรุณาระบุจำนวนผู้ใช้งาน',
       'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ',
       'contract_file.required' => "กรุณาแนบเอกสารหลักฐานการติดต่อจองห้องประชุม"
       ];
@@ -121,21 +123,21 @@ class ReserveController extends Controller
           if (is_numeric($req->user_tel) && is_string($req->detail_topic) && is_numeric($req->detail_count)) {
 
             if (!is_null($req->reserve_time)) {
-              $timeSelect = json_decode($req->reserve_time);
+							$timeSelect = json_decode($req->reserve_time);
               $temp_date = explode('-', $req->time_select);
               $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
-  
-              $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
+							
+							$time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
               $booking_startTime = array();
               $booking_endTime = array();
-  
+							
               for ($index = 0; $index < sizeof($time_remain[0]); $index++) {
-                  array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
-                  array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
+								array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
+								array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
               }
-
+							
               if(isset($req)) {
-                    if (isset($req->hdnEq)) {
+								if (isset($req->hdnEq)) {
                       for($index = 0 ; $index < count($req->hdnEq); $index++){
                           $temp = explode(",",$req->hdnEq[$index]);
                           $data_em = DB::table('equipment')
@@ -146,12 +148,21 @@ class ReserveController extends Controller
                           $data_count_equipment[$index] = $temp[1];
                       }
 
-                      $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
+											$id_insert_booking = array();
+											if (!is_null($req->reserve_date_end)) {
+												$id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3, false, true);
+											} else {
+												$id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
+											}
                       $reduce_equipment_now = false;
-                      $accept_borrow = false;
+											$accept_borrow = false;
                       func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow);
                   } else {
+										if (!is_null($req->reserve_date_end)) {
+											$id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3, false, true);
+										} else {
                       $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
+										}
                   }
 
                     // check have file
@@ -246,15 +257,18 @@ class ReserveController extends Controller
     } else {
       $isRoomOpen = func::CHECK_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
       $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->roomid, $date_select, $end_date_select);
+      $isMatchTimeRoomOpen = func::CHECK_IS_MATCH_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
 
       if ($isHoliday) {
         return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);
       }
       if ($isReserveRoom) {
-        return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากมีคนจองก่อนหน้าแล้ว']);
+        return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากห้องนี้มีการจองอยู่']);
+      }
+      if ($isMatchTimeRoomOpen) {
+        return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากเวลาเปิดห้องไม่ตรงกัน']);
       }
       if ($isRoomOpen) {
-        if (strlen($end_date_select) == 0) {
           $date_now = date('Y-m-d');
           $timenow = date('H');
       
@@ -304,9 +318,6 @@ class ReserveController extends Controller
   
           $time_empty = func::GET_TIMEUSE ($date_select, $time_reserve, $empty_timeuse, $req->roomid);
           return response()->json(['time_empty'=> $time_empty, 'time_reserve' => $time_reserve]);
-        } else {
-          return response()->json(['time_empty'=> true]);
-        }
       } else {
         $dayCloseRoom = func::CHECK_ROOM_CLOSE($req->roomid, $date_select, $end_date_select);
         return response()->json(['error'=> $dayCloseRoom]);
@@ -359,8 +370,8 @@ class ReserveController extends Controller
 
   public function SET_EDIT_DATA_RESERVE (Request $req) {
       $msg = [
-      'detail_topic.required' => 'กรุณาระบุหัวข้อการประชุม',
-      'detail_count.required' => 'กรุณาระบุจำนวนผู้เข้าประชุม',
+      'detail_topic.required' => 'กรุณาระบุหัวข้อการใช้งาน',
+      'detail_count.required' => 'กรุณาระบุจำนวนผู้ใช้งาน',
       'user_tel.required' => 'กรุณาระบุเบอร์โทรติดต่อ',
       ];
   

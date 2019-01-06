@@ -21,7 +21,6 @@ class HistoryController extends Controller
                             ->join('status_room', 'booking.status_ID', '=', 'status_room.status_ID')
                             ->join('meeting_room', 'detail_booking.meeting_ID', '=', 'meeting_room.meeting_ID')
                             ->where('booking.user_ID', Auth::user()->id)
-                            ->where('booking.status_ID', '!=', 4)
                             ->OrderBy('booking_date', 'desc')
                             ->get();
 
@@ -45,12 +44,14 @@ class HistoryController extends Controller
                     $check_dateCheckin[0][$index] = 2;
                 } else if ($dataHistory[$index]->status_ID == 3) {
                     $check_dateCheckin[0][$index] = 3;
+                } else if ($dataHistory[$index]->status_ID == 4) {
+                    $check_dateCheckin[0][$index] = 4;
                 }
             } else {
                 if ($dataHistory[$index]->status_ID == 1) {
                     $check_dateCheckin[0][$index] = 1;
                 } else {
-                    $check_dateCheckin[0][$index] = 4;
+                    $check_dateCheckin[0][$index] = 5;
                 }
             }
 
@@ -148,5 +149,13 @@ class HistoryController extends Controller
                             ->OrderBy('checkin', 'desc')
                             ->get();
         return $dataBorrow;
+    }
+
+    public function ADD_COMMENT_RESERVE (Request $req) {
+        DB::table('booking')
+            ->where('booking_ID', $req->data_booking)
+            ->update(['comment' => $req->comment]);
+
+        return response()->json(['message' => 'แจ้งหมายเหตุสำเร็จ']);
     }
 }

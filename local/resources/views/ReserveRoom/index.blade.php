@@ -18,7 +18,7 @@
                         <th>
                             ประเภทห้อง
                         </th>
-                        <th>
+                        <th id="tb-build">
                             อาคาร
                         </th>
                         <th>
@@ -60,6 +60,8 @@
 <script>
     $(document).ready(function() {
         $('#table_room').DataTable();
+
+        $('#tb-build').click();
         
         var Oncheck_message = '{{session('message')}}'
         

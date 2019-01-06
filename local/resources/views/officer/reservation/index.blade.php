@@ -22,7 +22,7 @@ use App\Officer as officer;
                     <th>
                         ประเภทห้อง
                     </th>
-                    <th>
+                    <th id="tb-build">
                         อาคาร
                     </th>
                     <th>
@@ -64,6 +64,7 @@ use App\Officer as officer;
 <script>       
     $(document).ready(function() {
       $('#table_room').DataTable();
+      $('#tb-build').click();
       $('[data-toggle="tooltip"]').tooltip(); 
       var msg = ''
       if('{{session("successMessage")}}' != null){

@@ -29,6 +29,7 @@ Route::get('/history', 'HistoryController@index');
 Route::get('/history/deletedata', 'HistoryController@DELETE_RESERVE');
 Route::get('/deleteborrow', 'HistoryController@DELETE_BORROW');
 Route::get('/getQr', 'HistoryController@GET_QRCODE');
+Route::post('/history/submitComment', 'HistoryController@ADD_COMMENT_RESERVE');
 
 Route::get('/download/file','Officer\DocumentController@downloadFile');
 

@@ -54,6 +54,7 @@ class Officer extends Model
                             <th>เอกสาร</th>
                             <th>สถานะการจอง</th>
                             <th>จัดการ</th>
+                            <th>หมายเหตุ</th>
                         </tr>
                     </thead>
                 <tbody>';
@@ -96,6 +97,10 @@ class Officer extends Model
                         $html=$html.'<i class="fa fa-check-circle fa-lg" aria-hidden="true" style="color: green"></i>';
                         }
                     }
+                $html=$html.'<td>';
+                if($booking->status_ID==2){
+                    $html=$html.'<button type="button" class="btn btn-info btn-xs" onclick="submitComment('.$booking->booking_ID.')">แจ้งหมายเหตุ</button> </td>';
+                }
                 $html=$html.'</td></tr>';
                 }
             }   

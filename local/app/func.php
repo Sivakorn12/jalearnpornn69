@@ -778,4 +778,13 @@ class func extends Model
         return false;
     // }
   }
+
+  public static function getEmailDomainToArray(){
+      $arr = array();
+      $domains = DB::table('type_email')->get();
+      foreach($domains as $dm){
+          array_push($arr,$dm->Name_Type);
+      }
+      return  $arr;
+  }
 }

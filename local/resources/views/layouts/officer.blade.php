@@ -140,6 +140,7 @@ use App\Officer as officer;
                                 <li ><a href="{{ url ('control/department/') }}"><i class="fa fa-circle-o" aria-hidden="true"></i> ภาควิชา</a></li>
                                 <li ><a href="{{ url ('control/faculty/') }}"><i class="fa fa-circle-o" aria-hidden="true"></i> คณะ</a></li>
                                 <li ><a href="{{ url ('control/building/') }}"><i class="fa fa-circle-o" aria-hidden="true"></i> อาคาร</a></li>
+                                <li ><a href="{{ url ('control/email_domain/') }}"><i class="fa fa-circle-o" aria-hidden="true"></i> อีเมลโดเมน</a></li>
                             </ul>
                         </li>
                         

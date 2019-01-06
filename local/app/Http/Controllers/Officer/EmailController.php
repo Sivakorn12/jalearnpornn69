@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Officer as officer;
 
-class FacultyController extends Controller
+class EmailController extends Controller
 {
+    //
     //
     public function __construct(){
         
@@ -31,48 +32,40 @@ class FacultyController extends Controller
     }
 
     public function index(){
-        $faculty = DB::table('faculty')
+        $type_email = DB::table('type_email')
                  ->get();
         $data = array(
-            'faculty' => $faculty
+            'type_email' => $type_email
         );
-        return view('officer/faculty/index',$data);
+        return view('officer/email_domain/index',$data);
     }
 
     public function save(Request $req){
         //dd($req->all());
-        if($req->faculty_id != ''){
+        if($req->Type_Email_ID != ''){
             // update
-            DB::table('faculty')
-                ->where('faculty_ID',$req->faculty_id)
+            DB::table('type_email')
+                ->where('Type_Email_ID',$req->Type_Email_ID)
                 ->update([
-                    'faculty_name' => $req->faculty_name
+                    'Name_Type' => $req->Name_Type
                 ]);
-            return redirect('control/faculty/')
+            return redirect('control/email_domain/')
                 ->with('successMessage','แก้ไขข้อมูลคณะสำเร็จ');
         }
         else{
             // new
-            DB::table('faculty')
+            DB::table('type_email')
                 ->insert([
-                    'faculty_name' => $req->faculty_name
+                    'Name_Type' => $req->Name_Type
                 ]);
-            return redirect('control/faculty/')
+            return redirect('control/email_domain/')
                 ->with('successMessage','เพิ่มข้อมูลคณะสำเร็จ');
         }
     }
 
     public function delete($id){
-
-        $dep = DB::table('department')->where('faculty_ID',$id)->get()->toArray();
-        if(sizeof($dep)>0 or officer::useFacultyInBooking($id)){
-            return redirect('control/faculty')
-                ->with('errorMessage','ไม่สามารถลบข้อมูลคณะได้เนื่องจากมีการอ้างอิงถึงข้อมูล');
-        }
-        else{
-            DB::table('faculty')->where('faculty_ID',$id)->delete();
-            return redirect('control/faculty');
-        }
+        DB::table('type_email')->where('Type_Email_ID',$id)->delete();
+        return redirect('control/email_domain');
         
     }
 }

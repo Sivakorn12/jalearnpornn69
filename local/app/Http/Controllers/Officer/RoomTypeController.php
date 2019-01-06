@@ -66,6 +66,10 @@ class RoomTypeController extends Controller
     }
 
     public function delete($id){
+        if(officer::isUseRoomType($id)){
+            return redirect('control/roomtype')
+                ->with('errorMessage','ไม่สามารถลบข้อมูลประเภทห้องได้เนื่องจากมีการอ้างอิงถึงข้อมูล');
+        }
         DB::table('meeting_type')->where('meeting_type_ID',$id)->delete();
         return redirect('control/roomtype');
     }

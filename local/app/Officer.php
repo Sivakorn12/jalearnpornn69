@@ -777,4 +777,54 @@ class Officer extends Model
         }
         return $time_btn;
     }
+
+    public static function useSectionInBooking($section_id){
+        $result = DB::table('booking')
+                        ->where('section_ID',$section_id)
+                        ->get();
+        if(sizeof($result)>0){
+            return true;
+        }
+        return false;
+    }
+    public static function useDepartmentInBooking($dep_id){
+        $result = DB::table('booking')
+                        ->where('department_ID',$dep_id)
+                        ->get();
+        if(sizeof($result)>0){
+            return true;
+        }
+        return false;
+    }
+
+    public static function useFacultyInBooking($faculty_ID){
+        $result = DB::table('booking')
+                        ->where('faculty_ID',$faculty_ID)
+                        ->get();
+        if(sizeof($result)>0){
+            return true;
+        }
+        return false;
+    }
+    public static function isUseBuilding($meeting_buiding){
+        $result = DB::table('meeting_room')
+                        ->where('meeting_buiding',$meeting_buiding)
+                        ->get();
+        if(sizeof($result)>0){
+            return true;
+        }
+        return false;
+    }
+    public static function isUseRoomType($meeting_type_ID){
+        $result = DB::table('meeting_room')
+                        ->where('meeting_type_ID',$meeting_type_ID)
+                        ->get();
+        if(sizeof($result)>0){
+            return true;
+        }
+        return false;
+    }
+    
+    
+    
 }

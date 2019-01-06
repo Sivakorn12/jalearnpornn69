@@ -10,6 +10,7 @@ use DB;
 use Calendar;  
 use App\Event;
 use Artisan;
+use Storage;
 use App\Officer as officer;
 use App\func as func;
 
@@ -131,6 +132,13 @@ class AdminController extends Controller
 
     public function backup_database(){
         Artisan::call('db:backup');
-        return redirect('admin/')->with('message', 'สำรองข้อมูลสำเร็จ');
+        $output = Artisan::output();
+        $files_db = Storage::disk('db_backup')->allFiles();
+        if(sizeof($files_db) >0){
+            $filename = $files_db[sizeof($files_db)-1];
+            $file = Storage::disk('db_backup')->getDriver()->getAdapter()->applyPathPrefix($filename);
+            return response()->download($file ,env('DB_DATABASE').'_backup_'.$filename);
+        }
+    
     }
 }

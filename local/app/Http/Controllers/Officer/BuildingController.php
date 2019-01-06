@@ -63,6 +63,10 @@ class BuildingController extends Controller
     }
 
     public function delete($id){
+        if(officer::isUseBuilding($id)){
+            return redirect('control/building')
+                ->with('errorMessage','ไม่สามารถลบข้อมูลอาคารได้เนื่องจากมีการอ้างอิงถึงข้อมูล');
+        }
         DB::table('building')->where('building_id',$id)->delete();
         return redirect('control/building');
     }

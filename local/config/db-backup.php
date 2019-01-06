@@ -7,12 +7,12 @@ return [
 
 	'mysql' => [
 		// Window
-		// 'dump_command_path' => 'C:/xampp/mysql/bin/',
-		// 'restore_command_path' => 'C:/xampp/mysql/bin/',
+		'dump_command_path' => env('WINDOWS_MYSQLDUMP_PATH'),
+		'restore_command_path' => env('WINDOWS_MYSQLDUMP_PATH'),
 		
 		// Mac
-		'dump_command_path' => '/Applications/XAMPP/xamppfiles/bin/',
-		'restore_command_path' => '/Applications/XAMPP/xamppfiles/bin/',	
+		// 'dump_command_path' => env('MAC_MYSQLDUMP_PATH'),
+		// 'restore_command_path' => env('MAC_MYSQLDUMP_PATH'),	
 	],
 
 	's3' => [

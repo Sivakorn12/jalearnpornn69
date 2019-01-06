@@ -123,6 +123,10 @@ Route::prefix('/control')->group(function () {
   Route::get('/checkdate', 'Officer\ReservationController@CHECK_DATE_RESERVE');
 
   Route::get('/resetStatus','Officer\CheckBookingController@resetStatus');
+
+  Route::get('/email_domain','Officer\EmailController@index');
+  Route::post('/email_domain/save','Officer\EmailController@save');
+  Route::any('/email_domain/delete/{id}','Officer\EmailController@delete');
 });
 
 Route::prefix('/admin')->group(function () {

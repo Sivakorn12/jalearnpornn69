@@ -58,6 +58,10 @@ return [
         'document' => [
 			'driver' => 'local',
 			'root'   => storage_path().'/document',
+        ],
+        'db_backup' => [
+			'driver' => 'local',
+			'root'   => storage_path().'/database_backup',
 		],
 
         's3' => [

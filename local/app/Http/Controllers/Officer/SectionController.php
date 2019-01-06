@@ -69,6 +69,10 @@ class SectionController extends Controller
     }
 
     public function delete($id){
+        if(officer::useSectionInBooking($id)){
+            return redirect('control/section')
+                ->with('errorMessage','ไม่สามารถลบข้อมูลสาขาวิชาได้เนื่องจากมีการอ้างอิงถึงข้อมูล');
+        }
         DB::table('section')->where('section_ID',$id)->delete();
         return redirect('control/section');
     }

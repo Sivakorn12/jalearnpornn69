@@ -68,7 +68,16 @@ class DepartmentController extends Controller
     }
 
     public function delete($id){
-        DB::table('department')->where('department_ID',$id)->delete();
-        return redirect('control/department');
+        $sec = DB::table('section')->where('department_ID',$id)->get()->toArray();
+        
+        if(sizeof($sec)>0 or officer::useDepartmentInBooking($id)){
+            return redirect('control/department/')
+                ->with('errorMessage','ไม่สามารถลบข้อมูลภาควิชาได้เนื่องจากมีการอ้างอิงถึงข้อมูล');
+        }
+        else{
+            DB::table('department')->where('department_ID',$id)->delete();
+            return redirect('control/department');
+        }
+        
     }
 }

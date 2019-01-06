@@ -9,6 +9,7 @@ use DB;
 use Exception;
 use Session;
 use Socialite;
+use App\func as func;
 
 class GoogleController extends Controller
 {
@@ -37,10 +38,10 @@ class GoogleController extends Controller
     {
         $user = Socialite::driver('google')->user();
         $user_array = explode("@", $user->email);
-        $chkMail_arr = explode(".", $user_array[1]);
-        unset($chkMail_arr[0]);
-        $domain = implode(".",$chkMail_arr);
-        if ($domain == "kmutnb.ac.th") {
+        $domain_arr = func::getEmailDomainToArray();
+        $domain = '@'.$user_array[1];
+
+        if (in_array($domain, $domain_arr)) {
             $check_user = DB::table("users")
                             ->where("user_email", '=', $user->email)
                             ->first();

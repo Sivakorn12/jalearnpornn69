@@ -164,7 +164,8 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
-        'Witty\LaravelDbBackup\DBBackupServiceProvider',  
+        //Torann\DatabaseBackup\DatabaseBackupServiceProvider::class,
+        'Witty\LaravelDbBackup\DBBackupServiceProvider',
         /*
          * Package Service Providers...
          */

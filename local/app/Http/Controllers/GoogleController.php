@@ -49,8 +49,7 @@ class GoogleController extends Controller
                $id_insert = DB::table('users')
                     ->insertGetId([
                         'user_name' => $user->name,
-                        'user_email' => $user->email,
-                        'remember_token' => "user"
+                        'user_email' => $user->email
                 ]);
 
                 Auth::loginUsingId($id_insert);

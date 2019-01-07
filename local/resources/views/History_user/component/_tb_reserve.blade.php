@@ -13,7 +13,6 @@ use App\Officer as officer;
               <th>สถานะ</th>
               <th></th>
               <th>ประเมินห้องประชุม</th>
-              <th>หมายเหตุ</th>
             </tr>
         </thead>
         <tbody>

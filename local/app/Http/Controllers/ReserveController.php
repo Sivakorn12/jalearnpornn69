@@ -175,7 +175,6 @@ class ReserveController extends Controller
                             Storage::disk('document')->put($fileFullName, file_get_contents($file));
                             for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                                 DB::table('document')->insert([
-                                    'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
                                     'section_ID' => isset($req->section_id)? $req->section_id : null,
                                     'document_file' => $fileFullName,
                                     'booking_id' => $id_insert_booking[$index]
@@ -215,7 +214,6 @@ class ReserveController extends Controller
                         Storage::disk('document')->put($fileFullName, file_get_contents($file));
                         for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                             DB::table('document')->insert([
-                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
                                 'section_ID' => isset($req->section_id)? $req->section_id : null,
                                 'document_file' => $fileFullName,
                                 'booking_id' => $id_insert_booking[$index]
@@ -426,7 +424,6 @@ class ReserveController extends Controller
                             DB::table('document')
                                 ->where('booking_id', $req->booking_id)
                                 ->update([
-                                    'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
                                     'section_ID' => isset($req->section_id)? $req->section_id : null,
                                     'document_file' => 'test.pdf'
                                 ]);

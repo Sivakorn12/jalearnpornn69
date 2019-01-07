@@ -79,38 +79,7 @@ elseif($type == 'confirmed'){
    </tbody>
 </table>
 <script>
-
 $(document).ready(function() {
   //$('#tb-{{$type}}').DataTable();
 });
-
-function submitComment (booking_id) {
-  swal({
-    text: 'แจ้งหมายเหตุ',
-    content: "input",
-    button: {
-      text: "ยืนยัน",
-      closeModal: false,
-    },
-  })
-  .then(name => {
-    if (!name) throw null;
-
-    $.ajax({
-          url: "{{url('history/submitComment')}}",
-          type: 'POST',
-          dataType: 'JSON',
-          data: { _token: "{{ csrf_token() }}", data_booking: booking_id, comment: name},
-          success: function(data){
-            swal(data.message, {
-              icon: "success",
-              buttons: false
-            })
-            setTimeout(function(){ window.location.reload() }, 1000);
-          }
-      })
-  })
-}
-
-
 </script>   

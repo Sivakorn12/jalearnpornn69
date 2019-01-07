@@ -93,24 +93,26 @@ function confirmBooking(id) {
 function cancelBooking(id) {
   swal({
     title: "คุณต้องการไม่อนุมัติการจองใช่หรือไม่ ?",
+    text: 'กรุณาแจ้งหมายเหตุ',
     icon: "warning",
+    content: "input",
     buttons: true,
     dangerMode: true,
     buttons: ["ยกเลิก", "ตกลง"]
   })
-  .then((willDelete) => {
-    if (willDelete) {
-      $.ajax({
-        url: window.location.pathname + "/" + id+"/cancel",
-        type: 'POST',
-        dataType: 'JSON',
-        data: { _token: "{{ csrf_token() }}",id:id },
-        success: function(data) {
-          $.notify("ยกเลิกการจองหมายเลข :"+data.id,"error");
+  .then(name => {
+    if (!name) throw null;
+
+    $.ajax({
+          url:  "{{url('control/checkbooking/cancel')}}",
+          type: 'POST',
+          dataType: 'JSON',
+          data: { _token: "{{ csrf_token() }}", id:id, comment: name},
+          success: function(data){
+            $.notify("ยกเลิกการจองหมายเลข :"+data.id,"error");
           fecthdataBooking()
-        }
+          }
       })
-    }
   })
 }
 

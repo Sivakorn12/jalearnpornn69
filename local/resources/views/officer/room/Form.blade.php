@@ -29,14 +29,14 @@ if(isset($room)){
                     <div class="col-md-1"></div>
                     <div class="col-md-10">
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label">ชื่อห้องประชุม</label>
+                            <label class="col-sm-3 control-label"><span style="color: red;">* </span>ชื่อห้องประชุม</label>
                             <div class="col-sm-7">
                                 <input type="text" class="form-control" id="room_name" name="room_name" value="{{(isset($room->meeting_name))?$room->meeting_name:old('room_name')}}" >
                                 <p  style="color:red">@if($errors->has('room_name')) {{$errors->first('room_name')}}@endif</p>
                             </div>
                         </div>
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label">ประเภทห้องประชุม</label>
+                            <label class="col-sm-3 control-label"><span style="color: red;">* </span>ประเภทห้องประชุม</label>
                             <div class="col-sm-7">
                                 <select class="form-control" name="type" id="sel1">
                                     @foreach($roomTypes as $type)
@@ -47,14 +47,14 @@ if(isset($room)){
                             </div>
                         </div>
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label">ขนาดห้อง(ที่นั่ง)</label>
+                            <label class="col-sm-3 control-label"><span style="color: red;">* </span>ขนาดห้อง(ที่นั่ง)</label>
                             <div class="col-sm-7">
                                 <input type="number" style="text-align:right" class="form-control" name="room_size" value="{{(isset($room->meeting_size))?$room->meeting_size:old('room_size')}}" >
                                 <p  style="color:red">@if($errors->has('room_size')) {{$errors->first('room_size')}}@endif</p>
                             </div>
                         </div>
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label">อาคาร</label>
+                            <label class="col-sm-3 control-label"><span style="color: red;">* </span>อาคาร</label>
                             <div class="col-sm-7">
                                 <select class="form-control" name="room_building"  id="">
                                 @foreach($buildings as $bd)
@@ -71,7 +71,7 @@ if(isset($room)){
                             </div>
                         </div>
                         <div class="form-group form-room">
-                            <label class="col-sm-3 control-label">ลิ้งค์แบบประเมิน</label>
+                            <label class="col-sm-3 control-label"><span style="color: red;">* </span>ลิ้งค์แบบประเมิน</label>
                             <div class="col-sm-7">
                                 <input type="text" class="form-control" id="est_link" name="est_link" value="{{(isset($room->estimate_link))?$room->estimate_link:old('est_link')}}">
                                 <p  style="color:red">@if($errors->has('est_link')) {{$errors->first('est_link')}}@endif</p>
@@ -86,9 +86,10 @@ if(isset($room)){
                         </div> --}}
                         @endif
                         <div class="form-group form-room" >
-                            <label class="col-sm-3 control-label" >รูปภาพ</label>
+                            <label class="col-sm-3 control-label" ><span style="color: red;">* </span>รูปภาพ</label>
                             <div class="col-sm-7">
                                 <input name="room_image[]" type="file" class="form-control" multiple onchange='handleFiles(this.files)' name="room_image"  accept="image/x-png,image/gif,image/jpeg" >
+                                <p style="color:red; font-size: 10px;">ขนาดไฟล์ไม่เกิน 2 mb</p>
                                 <p id="error-pic" style="display:none;color:red">กรุณาเลือกรูปภาพเท่านั้น</p>
                             </div>
                         </div>

@@ -87,14 +87,15 @@ class CheckBookingController extends Controller
        return response()->json(['id'=>$id]);
     }
     
-    public function cancelReservation($id){
+    public function cancelReservation(Request $req){
         $stateChange = DB::table('booking')
-                     ->where('booking_ID', $id)
+                     ->where('booking_ID', $req->id)
                      ->update([
                         'status_ID' => 2,
-                        'approve_date' => date('Y-m-d H:i:s')
+                        'approve_date' => date('Y-m-d H:i:s'),
+                        'comment' => $req->comment
                     ]);
-        return response()->json(['id'=>$id]);
+        return response()->json(['id'=>$req->id]);
     }
 
     public function fetchTbBooking(){

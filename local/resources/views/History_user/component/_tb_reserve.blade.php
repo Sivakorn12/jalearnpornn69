@@ -32,16 +32,12 @@ use App\Officer as officer;
             @endif
             </td>
             <td>
-            @if($check_date[0][$key] == 3) <a type="button" href="{{ url('history/editdata/'.$reserve->booking_ID.'/'.$time_start[$key]) }}" class="btn btn-warning btn-xs">แก้ไขการจอง</a> <button type="button" onclick="checkDecided({{$reserve->booking_ID}})" class="btn btn-danger btn-xs">ยกเลิกการจอง</button>
+            @if($check_date[0][$key] == 3) <a type="button" href="{{ url('history/editdata/'.$reserve->booking_ID.'/'.$time_start[$key]) }}" class="btn btn-warning btn-xs">แก้ไขการจอง</a> <button type="button" onclick="cancelBooking({{$reserve->booking_ID}})" class="btn btn-danger btn-xs">ยกเลิกการจอง</button>
             @endif
             </td>
             <td>
             @if ($checking_est[$key] == 1 && ($check_date[0][$key] == 1 || $check_date[0][$key] == 4)) <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">QR Code</button> <a type="button" class="btn btn-info btn-xs" href="{{$reserves[$key]->estimate_link}}" target="_blank">ไปลิ้งค์ประเมิน</a>
             @elseif ($check_date[0][$key] == 3) <button type="button" disabled="disabled" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" data-room="{{$reserves[$key]->estimate_link}}">QR Code</button> <a type="button" disabled="disabled" class="btn btn-info btn-xs" href="{{$reserves[$key]->estimate_link}}" target="_blank">ไปลิ้งค์ประเมิน</a>
-            @endif
-            </td>
-            <td>
-            @if ($check_date[0][$key] == 4) <button type="button" class="btn btn-info btn-xs" onclick="submitComment({{$reserve->booking_ID}})">แจ้งหมายเหตุ</button>
             @endif
             </td>
           </tr>
@@ -84,41 +80,15 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   })
 })
 
-function checkDecided (booking_id) {
+function cancelBooking(id) {
   swal({
-    title: "คุณต้องการยกเลิกการจองใช่หรือไม่ ?",
+    title: "คุณต้องการไม่อนุมัติการจองใช่หรือไม่ ?",
+    text: 'กรุณาแจ้งหมายเหตุ',
     icon: "warning",
+    content: "input",
     buttons: true,
     dangerMode: true,
-    buttons: ["cancel", "ยกเลิก"]
-  })
-  .then((willDelete) => {
-    if (willDelete) {
-      $.ajax({
-          url: "{{url('history/deletedata')}}",
-          type: 'GET',
-          dataType: 'JSON',
-          data: { _token: "{{ csrf_token() }}", data_booking: booking_id},
-          success: function(data){
-            swal(data.message, {
-              icon: "success",
-              buttons: false
-            })
-            setTimeout(function(){ window.location.reload() }, 1000);
-          }
-      })
-    }
-  })
-}
-
-function submitComment (booking_id) {
-  swal({
-    text: 'แจ้งหมายเหตุ',
-    content: "input",
-    button: {
-      text: "ยืนยัน",
-      closeModal: false,
-    },
+    buttons: ["ยกเลิก", "ตกลง"]
   })
   .then(name => {
     if (!name) throw null;
@@ -127,7 +97,7 @@ function submitComment (booking_id) {
           url: "{{url('history/submitComment')}}",
           type: 'POST',
           dataType: 'JSON',
-          data: { _token: "{{ csrf_token() }}", data_booking: booking_id, comment: name},
+          data: { _token: "{{ csrf_token() }}", data_booking: id, comment: name},
           success: function(data){
             swal(data.message, {
               icon: "success",

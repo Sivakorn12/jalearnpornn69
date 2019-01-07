@@ -259,7 +259,6 @@ class func extends Model
                                 'section_ID' => $req->section_id ?? null,
                                 'department_ID' => $req->department_id ?? null,
                                 'faculty_ID' => $req->faculty_id ?? null,
-                                'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                                 'user_ID' => $req->user_id,
                                 'booking_name' => $req->contract_name ?? $req->user_name,
                                 'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
@@ -309,7 +308,6 @@ class func extends Model
                                     'section_ID' => $req->section_id ?? null,
                                     'department_ID' => $req->department_id ?? null,
                                     'faculty_ID' => $req->faculty_id ?? null,
-                                    'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                                     'user_ID' => $req->user_id,
                                     'booking_name' => $req->contract_name ?? $req->user_name,
                                     'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
@@ -336,7 +334,6 @@ class func extends Model
                                     'section_ID' => $req->section_id ?? null,
                                     'department_ID' => $req->department_id ?? null,
                                     'faculty_ID' => $req->faculty_id ?? null,
-                                    'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                                     'user_ID' => $req->user_id,
                                     'booking_name' => $req->contract_name ?? $req->user_name,
                                     'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
@@ -365,7 +362,6 @@ class func extends Model
                         ->where('booking_ID', $req->booking_id)
                         ->update([
                             'section_ID' => isset($req->section_id)? $req->section_id : null,
-                            'institute_ID' => isset($req->institute_id)? $req->institute_id : null,
                             'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
                             'booking_date' => date('Y-m-d H:i:s'),
                         ]);

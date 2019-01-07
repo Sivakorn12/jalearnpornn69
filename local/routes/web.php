@@ -51,7 +51,7 @@ Route::prefix('/control')->group(function () {
   Route::get('/checkbooking/fetchTbBooking','Officer\CheckBookingController@fetchTbBooking');
   Route::get('/checkbooking/view/{id}','Officer\CheckBookingController@viewReservation');
   Route::any('/checkbooking/{id}/confirm','Officer\CheckBookingController@confirmReservation');
-  Route::any('/checkbooking/{id}/cancel','Officer\CheckBookingController@cancelReservation');
+  Route::any('/checkbooking/cancel','Officer\CheckBookingController@cancelReservation');
 
   Route::get('/reservation','Officer\ReservationController@index');
   Route::post('/reservation/confirm','Officer\ReservationController@confirm');

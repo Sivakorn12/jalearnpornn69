@@ -50,9 +50,7 @@ class GoogleController extends Controller
                     ->insertGetId([
                         'user_name' => $user->name,
                         'user_email' => $user->email,
-                        'remember_token' => "user",
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'updated_at' => date('Y-m-d H:i:s')
+                        'remember_token' => "user"
                 ]);
 
                 Auth::loginUsingId($id_insert);

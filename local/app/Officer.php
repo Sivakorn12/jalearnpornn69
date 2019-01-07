@@ -380,7 +380,11 @@ class Officer extends Model
             $html .= '<span>'.$eq->em_name.' x '.$eq->borrow_count.'</span><br>'  ;
         }
                     
-        $html .=    '</td>';
+        $html .=  '</td></tr>';
+        $html .= '<tr>
+                    <td width="100"><b>หมายเหตุ</b></td>
+                    <td>'.$booking->comment.'</td>
+        </tr>';
         $html .= (($booking->link??null) != null) ? '<tr><td><b>แบบประเมิน</b></td><td><a onclick="window.open(\''.$booking->link.'\')">ดูผลการประเมิน</a></td>': '';
         $html .= '</tr>
             </table>';

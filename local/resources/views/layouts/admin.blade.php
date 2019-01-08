@@ -17,6 +17,7 @@
     <link href="{{ url('css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ url('css/datepicker.css')}}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- Scripts -->
     
     
@@ -28,6 +29,13 @@
     <script src="{{ url('js/notify.js') }}"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker-custom.js')}}"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datepicker.th.js')}}"></script>
+    <script src="{{ url('js/moment.js') }}"></script>
+    <script src="{{ url('js/moment-timezone.js') }}"></script>
+    <script src="{{ url('js/moment-timezone-with-data-2012-2022.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.js"></script>      
+    <script type="text/javascript" src="{{ url('js/fullcalendar.th.js')}}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  
 </head>
 <body>
     <div id="wrapper" class="main">
@@ -84,6 +92,12 @@
                             <a href="{{ url ('admin/manageUser/') }}">
                                 <i class="fa fa-bookmark fa-fw"></i> จัดการผู้ใช้งาน
                             </a>
+                        </li>
+                        <li >
+                            <a data-toggle="collapse" href="#report"><i class="fa fa-file-text-o fa-fw"></i> รายงาน<span class="fa arrow fa-lg"  data-toggle="collapse" href="#report"></span></a>
+                            <ul id="report" class="collapse nav nav-second-level">
+                                <li ><a href="{{ url ('admin/report/reservation') }}"><i class="fa fa-circle-o" aria-hidden="true"></i> การจองห้องประชุม</a></li>                 
+                            </ul>
                         </li>
                         <li >
                             <a href="{{ url ('admin/backupdb/') }}">

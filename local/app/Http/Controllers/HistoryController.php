@@ -99,24 +99,21 @@ class HistoryController extends Controller
         return view('History_user/index', $data);
     }
 
-    public function DELETE_RESERVE (Request $req) {
+    public function DELETE_RESERVE ($bookingId) {
         $data_borrow = DB::table('borrow_booking')
             ->select('borrow_ID')
-            ->where('booking_ID', $req->data_booking)
+            ->where('booking_ID', $bookingId)
             ->first();
 
         DB::table('booking')
-            ->where('booking_ID', $req->data_booking)
+            ->where('booking_ID', $bookingId)
             ->update(['status_ID' => 4]);
 
         if (isset($data_borrow)) {
             DB::table('borrow_booking')
-                ->where('booking_ID', $req->data_booking)
+                ->where('booking_ID', $bookingId)
                 ->update(['borrow_status' => 4]);
 
-            return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
-        } else {
-            return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
         }
     }
 
@@ -156,6 +153,8 @@ class HistoryController extends Controller
             ->where('booking_ID', $req->data_booking)
             ->update(['comment' => $req->comment]);
 
-        return response()->json(['message' => 'แจ้งหมายเหตุสำเร็จ']);
+        $this->DELETE_RESERVE($req->data_booking);
+
+        return response()->json(['message' => 'ลบรายการจองสำเร็จ']);
     }
 }

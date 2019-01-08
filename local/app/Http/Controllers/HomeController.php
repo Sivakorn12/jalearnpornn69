@@ -56,7 +56,7 @@ class HomeController extends Controller
    }
 
    public function viewBooking($id){
-        $html = officer::viewBooking($id);
+        $html = func::viewBooking($id);
         return response()->json(['html'=>$html]);
     }
 

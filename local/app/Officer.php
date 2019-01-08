@@ -54,7 +54,6 @@ class Officer extends Model
                             <th>เอกสาร</th>
                             <th>สถานะการจอง</th>
                             <th>จัดการ</th>
-                            <th>หมายเหตุ</th>
                         </tr>
                     </thead>
                 <tbody>';
@@ -97,10 +96,6 @@ class Officer extends Model
                         $html=$html.'<i class="fa fa-check-circle fa-lg" aria-hidden="true" style="color: green"></i>';
                         }
                     }
-                $html=$html.'<td>';
-                if($booking->status_ID==2){
-                    $html=$html.'<button type="button" class="btn btn-info btn-xs" onclick="submitComment('.$booking->booking_ID.')">แจ้งหมายเหตุ</button> </td>';
-                }
                 $html=$html.'</td></tr>';
                 }
             }   
@@ -380,7 +375,11 @@ class Officer extends Model
             $html .= '<span>'.$eq->em_name.' x '.$eq->borrow_count.'</span><br>'  ;
         }
                     
-        $html .=    '</td>';
+        $html .=  '</td></tr>';
+        $html .= '<tr>
+                    <td width="100"><b>หมายเหตุ</b></td>
+                    <td>'.$booking->comment.'</td>
+        </tr>';
         $html .= (($booking->link??null) != null) ? '<tr><td><b>แบบประเมิน</b></td><td><a onclick="window.open(\''.$booking->link.'\')">ดูผลการประเมิน</a></td>': '';
         $html .= '</tr>
             </table>';

@@ -211,7 +211,6 @@ class ReservationController extends Controller
                         Storage::disk('document')->put($fileFullName, file_get_contents($file));
                         for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                             DB::table('document')->insert([
-                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
                                 'section_ID' => isset($req->section_id)? $req->section_id : null,
                                 'document_file' => $fileFullName,
                                 'booking_id' => $id_insert_booking[$index]
@@ -250,7 +249,6 @@ class ReservationController extends Controller
                         Storage::disk('document')->put($fileFullName, file_get_contents($file));
                         for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                             DB::table('document')->insert([
-                                'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
                                 'section_ID' => isset($req->section_id)? $req->section_id : null,
                                 'document_file' => $fileFullName,
                                 'booking_id' => $id_insert_booking[$index]
@@ -440,7 +438,6 @@ class ReservationController extends Controller
                                 'section_ID' => $req->section_id ?? null,
                                 'department_ID' => $req->department_id ?? null,
                                 'faculty_ID' => $req->faculty_id ?? null,
-                                'institute_ID' => $req->institute_id ?? null,
                                 'user_ID' => $req->user_id,
                                 'booking_name' => $req->contract_name ?? $req->user_name,
                                 'booking_phone' => $req->user_tel ?? null,
@@ -492,7 +489,6 @@ class ReservationController extends Controller
                     Storage::disk('document')->put($fileFullName, file_get_contents($file));
                     for ($index = 0; $index < sizeof($id_insert_booking); $index++) {
                         DB::table('document')->insert([
-                            'institute_ID'=>isset($req->institute_id)? $req->institute_id : null,
                             'section_ID' => isset($req->section_id)? $req->section_id : null,
                             'document_file' => $fileFullName,
                             'booking_id' => $id_insert_booking[$index]

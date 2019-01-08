@@ -136,6 +136,8 @@ Route::prefix('/admin')->group(function () {
   Route::get('/manageUser', 'Admin\AdminController@GET_USERS');
   Route::get('/manageUser/editstatus', 'Admin\AdminController@GET_FORM_STATUS');
   Route::post('/setstatusUser', 'Admin\AdminController@SET_STATUS_USER');
+
+  Route::get('/report/reservation','Admin\ReportController@reportReservation');
 });
 
 Route::get('auth/google', 'GoogleController@redirectToProvider');

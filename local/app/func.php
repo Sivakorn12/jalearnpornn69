@@ -783,4 +783,72 @@ class func extends Model
       }
       return  $arr;
   }
+
+  public static function viewBooking($id){
+    $booking = DB::table('booking')
+    ->leftjoin('detail_booking','booking.booking_ID','=','detail_booking.booking_ID')
+    ->leftjoin('users','booking.user_ID','=','users.id')
+    ->join('meeting_room','meeting_room.meeting_ID','=','detail_booking.meeting_ID')
+    ->where('booking.booking_ID',$id)
+    ->first();
+
+    $equips = DB::table('booking')
+                    ->select(
+                        'eq.em_name',
+                        DB::raw('sum(dbr.borrow_count) as borrow_count')
+                    )
+                    ->join('borrow_booking as bbr','booking.booking_ID','=','bbr.booking_ID')
+                    ->join('detail_borrow as dbr','bbr.borrow_ID','=','dbr.borrow_ID')
+                    ->join('equipment as eq','dbr.equiment_ID','=','em_ID')
+                    ->groupBy('eq.em_name')
+                    ->where('booking.booking_ID',$id)->get();
+    //dd($equip);
+
+    $dateCheckIn = explode("-", $booking->checkin);
+    $dateTHCheckIn = $dateCheckIn[2].'-'.$dateCheckIn[1].'-'.($dateCheckIn[0] + 543);
+    
+    $resultBooking = date("d-m-Y", strtotime(explode(" ", $booking->booking_date)[0]));
+    $bookingDate = explode("-", $resultBooking);
+    $bookingDate = $bookingDate[0].'-'.$bookingDate[1].'-'.($bookingDate[2] + 543).' ';
+    $bookingTHTime = explode(" ", date("d-m-Y H:i",strtotime($booking->booking_date)))[1];
+    
+    $html = '<table cellpadding=3>
+            <tr>
+                <td width="100"><b>ห้อง</b></td>
+                <td>'.$booking->meeting_name.'</td>
+            </tr>
+            <tr>
+                <td width="100"><b>วันที่</b></td>
+                <td>'.$dateTHCheckIn.'</td>
+            </tr>
+            <tr>
+                <td width="100"><b>เวลา</b></td>
+                <td>'.substr($booking->detail_timestart, -8,5) .' - '. substr($booking->detail_timeout, -8,5).'</td>
+            </tr>
+            <tr>
+                <td width="100"><b>ผู้จอง</b></td>
+                <td>'.((isset($booking->user_name))?$booking->user_name:'-').'</td>
+            </tr>
+            <tr>
+                <td width="100"><b>วันที่จอง</b></td>
+                <td>'.$bookingDate.'</td>
+            </tr>
+            <tr>
+                <td width="100"><b>วันเวลาที่ใช้งาน</b></td>
+                <td>'.$bookingTHTime.'</td>
+            </tr>
+            <tr>
+                <td valign="top" width="100"><b>การยืมอุปกรณ์</b></td>
+                <td>';
+    foreach($equips as $eq){
+        $html .= '<span>'.$eq->em_name.' x '.$eq->borrow_count.'</span><br>'  ;
+    }
+                
+    $html .=  '</td></tr>';
+    $html .= '<tr>
+                <td width="100"><b>หมายเหตุ</b></td>
+                <td>'.$booking->comment.'</td>
+    </tr></table>';
+    return $html;
+    }
 }

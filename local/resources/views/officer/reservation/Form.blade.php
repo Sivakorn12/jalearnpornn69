@@ -108,9 +108,11 @@
             <label class="col-sm-2 control-label"><span style="color: red;">* </span>เอกสารการจอง</label>
             <div class="col-sm-5">
               <input type="file" class="form-control" name="contract_file[]" multiple>
-              <p style="color:red; font-size: 10px;">ขนาดไฟล์ไม่เกิน 2 mb</p>
               <p  style="color:red">@if($errors->has('contract_file')) {{$errors->first('contract_file')}}@endif</p>
             </div>
+            <label class="control-label">
+              <span style="color:red; font-size: 12px;">ขนาดไฟล์ไม่เกิน 2 mb</span>
+            </label>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">อุปกรณ์ที่ยืมเพิ่ม</label>

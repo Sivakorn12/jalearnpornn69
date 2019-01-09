@@ -132,6 +132,10 @@ class EquipmentController extends Controller
     }
 
     public function delete($id){
+        if(officer::isUseEquipment($id)){
+            return redirect('control/equipment')
+                ->with('errorMessage','ไม่สามารถลบข้อมูลอุปกรณ์ได้เนื่องจากมีการอ้างอิงถึงข้อมูล');
+        }
         DB::table('equipment')->where('em_ID',$id)->delete();
         return redirect('control/equipment/');
     }

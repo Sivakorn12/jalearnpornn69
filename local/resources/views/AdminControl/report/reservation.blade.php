@@ -30,7 +30,8 @@ use App\Officer as officer;
         <tr>
             <th>วันที่</th>
             <th>ห้องประชุม</th>
-            <th>จำนวนครั้ง</th>
+            <th>ผู้จอง</th>
+            <th>ช่วงเวลา</th>
         </tr>
     </thead>
     <tbody id="data-list">
@@ -39,7 +40,8 @@ use App\Officer as officer;
           <tr>
           <td>{{date('d/m/Y',strtotime($data->checkin))}}</td>
           <td>{{$data->meeting_name}}</td>
-          <td>{{$data->total_reserve}}</td>
+          <td>{{$data->booking_name}}</td>
+          <td>{{$data->start_time}} - {{$data->end_time}}</td>
           </tr>
           @endforeach
         @else
@@ -58,8 +60,8 @@ use App\Officer as officer;
 <script>
   $(document).ready(function() {
     var groupColumn = 0;
-    var st = '{{$_GET["start_dt"]??date("d/m/Y")}}'
-    var end = '{{$_GET["end_dt"]??date("d/m/Y")}}'
+    var st = '{{date("d/m/Y",strtotime($_GET["start_dt"]))??date("d/m/Y")}}'
+    var end = '{{date("d/m/Y",strtotime($_GET["end_dt"]))??date("d/m/Y")}}'
     $('input[name="daterange"]').daterangepicker({
       startDate: st, 
       endDate: end ,

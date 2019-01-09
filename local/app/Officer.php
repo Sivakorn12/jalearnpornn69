@@ -88,12 +88,12 @@ class Officer extends Model
                         $html=$html.'<i style="color:#777" class=" fa fa-clock-o fa-lg" aria-hidden="true"></i>';
                     }else{
                         if($booking->status_ID==3){
-                        $html=$html.'<button type="button" class="btn btn-success" onclick="confirmBooking('.$booking->booking_ID.')"  ><i class="fa fa-check" aria-hidden="true"></i> อนุมัติ</button>
-                        <button type="button" class="btn btn-danger" onclick="cancelBooking('.$booking->booking_ID.')"><i class="fa fa-times" aria-hidden="true"></i> ไม่อนุมัติ</button>';
+                        $html=$html.'<button type="button" class="btn btn-success btn-sm" onclick="confirmBooking('.$booking->booking_ID.')"  ><i class="fa fa-check" aria-hidden="true"></i> อนุมัติ</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="rejectBooking('.$booking->booking_ID.')"><i class="fa fa-times" aria-hidden="true"></i> ไม่อนุมัติ</button>';
                         }elseif($booking->status_ID==2){
-                        $html=$html.'<i class="fa fa-ban fa-lg" aria-hidden="true" style="color: red"></i>';
+                        $html=$html.'';
                         }elseif($booking->status_ID==1){
-                        $html=$html.'<i class="fa fa-check-circle fa-lg" aria-hidden="true" style="color: green"></i>';
+                        $html=$html.'<button type="button" class="btn btn-primary btn-sm" onclick="cancelBooking('.$booking->booking_ID.')"><i class="fa fa-ban fa-lg" aria-hidden="true"></i> ยกเลิกการจอง</button>';
                         }
                     }
                 $html=$html.'</td></tr>';

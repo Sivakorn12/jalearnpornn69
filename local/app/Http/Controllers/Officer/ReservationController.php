@@ -473,6 +473,11 @@ class ReservationController extends Controller
                                 'equiment_ID' => $data_id_equipment[$inner],
                                 'borrow_count' => $data_count_equipment[$inner]
                             ]);
+                            $eq = DB::table('equipment')->where('em_ID', $data_id_equipment[$inner])->first();
+                            DB::table('equipment')->where('em_ID', $data_id_equipment[$inner])
+                            ->update([
+                                'em_count' => ($eq->em_count-$data_count_equipment[$inner])
+                            ]);
                     }
                 }
                 //dd('insert borrow success');

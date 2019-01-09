@@ -87,7 +87,8 @@ class CheckBookingController extends Controller
        return response()->json(['id'=>$id]);
     }
     
-    public function cancelReservation(Request $req){
+    public function rejectReservation(Request $req){
+        DB::beginTransaction();
         $stateChange = DB::table('booking')
                      ->where('booking_ID', $req->id)
                      ->update([
@@ -95,6 +96,80 @@ class CheckBookingController extends Controller
                         'approve_date' => date('Y-m-d H:i:s'),
                         'comment' => $req->comment
                     ]);
+        $data_borrow = DB::table('borrow_booking')
+                            ->join('detail_borrow as dbw','borrow_booking.borrow_ID','=','dbw.borrow_ID')
+                            ->where('borrow_booking.booking_ID',$req->id)
+                            ->get();
+
+        DB::table('borrow_booking')
+            ->where('booking_ID',$req->id)
+            ->update([
+                'borrow_status' => 2
+            ]);
+        if($data_borrow->count()>0 and $data_borrow[0]->borrow_status == 3){
+            $return_eq = DB::table('return_booking')
+                            ->join('detail_return as dr','return_booking.return_ID','=','dr.return_ID')
+                            ->where('return_booking.booking_ID',$req->id)
+                            ->get();
+            $eq_list = array();
+            foreach($return_eq as $re_eq){
+                array_push($eq_list,$re_eq->equiment_ID);
+            }
+            foreach($data_borrow as $key=>$br){
+                if(in_array($br->equiment_ID,$eq_list)){
+                $eq =   DB::table('equipment')->where('em_ID', $br->equiment_ID)->first();
+                        DB::table('equipment')->where('em_ID', $br->equiment_ID)
+                        ->update([
+                            'em_count' => ($eq->em_count+$br->borrow_count)
+                        ]);
+                }
+            }
+        }
+        DB::commit();
+        return response()->json(['id'=>$req->id]);
+
+        return response()->json(['id'=>$req->id]);
+    }
+
+    public function cancelReservation(Request $req){
+        DB::beginTransaction();
+        $stateChange = DB::table('booking')
+                     ->where('booking_ID', $req->id)
+                     ->update([
+                        'status_ID' => 4,
+                        'approve_date' => date('Y-m-d H:i:s'),
+                        'comment' => $req->comment
+                    ]);
+        $data_borrow = DB::table('borrow_booking')
+                            ->join('detail_borrow as dbw','borrow_booking.borrow_ID','=','dbw.borrow_ID')
+                            ->where('borrow_booking.booking_ID',$req->id)
+                            ->get();
+
+        DB::table('borrow_booking')
+            ->where('booking_ID',$req->id)
+            ->update([
+                'borrow_status' => 4
+            ]);
+        if($data_borrow->count()>0 and $data_borrow[0]->borrow_status == 3){
+            $return_eq = DB::table('return_booking')
+                            ->join('detail_return as dr','return_booking.return_ID','=','dr.return_ID')
+                            ->where('return_booking.booking_ID',$req->id)
+                            ->get();
+            $eq_list = array();
+            foreach($return_eq as $re_eq){
+                array_push($eq_list,$re_eq->equiment_ID);
+            }
+            foreach($data_borrow as $key=>$br){
+                if(in_array($br->equiment_ID,$eq_list)){
+                $eq =   DB::table('equipment')->where('em_ID', $br->equiment_ID)->first();
+                        DB::table('equipment')->where('em_ID', $br->equiment_ID)
+                        ->update([
+                            'em_count' => ($eq->em_count+$br->borrow_count)
+                        ]);
+                }
+            }
+        }
+        DB::commit();
         return response()->json(['id'=>$req->id]);
     }
 

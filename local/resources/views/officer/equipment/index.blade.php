@@ -48,14 +48,13 @@
               setTimeout(function(){ window.location.reload() }, 1000);
         }
       }
-      else if('{{session("errorMesaage")}}' != null){
+    if('{{session("errorMessage")}}' != null){
         var Oncheck_message = '{{session("errorMessage")}}'
         if (Oncheck_message) {
           swal(Oncheck_message, {
                 icon: "error",
                 buttons: false
               })
-              setTimeout(function(){ window.location.reload() }, 1000);
         }
       };
     });

@@ -828,7 +828,23 @@ class Officer extends Model
         }
         return false;
     }
-    
-    
+    public static function isUseEquipment($equipment_id) {
+        $result = DB::table('detail_borrow')
+                        ->where('equiment_ID',$equipment_id)
+                        ->get();
+        if(sizeof($result)>0){
+            return true;
+        }
+        return false;
+    }
+    public static function isUseMeetingRoom($meeting_id) {
+        $result = DB::table('detail_booking')
+                        ->where('meeting_ID',$meeting_id)
+                        ->get();
+        if(sizeof($result)>0){
+            return true;
+        }
+        return false;
+    }
     
 }

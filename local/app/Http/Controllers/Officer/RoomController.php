@@ -256,6 +256,10 @@ class RoomController extends Controller
     }
 
     public function delete($id){
+        if(officer::isUseMeetingRoom($id)){
+            return redirect('control/room/')
+                ->with('errorMessage','ไม่สามารถลบข้อมูลห้องประชุมได้เนื่องจากมีการอ้างอิงถึงข้อมูล');
+        }
         $meeting_room = DB::table('meeting_room')
                         ->where('meeting_ID',$id)
                         ->first();

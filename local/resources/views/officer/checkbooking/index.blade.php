@@ -90,9 +90,34 @@ function confirmBooking(id) {
   });
 }
 
-function cancelBooking(id) {
+function rejectBooking(id) {
   swal({
     title: "คุณต้องการไม่อนุมัติการจองใช่หรือไม่ ?",
+    text: 'กรุณาแจ้งหมายเหตุ',
+    icon: "warning",
+    content: "input",
+    buttons: true,
+    dangerMode: true,
+    buttons: ["ยกเลิก", "ตกลง"]
+  })
+  .then(name => {
+    if (!name) throw null;
+
+    $.ajax({
+          url:  "{{url('control/checkbooking/reject')}}",
+          type: 'POST',
+          dataType: 'JSON',
+          data: { _token: "{{ csrf_token() }}", id:id, comment: name},
+          success: function(data){
+            $.notify("ยกเลิกการจองหมายเลข :"+data.id,"error");
+          fecthdataBooking()
+          }
+      })
+  })
+}
+function cancelBooking(id) {
+  swal({
+    title: "คุณต้องการยกเลิกการจองใช่หรือไม่ ?",
     text: 'กรุณาแจ้งหมายเหตุ',
     icon: "warning",
     content: "input",

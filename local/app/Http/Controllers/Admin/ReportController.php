@@ -19,18 +19,19 @@ class ReportController extends Controller
                            'booking.checkin',
                            'r.meeting_ID',
                            'r.meeting_name',
-                           DB::raw('count(booking.booking_ID) as total_reserve')
+                           'booking.booking_name',
+                           DB::raw('DATE_FORMAT(dtb.detail_timestart, "%H:%i")as start_time'),
+                           DB::raw('DATE_FORMAT(dtb.detail_timeout, "%H:%i")as end_time')
                        )
                        ->join('detail_booking as dtb','booking.booking_ID','=','dtb.booking_ID')
                        ->join('meeting_room as r','dtb.meeting_ID','=','r.meeting_ID')
-                       ->where('booking.status_ID','<>',4)
+                       ->whereIn('booking.status_ID',[1,3])
                        ->whereBetween('dtb.detail_timestart',[$st,$end])
-                       ->groupBy(
-                        'booking.checkin',
-                        'r.meeting_ID',
-                        'r.meeting_name'
-                       )
-                       ->orderBy('booking.checkin')
+                       ->orderBy(
+                           'booking.checkin',
+                           'dtb.detail_timestart',
+                           'dtb.detail_timeout'
+                        )
                        ->get();
             return view('AdminControl.report.reservation',[
                 'showtb' => true,

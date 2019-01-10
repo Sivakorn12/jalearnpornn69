@@ -20,6 +20,7 @@ class ReportController extends Controller
                            'r.meeting_ID',
                            'r.meeting_name',
                            'booking.booking_name',
+                           'dtb.detail_topic',
                            DB::raw('DATE_FORMAT(dtb.detail_timestart, "%H:%i")as start_time'),
                            DB::raw('DATE_FORMAT(dtb.detail_timeout, "%H:%i")as end_time')
                        )

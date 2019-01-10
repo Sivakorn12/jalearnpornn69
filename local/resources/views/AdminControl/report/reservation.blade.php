@@ -60,8 +60,8 @@ use App\Officer as officer;
 <script>
   $(document).ready(function() {
     var groupColumn = 0;
-    var st = '{{date("d/m/Y",strtotime($_GET["start_dt"]))??date("d/m/Y")}}'
-    var end = '{{date("d/m/Y",strtotime($_GET["end_dt"]))??date("d/m/Y")}}'
+    var st = '{{(isset($_GET["start_dt"]))?date("d/m/Y",strtotime($_GET["start_dt"])):date("d/m/Y")}}'
+    var end = '{{(isset($_GET["end_dt"]))?date("d/m/Y",strtotime($_GET["end_dt"])):date("d/m/Y")}}'
     $('input[name="daterange"]').daterangepicker({
       startDate: st, 
       endDate: end ,

@@ -325,6 +325,8 @@ class func extends Model
               array_push($date_checkin, ($temp_date[0].'-'.$temp_date[1].'-'.$index));
             }
 
+            // dd(sizeof($booking_startTime));
+
             for ($index = 0; $index < sizeof($booking_startTime); $index++) {
                 $id = DB::table('booking')
                                 ->insertGetId([
@@ -336,7 +338,7 @@ class func extends Model
                                     'booking_name' => $req->contract_name ?? $req->user_name,
                                     'booking_phone' => $req->user_tel ?? null,
                                     'booking_date' => date('Y-m-d H:i:s'),
-                                    'checkin' => $date_checkin[(int)($index / 2)]
+                                    'checkin' => sizeof($booking_startTime) > 2 ? $date_checkin[(int)($index / 2)] : $date_checkin[$index]
                                 ]);
                 DB::table('detail_booking')
                         ->insert([

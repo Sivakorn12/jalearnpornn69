@@ -98,7 +98,8 @@ class ReservationController extends Controller
         }
 
         if ($isReserveRoom) {
-            return redirect('control/reservation/')->with('errorMesaage', 'ไม่สามารถจองห้องได้ เนื่องจากมีคนจองห้องก่อนหน้า ทำให้เวลาว่างของห้องไม่เท่ากัน');
+            return redirect('control/reservation/')
+                    ->with('errorMessage', 'ไม่สามารถจองห้องได้ เนื่องจากมีคนจองห้องก่อนหน้า ทำให้เวลาว่างของห้องไม่เท่ากัน');
         }
 
         $dataRoom = DB::table('meeting_room')

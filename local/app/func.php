@@ -143,7 +143,7 @@ class func extends Model
         $room_open_time = DB::table('room_open_time')
                             ->select('open_time', 'close_time')
                             ->where('meeting_ID', $id)
-                            ->where('day_id', $index_day_start)
+                            ->where('day_id', $index_day_start + 1)
                             ->where('open_flag', 1)
                             ->get();
 
@@ -225,34 +225,32 @@ class func extends Model
                 }
             }
 
-            if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && $count == 0) {
-                array_push($bookingStart, $times[$index]);
-                $count++;
-            } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && $count == 1) {
-                array_push($bookingEnd, $times[$index]);
-                $count = 0;
-            }
-            else if (($checkTimeuse[$index] == 1 && $checktimeReserve[$index] == 1) && $count != 0) {
-                array_push($bookingEnd, $times[$index]);
-                $count = 0;
-            } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 0) && $count != 0) {
-                array_push($bookingEnd, $times[$index]);
-                $count = 0;
-            } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && ($index == sizeof($checkTimeuse) - 1)) {
-                array_push($bookingEnd, $time_end.':00');
-                $count = 0;
-            }
-            if (sizeof($time_reserve) == 2 && (sizeof($bookingStart) >= 2 && $count == 1)) {
-                if ($index != sizeof($checkTimeuse) - 1) {
-                    array_push($bookingEnd, $times[$index + 1]);
-                } else {
-                    if (strlen($time_end) < 2) {
-                        array_push($bookingEnd, '0'.$time_end.':00');
-                    } else {
-                        array_push($bookingEnd, $time_end.':00');
-                    }
+            if (sizeof($time_reserve) == 2) {
+                if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && $count == 0) {
+                    array_push($bookingStart, $times[$index]);
+                    $count++;
+                } else if (($checkTimeuse[$index] == 1 && $checktimeReserve[$index] == 1) && $count != 0) {
+                    array_push($bookingEnd, $times[$index]);
+                    $count = 0;
+                } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 0) && $count != 0) {
+                    array_push($bookingEnd, $times[$index]);
+                    $count = 0;
+                } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && ($index == sizeof($checkTimeuse) - 1)) {
+                    array_push($bookingEnd, $time_end.':00');
+                    $count = 0;
                 }
-                break;
+                if (sizeof($time_reserve) < 2 && (sizeof($bookingStart) > 0 && $count == 1)) {
+                    if ($index != sizeof($checkTimeuse) - 1) {
+                        array_push($bookingEnd, $times[$index + 1]);
+                    } else {
+                        if (strlen($time_end) < 2) {
+                            array_push($bookingEnd, '0'.$time_end.':00');
+                        } else {
+                            array_push($bookingEnd, $time_end.':00');
+                        }
+                    }
+                    break;
+                }
             }
         }
 

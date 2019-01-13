@@ -151,7 +151,11 @@ $(function() {
           url: "{{url('checkdate')}}",
           type: 'GET',
           dataType: 'JSON',
-          data: {  date: newStartDate, endDate: newEndDate, roomid: "{{$rooms->meeting_ID}}" },
+          data: {
+            date: newStartDate,
+            endDate: newEndDate,
+            roomid: "{{$rooms->meeting_ID}}"
+          },
           success: function(data) {
             if (data.time_empty) {
               date_select = newStartDate
@@ -159,7 +163,6 @@ $(function() {
               times = data.time_empty
               time_reserve = data.time_reserve
               render_button_time()
-              // render_button_submit()
               $('#time-reserve').show()
             } else {
               $('#time-reserve').hide()
@@ -170,17 +173,6 @@ $(function() {
     }
   });
 });
-
-  // function render_button_submit() {
-  //   var submitHtml = ""
-  //   submitHtml += "<div><form action='{{ url('reserve/form/reserve') }}' method='get' enctype='multipart/form-data'>"
-  //   submitHtml += "<input type='hidden' name='_token' id='csrf-token' value='{{ Session::token() }}'>"
-  //   submitHtml += "<input type='hidden' name='meetingId' value="+meetingId+">"
-  //   submitHtml += "<input type='hidden' name='dateSelect' value="+date_select+">"
-  //   submitHtml += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
-  //   submitHtml += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
-  //   $('#time-reserve').html(submitHtml)
-  // }
   
   function render_button_time(){
     var viewHTML = ""
@@ -199,7 +191,6 @@ $(function() {
     viewHTML += "<input type='hidden' name='dateSelect' value="+date_select+">"
     viewHTML += "<input type='hidden' name='endDateSelect' value="+date_end_select+">"
     viewHTML += "<input type='hidden' id='timeSelect' name='timeSelect' value='"+(JSON.stringify(arrTime))+"'>"
-    // viewHTML += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
     viewHTML += "<button type='submit' style='margin-top: 15px; width: 10%;' class='btn btn-primary'>ยืนยัน</button></form</div>"
     $('#time-reserve').html(viewHTML)
     setColorBtn()

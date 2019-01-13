@@ -38,7 +38,7 @@
             </div>
             @else
             <div class="col-sm-5">
-                  <p class="form-control-static">{{$time_start}} ถึง {{$time_end}} (ใช้งานทั้งวัน)</p>
+                  <p class="form-control-static">{{$time_start}} ถึง {{$time_end}}</p>
             </div>
             @endif
           </div>

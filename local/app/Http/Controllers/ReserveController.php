@@ -54,6 +54,16 @@ class ReserveController extends Controller
     $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
     $temp_date_now = explode('-', date('Y-m-d'));
     $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
+
+    $isReserveRoom = false;
+
+    if (isset($req->endDateSelect)) {
+        $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->meetingId, $req->dateSelect, $req->endDateSelect);
+    }
+
+    if ($isReserveRoom) {
+        return redirect('reserve')->with('error', 'ไม่สามารถจองห้องได้ เนื่องจากมีคนจองห้องก่อนหน้า ทำให้เวลาว่างของห้องไม่เท่ากัน');
+    }
     
     $dataRoom = DB::table('meeting_room')
 		->where('meeting_ID', $req->meetingId)
@@ -62,39 +72,39 @@ class ReserveController extends Controller
     $dataequipment = DB::table('equipment')
 		->get();
 
-		$timeSelect = json_decode($req->timeSelect);
+    $timeSelect = json_decode($req->timeSelect);
 
-		if (sizeof($timeSelect) != 0) {
-			$time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
+    if (sizeof($timeSelect) != 0) {
+        $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);
 
-      $data = array(
-        'room' => $dataRoom,
-        'time_start' => $time_remain[0],
-        'time_end' => $time_remain[1],
-        'time_select' => $date_select,
-        'reserve_time' => $req->timeSelect,
-        'date_reserve' => $date_now,
-        'timeTH_select' => $req->dateSelect,
-        'timeTH_select_end' => $req->endDateSelect,
-        'data_equipment' => $dataequipment,
-        'sections' => func::GetSection(),
-        'dept' => func::GetDepartment(),
-        'faculty' => func::GetFaculty()
-      );
+        $data = array(
+            'room' => $dataRoom,
+            'time_start' => $time_remain[0],
+            'time_end' => $time_remain[1],
+            'time_select' => $date_select,
+            'reserve_time' => $req->timeSelect,
+            'date_reserve' => $date_now,
+            'timeTH_select' => $req->dateSelect,
+            'timeTH_select_end' => $req->endDateSelect,
+            'data_equipment' => $dataequipment,
+            'sections' => func::GetSection(),
+            'dept' => func::GetDepartment(),
+            'faculty' => func::GetFaculty()
+        );
     } else {
-      $data = array(
-        'room' => $dataRoom,
-        'time_start' => $req->dateSelect,
-        'time_end' => $req->endDateSelect,
-        'time_select' => $date_select,
-        'reserve_time' => '',
-        'date_reserve' => $date_now,
-        'timeTH_select' => $req->dateSelect,
-        'data_equipment' => $dataequipment,
-        'sections' => func::GetSection(),
-        'dept' => func::GetDepartment(),
-        'faculty' => func::GetFaculty()
-      );
+        $data = array(
+            'room' => $dataRoom,
+            'time_start' => $req->dateSelect,
+            'time_end' => $req->endDateSelect,
+            'time_select' => $date_select,
+            'reserve_time' => '',
+            'date_reserve' => $date_now,
+            'timeTH_select' => $req->dateSelect,
+            'data_equipment' => $dataequipment,
+            'sections' => func::GetSection(),
+            'dept' => func::GetDepartment(),
+            'faculty' => func::GetFaculty()
+        );
     }
       
       return view('ReserveRoom/reserveForm', $data);
@@ -126,14 +136,14 @@ class ReserveController extends Controller
 							$timeSelect = json_decode($req->reserve_time);
               $temp_date = explode('-', $req->time_select);
               $date_select = $temp_date[2].'-'.$temp_date[1].'-'.($temp_date[0] + 543);
-							
-							$time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
+              
+              $time_remain = func::CHECK_TIME_REMAIN ($req->meeting_id, $timeSelect, $date_select);
               $booking_startTime = array();
               $booking_endTime = array();
 							
               for ($index = 0; $index < sizeof($time_remain[0]); $index++) {
-								array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
-								array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
+                array_push($booking_startTime, $req->time_select.' '.$time_remain[0][$index]);
+                array_push($booking_endTime, $req->time_select.' '.$time_remain[1][$index]);
               }
 							
               if(isset($req)) {
@@ -148,12 +158,12 @@ class ReserveController extends Controller
                           $data_count_equipment[$index] = $temp[1];
                       }
 
-											$id_insert_booking = array();
-											if (!is_null($req->reserve_date_end)) {
-												$id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3, false, true);
-											} else {
-												$id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
-											}
+                        $id_insert_booking = array();
+                        if (!is_null($req->reserve_date_end)) {
+                            $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3, false, true);
+                        } else {
+                            $id_insert_booking = func::SET_DATA_BOOKING($req, $booking_startTime, $booking_endTime, 3);
+                        }
                       $reduce_equipment_now = false;
 											$accept_borrow = false;
                       func::SET_DATA_BORROW($data_id_equipment, $data_count_equipment, $id_insert_booking, $req, $reduce_equipment_now, $accept_borrow);
@@ -254,14 +264,10 @@ class ReserveController extends Controller
       return response()->json(['error'=> 'ไม่สามารถจองห้องย้อนหลังได้']);
     } else {
       $isRoomOpen = func::CHECK_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
-      $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->roomid, $date_select, $end_date_select);
       $isMatchTimeRoomOpen = func::CHECK_IS_MATCH_ROOM_OPEN($req->roomid, $date_select, $end_date_select);
 
       if ($isHoliday) {
         return response()->json(['error'=> 'ไม่สามารถจองห้องในวันหยุดได้']);
-      }
-      if ($isReserveRoom) {
-        return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากห้องนี้มีการจองอยู่']);
       }
       if ($isMatchTimeRoomOpen) {
         return response()->json(['error'=> 'ไม่สามารถจองห้องได้ เนื่องจากเวลาเปิดห้องไม่ตรงกัน']);

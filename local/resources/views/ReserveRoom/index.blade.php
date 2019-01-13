@@ -72,6 +72,14 @@
             })
             setTimeout(function(){ window.location.reload() }, 1000);
         }
+
+        var Oncheck_error = '{{session('error')}}'
+        if (Oncheck_error) {
+            swal(Oncheck_error, {
+              icon: "warning",
+              button: true
+            })
+        }
     });
 </script>
 @endsection

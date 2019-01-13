@@ -119,8 +119,15 @@ class func extends Model
     }
 
     public static function CHECK_TIME_REMAIN ($id, $time_reserve, $time_select) {
+        $formatter_day_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
         $temp_date = explode('-', $time_select);
         $date_select = ($temp_date[2] - 543).'-'.$temp_date[1].'-'.$temp_date[0];
+
+        $temp_day = date_create($date_select);
+        $temp_day = date_format($temp_day, 'r');
+        $day_select = substr($temp_day, 0, 3);
+        $index_day_start = array_search($day_select, $formatter_day_en);
 
         $data_openExtra = DB::table('meeting_open_extra')
                                 ->where(DB::Raw('SUBSTRING(extra_start, 1, 10)'), $date_select)
@@ -133,8 +140,15 @@ class func extends Model
                                     ])
                                     ->first();
 
-        $time_start = 8;
-        $time_end = 16;
+        $room_open_time = DB::table('room_open_time')
+                            ->select('open_time', 'close_time')
+                            ->where('meeting_ID', $id)
+                            ->where('day_id', $index_day_start)
+                            ->where('open_flag', 1)
+                            ->get();
+
+        $time_start = (int)$room_open_time[0]->open_time;
+        $time_end = (int)$room_open_time[0]->close_time;
         $times = array();
         $checkTimeuse = array();
         $checktimeReserve = array();
@@ -203,10 +217,22 @@ class func extends Model
         $count = 0;
 
         for ($index = 0; $index < sizeof($checkTimeuse); $index++) {
+            if (sizeof($time_reserve) == 1) {
+                if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1)) {
+                    array_push($bookingStart, $times[$index]);
+                    array_push($bookingEnd, $times[$index + 1]);
+                    break;
+                }
+            }
+
             if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && $count == 0) {
                 array_push($bookingStart, $times[$index]);
                 $count++;
-            } else if (($checkTimeuse[$index] == 1 && $checktimeReserve[$index] == 1) && $count != 0) {
+            } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && $count == 1) {
+                array_push($bookingEnd, $times[$index]);
+                $count = 0;
+            }
+            else if (($checkTimeuse[$index] == 1 && $checktimeReserve[$index] == 1) && $count != 0) {
                 array_push($bookingEnd, $times[$index]);
                 $count = 0;
             } else if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 0) && $count != 0) {
@@ -216,7 +242,7 @@ class func extends Model
                 array_push($bookingEnd, $time_end.':00');
                 $count = 0;
             }
-            if (sizeof($time_reserve) < 2 && (sizeof($bookingStart) > 0 && $count == 1)) {
+            if (sizeof($time_reserve) == 2 && (sizeof($bookingStart) >= 2 && $count == 1)) {
                 if ($index != sizeof($checkTimeuse) - 1) {
                     array_push($bookingEnd, $times[$index + 1]);
                 } else {
@@ -310,9 +336,9 @@ class func extends Model
                                     'faculty_ID' => $req->faculty_id ?? null,
                                     'user_ID' => $req->user_id,
                                     'booking_name' => $req->contract_name ?? $req->user_name,
-                                    'booking_phone' => isset($req->user_tel)? $req->user_tel : null,
+                                    'booking_phone' => $req->user_tel ?? null,
                                     'booking_date' => date('Y-m-d H:i:s'),
-                                    'checkin' => $date_checkin[$index]
+                                    'checkin' => $date_checkin[(int)($index / 2)]
                                 ]);
                 DB::table('detail_booking')
                         ->insert([
@@ -704,75 +730,75 @@ class func extends Model
   }
 
   public static function CHECK_IS_RESERVE_ROOM($roomId, $startDate, $endDate) {
-    $isReseve = DB::table('detail_booking')
+    $tmpStartDate = explode('-', $startDate);
+    $startDateSelectFormatter = ($tmpStartDate[2] - 543).'-'.$tmpStartDate[1].'-'.$tmpStartDate[0];
+
+    $tmpEndDate = explode('-', $endDate);
+    $endDateSelectFormatter = ($tmpEndDate[2] - 543).'-'.$tmpEndDate[1].'-'.$tmpEndDate[0];
+
+    $isReserveEqual = array();
+
+    for ($index = $tmpStartDate[0]; $index <= $tmpEndDate[0]; $index++) {
+        $tempDateCheck = ($tmpEndDate[2] - 543).'-'.$tmpEndDate[1].'-'.$index;
+
+        $isReseve = DB::table('detail_booking')
                     ->where('meeting_ID', $roomId)
                     ->where([
-                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '>=', $startDate],
-                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $endDate],
+                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '>=', $tempDateCheck],
+                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $tempDateCheck],
                     ])
                     ->join('booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
                     ->whereIn('booking.status_ID', [1, 3])
                     ->get();
-                    
-    if(sizeof($isReseve) > 0) {
-      return true;
-    } else {
-      return false;
+
+        array_push($isReserveEqual, $isReseve);
     }
+
+    for ($index = 1; $index < sizeof($isReserveEqual); $index++) {
+        $sizeCheck = sizeof($isReserveEqual[0]);
+
+        if ($sizeCheck != sizeof($isReserveEqual[$index])) {
+            return true;
+            break;
+        }
+    }
+
+    return false;
   }
 
   public static function CHECK_IS_MATCH_ROOM_OPEN($roomId, $start_date, $end_date = '') {
     $formatter_day_en = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     $formatter_day_th = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
 
-    // if (strlen($end_date) == 0) {
-    //   dd(true);
-    //   $temp_day_start = date_create($start_date);
-    //   $temp_day_start = date_format($temp_day_start, 'r');
-    //   $day_start = substr($temp_day_start, 0, 3);
-    //   $index_of_day = array_search($day_start, $formatter_day_en);
+    $temp_day = date_create($start_date);
+    $temp_day = date_format($temp_day, 'r');
+    $day_start = substr($temp_day, 0, 3);
+    $index_day_start = array_search($day_start, $formatter_day_en);
 
-    //   $data_room_open_time = DB::table('room_open_time')
-    //                           ->where('meeting_ID', $roomId)
-    //                           ->where('day_id', $index_of_day + 1)
-    //                           ->first();
+    $temp_end_day = date_create($end_date);
+    $temp_end_day = date_format($temp_end_day, 'r');
+    $day_end = substr($temp_end_day, 0, 3);
+    $index_day_end = array_search($day_end, $formatter_day_en);
 
-    //   if ($data_room_open_time->open_flag == 1) {
-    //     return false;
-    //   } else {
-    //     return true;
-    //   }
-    // } else {
-      $temp_day = date_create($start_date);
-      $temp_day = date_format($temp_day, 'r');
-      $day_start = substr($temp_day, 0, 3);
-      $index_day_start = array_search($day_start, $formatter_day_en);
+    $room_open_time = DB::table('room_open_time')
+                            ->select('open_time', 'close_time')
+                            ->where('meeting_ID', $roomId)
+                            ->where([
+                                ['day_id', '>=', $index_day_start + 1],
+                                ['day_id', '<=', $index_day_end + 1]
+                            ])
+                            ->where('open_flag', 1)
+                            ->get();
 
-      $temp_end_day = date_create($end_date);
-      $temp_end_day = date_format($temp_end_day, 'r');
-      $day_end = substr($temp_end_day, 0, 3);
-      $index_day_end = array_search($day_end, $formatter_day_en);
+    for ($index = 0; $index < sizeof($room_open_time); $index++) {
+        $tmpTimeStart = $room_open_time[0]->open_time;
+        $tmpTimeEnd = $room_open_time[0]->close_time;
 
-      $room_open_time = DB::table('room_open_time')
-                              ->select('open_time', 'close_time')
-                              ->where('meeting_ID', $roomId)
-                              ->where([
-                                  ['day_id', '>=', $index_day_start + 1],
-                                  ['day_id', '<=', $index_day_end + 1]
-                              ])
-                              ->where('open_flag', 1)
-                              ->get();
-
-        for ($index = 0; $index < sizeof($room_open_time); $index++) {
-          $tmpTimeStart = $room_open_time[0]->open_time;
-          $tmpTimeEnd = $room_open_time[0]->close_time;
-
-          if ($tmpTimeStart != $room_open_time[$index]->open_time || $tmpTimeEnd != $room_open_time[$index]->close_time) {
-            return true;
-          }
+        if ($tmpTimeStart != $room_open_time[$index]->open_time || $tmpTimeEnd != $room_open_time[$index]->close_time) {
+        return true;
         }
-        return false;
-    // }
+    }
+    return false;
   }
 
   public static function getEmailDomainToArray(){
@@ -802,7 +828,6 @@ class func extends Model
                     ->join('equipment as eq','dbr.equiment_ID','=','em_ID')
                     ->groupBy('eq.em_name')
                     ->where('booking.booking_ID',$id)->get();
-    //dd($equip);
 
     $dateCheckIn = explode("-", $booking->checkin);
     $dateTHCheckIn = $dateCheckIn[2].'-'.$dateCheckIn[1].'-'.($dateCheckIn[0] + 543);

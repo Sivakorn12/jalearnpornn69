@@ -91,6 +91,16 @@ class ReservationController extends Controller
         $temp_date_now = explode('-', date('Y-m-d'));
         $date_now = $temp_date_now[2].'-'.$temp_date_now[1].'-'.($temp_date_now[0] + 543);
         
+        $isReserveRoom = false;
+
+        if (isset($req->endDateSelect)) {
+            $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->meetingId, $req->dateSelect, $req->endDateSelect);
+        }
+
+        if ($isReserveRoom) {
+            return redirect('control/reservation/')->with('errorMesaage', 'ไม่สามารถจองห้องได้ เนื่องจากมีคนจองห้องก่อนหน้า ทำให้เวลาว่างของห้องไม่เท่ากัน');
+        }
+
         $dataRoom = DB::table('meeting_room')
             ->where('meeting_ID', $req->meetingId)
             ->first();

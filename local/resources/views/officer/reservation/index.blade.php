@@ -77,14 +77,14 @@ use App\Officer as officer;
               setTimeout(function(){ window.location.reload() }, 1000);
         }
       }
-      else if('{{session("errorMesaage")}}' != null) {
-        var Oncheck_message = '{{session("errorMessage")}}'
-        if (Oncheck_message) {
-          swal(Oncheck_message, {
+
+    if('{{session("errorMessage")}}' != null){
+        var Oncheck_error = '{{session('errorMessage')}}'
+        if (Oncheck_error) {
+          swal(Oncheck_error, {
                 icon: "error",
-                buttons: false
+                button: true
               })
-              setTimeout(function(){ window.location.reload() }, 1000);
         }
       };
     });

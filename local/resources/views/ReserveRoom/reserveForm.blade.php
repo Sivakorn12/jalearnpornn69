@@ -33,7 +33,7 @@
             @if(is_array($time_start))
             <div class="col-sm-5">
                 @for($index = 0; $index < sizeof($time_start); $index++)
-                  <p class="form-control-static">{{$timeTH_select}} ถึง {{$timeTH_select_end}} (ใช้งานเวลา : {{$time_start[$index]}} - {{$time_end[$index]}})</p>
+                  <p class="form-control-static">{{$timeTH_select}} : {{$timeTH_select_end}} (ใช้งานเวลา : {{$time_start[$index]}} - {{$time_end[$index]}})</p>
                 @endfor
             </div>
             @else

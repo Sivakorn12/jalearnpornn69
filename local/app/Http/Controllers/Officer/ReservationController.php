@@ -371,10 +371,13 @@ class ReservationController extends Controller
                                     ->where('day_id',$day_id)
                                     ->first();
         $time_reserve = json_decode($req->time_reserve);
-        if(sizeof($time_reserve)==1){
-            $time_reserve[1]= str_pad($time_reserve[0]+1, 5, "0", STR_PAD_LEFT);
+        if(sizeof($time_reserve[0])==1){
+            $time_reserve[0][1]= $time_reserve[0][0];
         }
-        $time_reserve_arr = [$time_reserve[0].':00',$time_reserve[1].':00'];
+        $time_reserve_arr = array();
+        foreach($time_reserve as $key=>$trs){
+            array_push($time_reserve_arr,[ $trs[0].':00',str_pad($trs[1]+1, 2, "0", STR_PAD_LEFT).':00']);
+        }
         $data = array(
             'room' => $room,
             'date_reserve' => json_decode($req->data_reserve),
@@ -431,53 +434,54 @@ class ReservationController extends Controller
 
             
             for($i = 0 ; $i < sizeof($date_reserve); $i++){
-                
-                $id = DB::table('booking')
-                            ->insertGetId([
-                                'status_ID' => 1,
-                                'section_ID' => $req->section_id ?? null,
-                                'department_ID' => $req->department_id ?? null,
-                                'faculty_ID' => $req->faculty_id ?? null,
-                                'user_ID' => $req->user_id,
-                                'booking_name' => $req->contract_name ?? $req->user_name,
-                                'booking_phone' => $req->user_tel ?? null,
-                                'booking_date' => date('Y-m-d H:i:s'),
-                                'checkin' => $date_reserve[$i]
-                            ]);
-                array_push($id_insert_booking,$id);
-                DB::table('detail_booking')
-                        ->insert([
-                            'booking_ID' => $id,
-                            'meeting_ID' => $req->meeting_id,
-                            'detail_topic' => $req->detail_topic,
-                            'detail_timestart' => date('Y-m-d H:i:s',strtotime($date_reserve[$i].' '.$time_reserve[0])),
-                            'detail_timeout' => date('Y-m-d H:i:s' ,strtotime($date_reserve[$i].' '.$time_reserve[1])),
-                            'detail_count' => $req->detail_count,
-                            'link' => $estimate_link
-                        ]);
-                $reduce_equipment_now = true;
-                $accept_borrow = false;
-                $flag_date_range = true;
-                if (isset($req->hdnEq)){
-                    $borrow_booking_id = DB::table('borrow_booking')
-                                            ->insertGetId([
-                                                'booking_ID' => $id,
-                                                'borrow_date' => $date_reserve[$i],
-                                                'borrow_status' => 3
-                                            ]);
-                                                
-                    for($inner = 0 ; $inner < sizeof($data_count_equipment); $inner++){
-                        DB::table('detail_borrow')
+                for($cnt_t = 0;$cnt_t < sizeof($time_reserve);$cnt_t++){
+                    $id = DB::table('booking')
+                                ->insertGetId([
+                                    'status_ID' => 1,
+                                    'section_ID' => $req->section_id ?? null,
+                                    'department_ID' => $req->department_id ?? null,
+                                    'faculty_ID' => $req->faculty_id ?? null,
+                                    'user_ID' => $req->user_id,
+                                    'booking_name' => $req->contract_name ?? $req->user_name,
+                                    'booking_phone' => $req->user_tel ?? null,
+                                    'booking_date' => date('Y-m-d H:i:s'),
+                                    'checkin' => $date_reserve[$i]
+                                ]);
+                    array_push($id_insert_booking,$id);
+                    DB::table('detail_booking')
                             ->insert([
-                                'borrow_ID' => $borrow_booking_id,
-                                'equiment_ID' => $data_id_equipment[$inner],
-                                'borrow_count' => $data_count_equipment[$inner]
+                                'booking_ID' => $id,
+                                'meeting_ID' => $req->meeting_id,
+                                'detail_topic' => $req->detail_topic,
+                                'detail_timestart' => date('Y-m-d H:i:s',strtotime($date_reserve[$i].' '.$time_reserve[$cnt_t][0])),
+                                'detail_timeout' => date('Y-m-d H:i:s' ,strtotime($date_reserve[$i].' '.$time_reserve[$cnt_t][1])),
+                                'detail_count' => $req->detail_count,
+                                'link' => $estimate_link
                             ]);
-                            $eq = DB::table('equipment')->where('em_ID', $data_id_equipment[$inner])->first();
-                            DB::table('equipment')->where('em_ID', $data_id_equipment[$inner])
-                            ->update([
-                                'em_count' => ($eq->em_count-$data_count_equipment[$inner])
-                            ]);
+                    $reduce_equipment_now = true;
+                    $accept_borrow = false;
+                    $flag_date_range = true;
+                    if (isset($req->hdnEq)){
+                        $borrow_booking_id = DB::table('borrow_booking')
+                                                ->insertGetId([
+                                                    'booking_ID' => $id,
+                                                    'borrow_date' => $date_reserve[$i],
+                                                    'borrow_status' => 3
+                                                ]);
+                                                    
+                        for($inner = 0 ; $inner < sizeof($data_count_equipment); $inner++){
+                            DB::table('detail_borrow')
+                                ->insert([
+                                    'borrow_ID' => $borrow_booking_id,
+                                    'equiment_ID' => $data_id_equipment[$inner],
+                                    'borrow_count' => $data_count_equipment[$inner]
+                                ]);
+                                $eq = DB::table('equipment')->where('em_ID', $data_id_equipment[$inner])->first();
+                                DB::table('equipment')->where('em_ID', $data_id_equipment[$inner])
+                                ->update([
+                                    'em_count' => ($eq->em_count-$data_count_equipment[$inner])
+                                ]);
+                        }
                     }
                 }
                 //dd('insert borrow success');

@@ -256,9 +256,63 @@
         arrTime = []
         arrTime[0] = value
       }
+
+      
     }
+    var time_arr = []
+    var row = 0
+    var flag_time_book = 0
+    var statusTimeBook = "new"
+    if(arrTime.length == 2){
+      var s_time = null
+      var e_time = null
+      for(var nt = parseInt(arrTime[0]); nt <= parseInt(arrTime[1]);nt++){
+        if(statusTimeBook == "new" && checkCanBook(padHour(nt.toString())) != 0){
+          flag_time_book = 1
+          s_time = padHour(nt.toString())
+        }
+        if(statusTimeBook == "can_book" && (checkCanBook(padHour(nt.toString())) == 0 || nt == parseInt(arrTime[1]))){
+          flag_time_book = 2
+          e_time = (nt == parseInt(arrTime[1]))? padHour(nt.toString()):padHour((nt-1).toString())
+          time_arr.push([s_time,e_time])
+          s_time = null
+          e_time = null
+        }
+        if(statusTimeBook == "not_book" && checkCanBook(padHour(nt.toString())) != 0){
+          flag_time_book = 1
+          s_time = padHour(nt.toString())
+        }
+        if(nt == parseInt(arrTime[1]) && e_time == null && s_time != null){
+          time_arr.push([s_time,s_time])
+        }
+        statusTimeBook = setStatusTimeBookTimeBook(flag_time_book)
+      }
+
+      console.log(time_arr)
+      $('#time_reserve').val(JSON.stringify(time_arr))
+    }
+    else{
+      console.log('er')
+      $('#time_reserve').val(JSON.stringify([arrTime]))
+    }
+    
     render_btn_time()
-    $('#time_reserve').val(JSON.stringify(arrTime))
+  }
+
+  function checkCanBook(index){
+    for(indx in time_btn){
+      if(time_btn[indx]["index"] == index){
+        return time_btn[indx]["can_book"]
+      }
+    }
+  }
+  function padHour(n) { return ("00" + n).slice(-2); }
+
+  function setStatusTimeBookTimeBook(index){
+    var statusTimeBook = [
+      "new","can_book","not_book"
+    ]
+    return statusTimeBook[index]
   }
 
   function setColorBtn(){

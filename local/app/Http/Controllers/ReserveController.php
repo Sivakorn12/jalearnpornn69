@@ -66,12 +66,12 @@ class ReserveController extends Controller
     }
     
     $dataRoom = DB::table('meeting_room')
-		->where('meeting_ID', $req->meetingId)
-		->first();
+    ->where('meeting_ID', $req->meetingId)
+    ->first();
     
     $dataequipment = DB::table('equipment')
-		->get();
-
+    ->get();
+    
     $timeSelect = json_decode($req->timeSelect);
 
     if (sizeof($timeSelect) != 0) {

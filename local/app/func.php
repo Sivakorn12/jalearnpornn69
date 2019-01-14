@@ -229,6 +229,9 @@ class func extends Model
                 if (($checkTimeuse[$index] == 0 && $checktimeReserve[$index] == 1) && $count == 0) {
                     array_push($bookingStart, $times[$index]);
                     $count++;
+                } else if (($checkTimeuse[$index] == 1 && $checktimeReserve[$index] == 0) && $count != 0) {
+                    array_push($bookingEnd, $times[$index]);
+                    $count = 0;
                 } else if (($checkTimeuse[$index] == 1 && $checktimeReserve[$index] == 1) && $count != 0) {
                     array_push($bookingEnd, $times[$index]);
                     $count = 0;
@@ -324,8 +327,6 @@ class func extends Model
               }
               array_push($date_checkin, ($temp_date[0].'-'.$temp_date[1].'-'.$index));
             }
-
-            // dd(sizeof($booking_startTime));
 
             for ($index = 0; $index < sizeof($booking_startTime); $index++) {
                 $id = DB::table('booking')
@@ -729,7 +730,7 @@ class func extends Model
     return $date_checkin;
   }
 
-  public static function CHECK_IS_RESERVE_ROOM($roomId, $startDate, $endDate) {
+  public static function CHECK_IS_RESERVE_ROOM($roomId, $startDate, $endDate, $timeSelect) {
     $tmpStartDate = explode('-', $startDate);
     $startDateSelectFormatter = ($tmpStartDate[2] - 543).'-'.$tmpStartDate[1].'-'.$tmpStartDate[0];
 
@@ -744,25 +745,24 @@ class func extends Model
         $isReseve = DB::table('detail_booking')
                     ->where('meeting_ID', $roomId)
                     ->where([
-                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '>=', $tempDateCheck],
-                      [DB::Raw('SUBSTRING(detail_timestart, 1, 10)'), '<=', $tempDateCheck],
+                      [DB::Raw('detail_timestart'), '>=', $tempDateCheck.' '.$timeSelect[0]],
+                      [DB::Raw('detail_timestart'), '<=', $tempDateCheck.' '.$timeSelect[1]],
                     ])
                     ->join('booking', 'booking.booking_ID', '=', 'detail_booking.booking_ID')
                     ->whereIn('booking.status_ID', [1, 3])
                     ->get();
-
+             
         array_push($isReserveEqual, $isReseve);
     }
-
+    
     for ($index = 1; $index < sizeof($isReserveEqual); $index++) {
         $sizeCheck = sizeof($isReserveEqual[0]);
-
+        
         if ($sizeCheck != sizeof($isReserveEqual[$index])) {
             return true;
             break;
         }
     }
-
     return false;
   }
 

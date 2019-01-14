@@ -93,8 +93,10 @@ class ReservationController extends Controller
         
         $isReserveRoom = false;
 
+        $timeSelect = json_decode($req->timeSelect);
+
         if (isset($req->endDateSelect)) {
-            $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->meetingId, $req->dateSelect, $req->endDateSelect);
+            $isReserveRoom = func::CHECK_IS_RESERVE_ROOM($req->meetingId, $req->dateSelect, $req->endDateSelect, $timeSelect);
         }
 
         if ($isReserveRoom) {
@@ -108,8 +110,6 @@ class ReservationController extends Controller
         
         $dataequipment = DB::table('equipment')
                                 ->get();
-                                
-        $timeSelect = json_decode($req->timeSelect);
         
         if (!is_null($req->timeSelect)) {
         $time_remain = func::CHECK_TIME_REMAIN ($req->meetingId, $timeSelect, $req->dateSelect);

@@ -73,7 +73,7 @@ use App\Officer as officer;
           swal(Oncheck_message, {
                 icon: "success",
                 buttons: false
-              })
+            })
               setTimeout(function(){ window.location.reload() }, 1000);
         }
       }

@@ -166,7 +166,9 @@
         arrTime = []
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         if(start.day() != end.day()){
-          alert('กรุณาเลือกวันให้ตรงกัน')
+          swal('กรุณาเลือกวันให้ตรงกัน', {
+                icon: "warning"
+          })
           
           $('#confirm_reserve_date').hide()
           $('#div_date_list').hide()
@@ -188,7 +190,7 @@
                 //console.log(data)
                 if(data.success == 0){
                  
-                  alert(data.message)
+                  swal(data.message, {icon: "error"})
                   $('input[name="daterange"]').data('daterangepicker').setStartDate(date_now);
                   $('input[name="daterange"]').data('daterangepicker').setEndDate(date_now);
                   $('#div_date_list').hide()
@@ -335,11 +337,13 @@
     
     if(arrTime.length == 0){
       e.preventDefault();
-      alert('กรุณาเลือกเวลาที่จะจองก่อน')
+      swal('กรุณาเลือกเวลาที่จะจองก่อน', {
+                icon: "warning"
+      })
       //$('#select_date_form').submit(false); 
     }
     else{
-            $('#select_date_form').submit();
+      $('#select_date_form').submit();
     }
   })
 

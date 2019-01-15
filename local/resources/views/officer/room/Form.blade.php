@@ -25,7 +25,7 @@ if(isset($room)){
                   ข้อมูลห้องประชุม
                 </div>
                 <div class="panel-body" >
-                <form action="{{url('control/room/'.$action)}}" class="form-horizontal" id="form_room"  method="POST" onsubmit="return confirm('WARNING : การเปลี่ยนแปลงเวลาเปิด-ปิดห้องจะทำให้การจองห้อง '+$('#room_name').val()+' หลังจากวันนี้ที่ไม่อยู่ในช่วงเวลาที่เปลี่ยนแปลงถูกยกเลิก\n\nคุณต้องการบันทึกการเปลี่ยนแปลงหรือไม่?')" enctype="multipart/form-data">
+                <form action="{{url('control/room/'.$action)}}" class="form-horizontal" id="form_room"  method="POST"  enctype="multipart/form-data">
                     <div class="col-md-1"></div>
                     <div class="col-md-10">
                         <div class="form-group form-room">
@@ -231,6 +231,22 @@ if(isset($room)){
         }
         
     }
+
+    $('#submit-btn').on('click', function(e){
+        e.preventDefault();
+        swal({
+            icon: 'warning',
+            title:"Warning!",
+            text: 'การเปลี่ยนแปลงเวลาเปิด-ปิดห้องจะทำให้การจองห้อง '+$('#room_name').val()+' หลังจากวันนี้ที่ไม่อยู่ในช่วงเวลาที่เปลี่ยนแปลงถูกยกเลิก\n\nคุณต้องการบันทึกการเปลี่ยนแปลงหรือไม่?',
+            buttons: {
+                cancel: true,
+                confirm: true,
+            }
+        }).then(function(res) {
+            if(res) $('#form_room').submit()
+        })
+
+    })
     function handleFiles(files){
     $('#error-pic').hide()
     var isImg = true

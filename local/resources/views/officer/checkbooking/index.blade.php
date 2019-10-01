@@ -4,9 +4,7 @@ use App\Officer as officer;
 @extends('layouts.officer',['page'=>'checkbooking'])
 @section('page_heading','ตรวจสอบการจองห้อง')
 @section('content')
-{{-- <pre>
-  {{$bookings}}
-</pre> --}}
+
  <div class="row">
       <div class="col-xs-12" style="padding-bottom:10px">
         <div style="float:right"> 

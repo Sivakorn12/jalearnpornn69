@@ -2,7 +2,7 @@ $('#booking-detail').on('show.bs.modal', function(event) {
   var button = $(event.relatedTarget)
   var id = button.data('id'); 
   var modal = $(this)
-  //console.log(window.location.pathname + "/view/" + id)  
+  
   $.ajax({
       url: window.location.pathname + "/view/" + id,
       type: 'GET',
@@ -15,7 +15,6 @@ $('#booking-detail').on('show.bs.modal', function(event) {
 });
 
 function fecthdataBooking(){
-  console.log('fetch Booking At:'+ new Date())
   $.ajax({
       url: window.location.pathname + "/fetchTbBooking",
       type: 'GET',
@@ -77,7 +76,6 @@ function getNoti(){
         dataType: 'JSON',
         data: '',
         success: function(res) {
-            //console.log(res.data)
             $('.button_badge').text(Object.keys(res.data).length)
             var list = setListNoti(res.data)
             $('.noti').html(list)
@@ -123,7 +121,6 @@ $(document).ready(function(){
         var dep_id = $("#department_id").val()
         if(dep_id == '') $("#section_id").prop('disabled', true);
         else $("#section_id").prop('disabled', false);
-        //console.log(dep)
         var select_sec = sec.filter(function (a) {
             return a.department_ID == dep_id;
         });

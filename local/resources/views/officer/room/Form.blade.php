@@ -200,12 +200,10 @@ if(isset($room)){
       $('#tb-room').DataTable();
       $('[data-toggle="tooltip"]').tooltip();  
       setTimepickerAllDay(open_time_list)
-      //console.log(open_time_list)
     //   $('#submit-btn').click(function(event){
     //     //$('#form_room').submit(false)
     //     event.preventDefault();
     //     if(confirm('การเปลี่ยนแปลงเวลาเปิด-ปิดห้องจะทำให้การจองห้อง '+$('#room_name').val()+' หลังจากวันนี้ที่ไม่อยู่ในช่วงเวลาที่เปลี่ยนแปลงถูกยกเลิก\n\nคุณต้องการบันทึกการเปลี่ยนแปลงหรือไม่?')){
-    //         console.log('flfl')
     //         $('#form_room').submit(true)
     //     }
     //   })

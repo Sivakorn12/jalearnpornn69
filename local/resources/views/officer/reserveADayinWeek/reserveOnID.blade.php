@@ -164,7 +164,6 @@
       }
       }, function(start, end, label) {
         arrTime = []
-        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         if(start.day() != end.day()){
           swal('กรุณาเลือกวันให้ตรงกัน', {
                 icon: "warning"
@@ -187,7 +186,6 @@
                 meeting_id:meetingId
               },
               success: function(data) {
-                //console.log(data)
                 if(data.success == 0){
                  
                   swal(data.message, {icon: "error"})
@@ -290,11 +288,9 @@
         statusTimeBook = setStatusTimeBookTimeBook(flag_time_book)
       }
 
-      console.log(time_arr)
       $('#time_reserve').val(JSON.stringify(time_arr))
     }
     else{
-      console.log('er')
       $('#time_reserve').val(JSON.stringify([arrTime]))
     }
     

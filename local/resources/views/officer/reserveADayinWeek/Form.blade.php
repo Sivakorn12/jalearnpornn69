@@ -250,7 +250,6 @@ $("#faculty_id").change(function(){
 var fac_id = $("#faculty_id").val()
 if(fac_id == '') $("#department_id").prop('disabled', true);
 else $("#department_id").prop('disabled', false);
-console.log(fac_id)
 var select_dep = dep.filter(function (a) {
     return a.faculty_ID == fac_id;
 });

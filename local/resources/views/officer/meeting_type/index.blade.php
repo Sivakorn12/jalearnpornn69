@@ -80,7 +80,6 @@ use App\Officer as officer;
                 icon: "error",
                 buttons: false
               })
-              //setTimeout(function(){ window.location.reload() }, 1000);
         }
       };
     });
